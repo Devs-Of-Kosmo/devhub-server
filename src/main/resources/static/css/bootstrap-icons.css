@@ -1,0 +1,10 @@
+@font-face{font-display:block;font-family:bootstrap-icons;src:url(../fonts/bootstrap-icons.woff2?8d200481aa7f02a2d63a331fc782cfaf) format("woff2"),url(../fonts/bootstrap-icons.woff?8d200481aa7f02a2d63a331fc782cfaf) format("woff")}
+.bi::before,[class*=" bi-"]::before,[class^=bi-]::before{font-family:bootstrap-icons!important;font-weight:400!important}
+.bi::before,[class*=" bi-"]::before,[class^=bi-]::before{display:inline-block;font-style:normal;font-feature-settings:normal;font-variant:normal;text-transform:none;line-height:1;vertical-align:-.125em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.bi-arrow-right::before{content:"\f138"}
+.bi-box::before{content:"\f1c8"}
+.bi-facebook::before{content:"\f344"}
+.bi-instagram::before{content:"\f437"}
+.bi-list::before{content:"\f479"}
+.bi-twitter::before{content:"\f5ef"}
+.bi-whatsapp::before{content:"\f618"}

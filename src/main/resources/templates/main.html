@@ -1,10 +1,73 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Submit Data to Spring Boot</h1>
+    <form id="dataForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="age">Age:</label>
+        <input type="text" id="age" name="age" required><br><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <h1>Compare Texts</h1>
+    <form id="compareForm">
+        <label for="text1">Text 1:</label>
+        <textarea id="text1" name="text1" required></textarea><br><br>
+        <label for="text2">Text 2:</label>
+        <textarea id="text2" name="text2" required></textarea><br><br>
+        <input type="submit" value="Compare">
+    </form>
+
+    <h2>Comparison Result</h2>
+    <div id="comparisonResult"></div>
+</div>
+
+<script>
+    document.getElementById('dataForm').onsubmit = function(event) {
+        event.preventDefault();
+        const name = document.getElementById('name').value;
+        const age = document.getElementById('age').value;
+
+        fetch('/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'name': name,
+                'age': age
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(JSON.stringify(data));
+            });
+    }
+
+    document.getElementById('compareForm').onsubmit = function(event) {
+        event.preventDefault();
+        const text1 = document.getElementById('text1').value;
+        const text2 = document.getElementById('text2').value;
+
+        fetch('/compare', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'text1': text1,
+                'text2': text2
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('comparisonResult').innerHTML = data.diff_html;
+                alert(data.result);
+            });
+    }
+</script>
+{% endblock %}
