@@ -12,11 +12,30 @@ import java.util.Map;
 @Controller
 public class ViewController {
 
-    @GetMapping()
+    @GetMapping("/main")
     public String welcome() {
         return "main";
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    @GetMapping("/register")
+    public String register() {
+        return "register";
+    }
+
+    @GetMapping("/password-reset")
+    public String passwordReset() {
+        return "password-reset";
+    }
+
+    @GetMapping("/contact")
+    public String contact() {
+        return "contact";
+    }
     @PostMapping("/send-data")
     public ResponseEntity<String> sendDataToFlask(@RequestBody Map<String, String> data) {
         String flaskUrl = "http://127.0.0.1:5000/";
