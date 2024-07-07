@@ -1,16 +1,14 @@
 package team.devs.devhub.domain.user.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import team.devs.devhub.global.common.BaseTimeEntity;
 import team.devs.devhub.global.common.DeleteCondition;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class User extends BaseTimeEntity {
 
     @Id
