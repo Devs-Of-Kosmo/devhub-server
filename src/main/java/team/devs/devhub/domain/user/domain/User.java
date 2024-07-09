@@ -1,16 +1,16 @@
 package team.devs.devhub.domain.user.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import team.devs.devhub.global.common.BaseTimeEntity;
 import team.devs.devhub.global.common.DeleteCondition;
 
 @Entity
+@Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class User extends BaseTimeEntity {
 
     @Id
@@ -27,8 +27,8 @@ public class User extends BaseTimeEntity {
     @Column(length = 10, nullable = false)
     private String name;
 
-    @Column(length = 4, nullable = false)
-    private String identificationCode;
+    @Column(nullable = false)
+    private Integer identificationCode;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -39,7 +39,7 @@ public class User extends BaseTimeEntity {
     private DeleteCondition deleteCondition;
 
     @Builder
-    public User(Long id, String email, String password, String name, String identificationCode, RoleType roleType, DeleteCondition deleteCondition) {
+    public User(Long id, String email, String password, String name, Integer identificationCode, RoleType roleType, DeleteCondition deleteCondition) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -47,6 +47,14 @@ public class User extends BaseTimeEntity {
         this.identificationCode = identificationCode;
         this.roleType = roleType;
         this.deleteCondition = deleteCondition;
+    }
+
+    public void encodePassword(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
+    }
+
+    public void assignIdentificationCode(int maxIdentificationCode) {
+        this.identificationCode = maxIdentificationCode + 1;
     }
 
 }
