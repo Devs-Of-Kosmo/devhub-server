@@ -7,10 +7,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import team.devs.devhub.domain.user.dto.CommonUserResponse;
 import team.devs.devhub.domain.user.dto.SignupRequest;
 import team.devs.devhub.domain.user.dto.SignupResponse;
 import team.devs.devhub.domain.user.service.UserService;
+import team.devs.devhub.global.security.CustomUserDetails;
 
 @RestController
 @RequestMapping("/api/user")
@@ -27,6 +30,14 @@ public class UserController {
 
         SignupResponse response = userService.saveUser(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/info")
+    @Operation(summary = "내 정보 조회 API", description = "요청하는 유저의 정보를 받는다, JWT 토큰을 Header Authorization에 \"Bearer {accessToken}\" 형식으로 보낸다")
+    public ResponseEntity<CommonUserResponse> readMyInfo(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        return ResponseEntity.ok(userService.readUserInfo(customUserDetails.getId()));
     }
 
 
