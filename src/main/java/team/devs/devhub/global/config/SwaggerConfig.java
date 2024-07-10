@@ -18,8 +18,8 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-                .title("CodeArena Swagger")
-                .description("CodeArena 유저 및 인증 , ps, 알림에 관한 REST API")
+                .title("DevHub")
+                .description("DevHub 프로젝트 API 명세서")
                 .version("1.0.0");
     }
 }
