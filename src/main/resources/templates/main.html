@@ -8,14 +8,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,400;0,700;1,200&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle&display=swap" rel="stylesheet">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/devhub.css" rel="stylesheet">
-    <link href="/css/custom.css" rel="stylesheet">
 </head>
 
 <body>
-
 <main>
     <header class="site-header">
         <div class="container">
@@ -24,12 +25,12 @@
                     <a class="site-header-text d-flex justify-content-center align-items-center me-auto" href="main">
                         <i class="bi-box"></i>
                         <span class="nav-link">DEVHUV</span>
-
                     </a>
 
                     <ul class="nav d-flex justify-content-center align-items-center mx-auto">
-                        <li class="nav-item"><a href="login" class="nav-link">로그인</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">나의 프로젝트</a></li>
+                        <li class="nav-item"><a href="login" id="login-link" class="nav-link">로그인</a></li>
+                        <li class="nav-item"><button id="lang-switch" class="btn btn-primary nav-link" style="color : white;">영어로 변경</button></li>
+                        <li class="nav-item"><a href="http://192.168.0.4:5000/" class="nav-link">나의 프로젝트</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">팀의 프로젝트</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">팀원 구하기</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">쪽지 보내기</a></li>
@@ -58,7 +59,7 @@
                     <li><a href="login">로그인</a></li>
                     <li><a href="register">회원가입</a></li>
                     <li><a href="password-reset">Password Reset</a></li>
-                    <li><a href="#">나만의 레포지토리</a></li>
+                    <li><a href="http://192.168.0.135:5000/">나만의 레포지토리</a></li>
                     <li><a href="contact">팀 레포지토리</a></li>
                 </ul>
             </nav>
@@ -119,12 +120,9 @@
                             <h2 class="countdown-title seconds"></h2>
                             <span class="countdown-text">초</span>
                         </li>
-                        <li>
-                            <button id="lang-switch" class="btn btn-primary" style="position: fixed; bottom: 10px; right: 10px; color : white;">영어로 변경</button>
-                        </li>
                     </ul>
                     <div class="container d-flex justify-content-center">
-                        <a href="#" class="button_center me-3" style="margin-right: 20%;">
+                        <a href="register" class="button_center me-3" style="margin-right: 20%;">
                             <div class="plate"></div>
                             <div class="plate"></div>
                             <div class="plate"></div>
@@ -141,7 +139,7 @@
                                 <div class="inner inner__right"></div>
                             </div>
                         </a>
-                        <a href="#" class="button_center">
+                        <a href="login" class="button_center">
                             <div class="plate"></div>
                             <div class="plate"></div>
                             <div class="plate"></div>
@@ -172,6 +170,59 @@
             </video>
         </div>
     </section>
+    <div class="new-section">
+        <div class="wrapper">
+            <!-- Top Container -->
+            <section class="top-container">
+                <header class="showcase">
+                    <h1>당신을 위해</h1>
+                    <p>어렵고 불편한 형상관리를 도와줍니다</p>
+                    <a href="#" class="btn">더 알아보기</a>
+                </header>
+                <div class="top-box top-box-a">
+                    <h4>Plus+</h4>
+                    <p class="price">$2/월</p>
+                    <a href="" class="btn">구독하기</a>
+                </div>
+                <div class="top-box top-box-b">
+                    <h4>Unlimited</h4>
+                    <p class="price">$3/월</p>
+                    <a href="" class="btn">구독하기</a>
+                </div>
+            </section>
+
+            <!-- Boxes Section -->
+            <section class="boxes">
+                <div class="box chart-pie">
+                    <h3>코드 분석</h3>
+                    <p>코드 변경 사항을 분석하고 효율성을 높이세요.</p>
+                </div>
+                <div class="box globe">
+                    <h3>마케팅</h3>
+                    <p>전 세계에 걸쳐 코드를 공유하고 협업하세요.</p>
+                </div>
+                <div class="box cog">
+                    <h3>개발 지원</h3>
+                    <p>효율적인 개발을 위한 도구와 리소스를 제공합니다.</p>
+                </div>
+                <div class="box users">
+                    <h3>지원</h3>
+                    <p>필요한 모든 지원을 제공합니다. 언제든지 문의하세요.</p>
+                </div>
+            </section>
+
+            <!-- Info Section -->
+            <section class="info">
+                <img src="https://image.ibb.co/j4Qz8x/pic1.jpg" alt="">
+                <div>
+                    <h2>웹에서 당신의 비즈니스를</h2>
+                    <p>형상관리를 통해 코드 비교, 디렉토리 구조 파악, 코드 리뷰 등 다양한 기능을 제공합니다. 우리의 서비스를 통해 비즈니스의 효율성을 높이고 시간을 절약하세요.</p>
+                    <a href="#" class="btn">자세히 알아보기</a>
+                </div>
+            </section>
+        </div>
+    </div>
+
 
     <!-- Footer will be loaded here -->
     <div id="footer-placeholder"></div>
@@ -185,6 +236,14 @@
     <script src="/js/lang-switch.js"></script>
     <!-- Tawk.to Script -->
     <script src="/js/tawkto.js"></script>
+    <script>
+        $(document).ready(function() {
+            var userName = localStorage.getItem('name');
+            if (userName) {
+                $('#login-link').text(userName + '님');
+            }
+        });
+    </script>
 </main>
 </body>
 </html>

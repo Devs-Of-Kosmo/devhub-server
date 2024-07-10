@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<form id="loginForm" class="custom-form login-form" role="form" method="post">
+  <h2 class="hero-title text-center mb-4 pb-2">Login Form</h2>
+  <div class="form-floating mb-4 p-0">
+    <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" required="">
+    <label for="email">Email address</label>
+  </div>
+  <div class="form-floating p-0">
+    <input type="password" name="password" id="password" class="form-control" placeholder="Password" required autocomplete="current-password">
+    <label for="password">Password</label>
+  </div>
+  <div class="form-check mb-4">
+    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+    <label class="form-check-label" for="flexCheckDefault">Remember me</label>
+  </div>
+  <div class="row justify-content-center align-items-center">
+    <div class="col-lg-5 col-12">
+      <button type="submit" class="form-control">Login</button>
+    </div>
+    <div class="col-lg-5 col-12">
+      <a href="register" class="btn custom-btn custom-border-btn">Register</a>
+    </div>
+  </div>
+</form>
+
+<script>
+  $(document).ready(function() {
+    $('#loginForm').on('submit', function(event) {
+      event.preventDefault();
+
+      var formData = {
+        email: $('#email').val(),
+        password: $('#password').val()
+      };
+
+      $.ajax({
+        type: 'POST',
+        url: '/api/auth/public/login', // 로그인 API 엔드포인트
+        data: JSON.stringify(formData),
+        contentType: 'application/json',
+        success: function(response) {
+          alert('Login successful!');
+          console.log(response);
+        },
+        error: function(error) {
+          if (error.responseJSON) {
+            alert('Login failed: ' + error.responseJSON.message);
+          } else {
+            alert('Login failed: ' + error.statusText);
+          }
+          console.error(error);
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

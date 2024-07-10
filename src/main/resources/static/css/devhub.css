@@ -1,4 +1,8 @@
 :root {
+    --primary: #000000;
+    --dark: #333;
+    --light: #fff;
+    --shadow: 0 1px 5px rgba(104, 104, 104, 0.8);
     --body-bg-color: #181717;
     --white-color: #ffffff;
     --primary-color: #E07A5F;
@@ -26,6 +30,14 @@
     --font-weight-normal: 400;
     --font-weight-medium: 500;
     --font-weight-bold: 700;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
 }
 
 body {
@@ -227,7 +239,6 @@ b, strong {
 }
 
 .hero-bg {
-
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -544,5 +555,218 @@ b, strong {
     .page-404-title {
         font-size: 40px;
     }
+}
 
+/* New Section Styles */
+.new-section * {
+    box-sizing: border-box;
+    font-family: 'Dongle', sans-serif;
+    color:#ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+.new-section {
+    background: #000000;
+    padding: 30px 50px;
+    line-height: 1.4;
+}
+
+.new-section .btn {
+    background: var(--dark);
+    color: var(--light);
+    padding: 0.6rem 1.3rem;
+    text-decoration: none;
+    border: 0;
+}
+
+.new-section img {
+    max-width: 100%;
+}
+
+.new-section .wrapper {
+    display: grid;
+    grid-gap: 20px;
+    background-color: #181717; /* 추가된 배경 색상 */
+}
+
+.new-section .top-container {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-areas:
+    'showcase showcase top-box-a'
+    'showcase showcase top-box-b';
+}
+
+.new-section .showcase {
+    position: relative;
+    grid-area: showcase;
+    min-height: 400px;
+    background: url('../images/logo_1.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    box-shadow: var(--shadow);
+}
+
+.new-section .showcase::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.new-section .showcase h1 {
+    font-size: 4rem;
+    margin-bottom: 0;
+    color: cyan;
+    position: relative;
+    z-index: 2;
+}
+
+.new-section .showcase p {
+    font-size: 1.3rem;
+    margin-top: 0;
+    color: cyan;
+    position: relative;
+    z-index: 2;
+}
+
+.new-section .top-box {
+    background: var(--primary);
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+}
+
+.new-section .top-box .price {
+    font-size: 2.5rem;
+}
+
+.new-section .top-box-a {
+    grid-area: top-box-a;
+}
+
+.new-section .top-box-b {
+    grid-area: top-box-b;
+}
+
+.new-section .boxes {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.new-section .box {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+    padding: 1.5rem 2rem;
+    box-shadow: var(--shadow);
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark);
+}
+
+.new-section .box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.new-section .box h3, .new-section .box p {
+    position: relative;
+    z-index: 2;
+}
+
+/* 폰트 크기 변경 */
+.new-section .box h3 {
+    font-size: 2rem; /* h3 요소의 폰트 크기 설정 */
+}
+
+.new-section .box p {
+    font-size: 1.2rem; /* p 요소의 폰트 크기 설정 */
+}
+
+.new-section .box.chart-pie {
+    background-image: url('../images/code.png');
+}
+
+.new-section .box.globe {
+    background-image: url('../images/business-service.png');
+}
+
+.new-section .box.cog {
+    background-image: url('../images/tool.png');
+}
+
+.new-section .box.users {
+    background-image: url('../images/business-service.png');
+}
+
+.new-section .info {
+    background: var(--primary);
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-gap: 30px;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 3rem;
+}
+
+.new-section .info img {
+    width: 100%;
+}
+
+@media (max-width: 700px) {
+    .new-section .top-container {
+        grid-template-areas:
+      'showcase showcase'
+      'top-box-a top-box-b';
+    }
+
+    .new-section .showcase h1 {
+        font-size: 2.5rem;
+    }
+
+    .new-section .main-nav ul {
+        grid-template-columns: 1fr;
+    }
+
+    .new-section .info {
+        grid-template-columns: 1fr;
+    }
+
+    .new-section .info .btn {
+        display: block;
+        text-align: center;
+        margin: auto;
+    }
+}
+
+@media (max-width: 500px) {
+    .new-section .top-container {
+        grid-template-areas:
+      'showcase'
+      'top-box-a'
+      'top-box-b';
+    }
 }
