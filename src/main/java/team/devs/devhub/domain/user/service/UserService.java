@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
+import team.devs.devhub.domain.user.dto.CommonUserResponse;
 import team.devs.devhub.domain.user.dto.SignupResponse;
+import team.devs.devhub.domain.user.exception.UserNotFoundException;
+import team.devs.devhub.global.error.exception.ErrorCode;
 
 @Service
 @Transactional
@@ -38,5 +41,12 @@ public class UserService {
 
         log.info("처리 후" + user);
         return SignupResponse.of(userRepository.save(user));
+    }
+
+    public CommonUserResponse readUserInfo(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        return CommonUserResponse.of(user);
     }
 }
