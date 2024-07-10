@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="sidebar">
+        <h2>Project Directory Structure</h2>
+        <span id="file1-name" class="file-name"></span>
+        <div class="structure-container" id="original-structure-container">
+            <!-- Original file structure will be displayed here -->
+        </div>
+    </div>
+    <div class="main-content">
+        <h2>아무코드 변환 테스트</h2>
+        <p>아무코드나 일단 틀어</p>
+        <div class="code-converter">
+            <h3>Code Converter</h3>
+            <div class="language-selection">
+                <label for="language-select">Select Language:</label>
+                <select id="language-select" class="custom-select">
+                    <option value="java">Java</option>
+                    <option value="c">C</option>
+                    <option value="python">Python</option>
+                </select>
+            </div>
+            <div class="code-input">
+                <label for="code-input">Enter Code:</label>
+                <textarea id="code-input" rows="10" cols="50" class="code-textarea"></textarea>
+            </div>
+            <button id="convert-btn" class="action-btn">Convert to Selected Language</button>
+            <div class="code-output">
+                <h4>Converted Code:</h4>
+                <pre id="code-output" class="code-result"></pre>
+            </div>
+        </div>
+
+        <!-- 댓글 섹션 -->
+        <div id="comment-section">
+            <h2>Comments</h2>
+            <form id="comment-form">
+                <input type="text" id="username" placeholder="Your Name" class="input-field" required>
+                <textarea id="user-comment" placeholder="Your Comment" class="textarea-field" required></textarea>
+                <input type="hidden" id="page" value="about">
+                <button type="submit" class="submit-btn">Submit</button>
+            </form>
+            <div id="comments-list">
+                {% for comment in comments %}
+                <div class="comment">
+                    <p><strong>{{ comment.username }}</strong>: {{ comment.user_comment }}</p>
+                    {% if comment.admin_response %}
+                    <p><em>Admin:</em> {{ comment.admin_response }}</p>
+                    {% elif current_user.is_authenticated and current_user.is_admin %}
+                    <form class="response-form" data-id="{{ comment.id }}">
+                        <textarea placeholder="Admin Response" class="textarea-field"></textarea>
+                        <button type="submit" class="submit-btn">Respond</button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/converter.js') }}"></script>
+<script src="{{ url_for('static', filename='js/comments.js') }}"></script>
+{% endblock %}

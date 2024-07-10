@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Save Files{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Save Files</h1>
+    <p>Below are the saved files with their contents:</p>
+    {% if saved_files %}
+    <ul>
+        {% for file in saved_files %}
+        <li>
+            <strong>{{ file.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong>: <a href="{{ url_for('main.download_file', filename=file.filename) }}">{{ file.filename }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No saved files found.</p>
+    {% endif %}
+</div>
+{% endblock %}

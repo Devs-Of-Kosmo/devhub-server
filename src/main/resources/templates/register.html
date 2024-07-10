@@ -6,7 +6,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Devhub-register</title>
-
+    <!-- jQuery 라이브러리 포함 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- CSS FILES -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,7 +72,7 @@
                 <div class="modal-body">
                     <form action="#" method="get" class="custom-form mt-lg-4 mt-2" role="form">
                         <h2 class="modal-title" id="subscribeModalLabel">Stay up to date</h2>
-                        <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="your@email.com" required="">
+                        <input type="email" name="email" id="subscribeEmail" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="your@email.com" required="">
                         <button type="submit" class="form-control">초대하기</button>
                     </form>
                 </div>
@@ -86,13 +87,13 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-12 mx-auto">
-                    <form class="custom-form" role="form" method="post">
+                    <form id="registerForm" class="custom-form" role="form">
                         <h2 class="hero-title text-center mb-4 pb-2">Create an account</h2>
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-12">
                                 <div class="form-floating">
-                                    <input type="text" name="full-name" id="full-name" class="form-control" placeholder="Full Name" required="">
-                                    <label for="floatingInput">Full Name</label>
+                                    <input type="text" name="name" id="name" class="form-control" placeholder="Full Name" required="">
+                                    <label for="name">Full Name</label>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-12">
@@ -118,7 +119,7 @@
                                     <button type="submit" class="form-control">Submit</button>
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-7">
-                                    <p class="mb-0">Already have an account? <a href="/login.html" class="ms-2">Login</a></p>
+                                    <p class="mb-0">Already have an account? <a href="login" class="ms-2">Login</a></p>
                                 </div>
                             </div>
                         </div>
@@ -136,10 +137,36 @@
 </main>
 
 <!-- JAVASCRIPT FILES -->
-<script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/countdown.js"></script>
 <script src="/js/init.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#registerForm').on('submit', function(event) {
+            event.preventDefault();
 
+            var formData = {
+                name: $('#name').val(),
+                email: $('#email').val(),
+                password: $('#password').val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/user/public/signup', // 회원가입 API 엔드포인트
+                data: JSON.stringify(formData),
+                contentType: 'application/json',
+                success: function(response) {
+                    alert('Registration successful!');
+                    location.href = 'main';
+                },
+                error: function(error) {
+                    alert('Registration failed!');
+                    // 회원가입 실패 시 처리할 내용 추가
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

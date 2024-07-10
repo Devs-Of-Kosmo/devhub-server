@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -35,6 +36,10 @@ public class ViewController {
     @GetMapping("/contact")
     public String contact() {
         return "contact";
+    }
+    @GetMapping("/test")
+    public String test() {
+        return "test";
     }
     @PostMapping("/send-data")
     public ResponseEntity<String> sendDataToFlask(@RequestBody Map<String, String> data) {

@@ -31,7 +31,8 @@ import team.devs.devhub.global.security.CustomUserDetailsService;
 public class SecurityConfig {
     private final String[] AUTH_WHITELIST = {
             "/main", "/swagger-ui/**", "/error", "/favicon.ico",
-            "/api/*/public/**"
+            "/api/*/public/**","/register", "/test","/login","/v3/api-docs/**",
+            "/css/**", "/js/**", "/images/**", "/videos/**", "/fonts/**", "/footer.html", "/templates/**"
     };
     private final TokenProvider tokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
