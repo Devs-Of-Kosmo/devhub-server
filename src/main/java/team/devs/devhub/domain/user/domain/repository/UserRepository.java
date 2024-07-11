@@ -13,4 +13,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT MAX(identificationCode) FROM User WHERE name = :name")
     Optional<Integer> findMaxIdentificationCodeByName(@Param("name") String name);
+
+    boolean existsByEmail(String email);
 }

@@ -11,7 +11,9 @@ public enum ErrorCode {
     PASSWORD_NOT_MATCHED(500, "C007", "Password Not Matched"),
 
     // User
-    USER_NOT_FOUND(500, "U001", "User Not Found Error");
+    USER_NOT_FOUND(500, "U001", "User Not Found Error"),
+    EMAIL_DUPLICATED(500, "U002", "Duplicated Email"),
+    INCORRECT_PASSWORD_PATTERN(500, "U003", "Incorrect Password Pattern");
 
 
     private final String code;
