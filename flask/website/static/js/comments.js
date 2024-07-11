@@ -18,7 +18,7 @@ document.getElementById('comment-form').addEventListener('submit', async functio
 
     const data = await response.json();
     if (data.result === "Comment added successfully") {
-        location.reload();  // Reload to see the new comment
+        location.reload();
     } else {
         alert('Failed to add comment');
     }
@@ -43,7 +43,7 @@ document.querySelectorAll('.response-form').forEach(form => {
 
         const data = await response.json();
         if (data.result === "Response added successfully") {
-            location.reload();  // Reload to see the new response
+            location.reload();
         } else {
             alert('Failed to add response');
         }

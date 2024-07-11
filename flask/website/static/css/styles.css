@@ -195,14 +195,58 @@ header .container1 {
     margin-top: 20px;
     text-align: center;
 }
+.filename-suffix{
+    background-color: #252526;
+}
+.file-button {
+    background-color: #252526;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    margin: 5px 0;
+    cursor: pointer;
+    font-size: 0.6rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: block;
+    width: 100%;
+    text-align: left;
+}
 
-#compare-btn, .open-file-btn, .compare-btn, #save-changes-btn, .action-btn {
+.file-button:hover {
+    background-color: #3a3a3c;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.file-button:active {
+    transform: scale(0.98);
+    background-color: #1e1e1f;
+}
+
+.file-button::before {
+    content: "\f07c"; /* Font Awesome folder icon */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 10px;
+}
+
+.file-button.clicked {
+    animation: click-animation 0.3s ease;
+}
+
+@keyframes click-animation {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+#compare-btn, .open-file-btn, .compare-btn, #save-changes-btn, .action-btn, .submit-btn {
     background-color: #0e639c;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 6px 12px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 12px;
     border-radius: 4px;
     transition: background-color 0.3s, transform 0.3s;
 }
@@ -216,7 +260,7 @@ header .container1 {
     margin-top: 20px;
     padding: 10px;
     border: 1px solid #444;
-    color: #d4d4d4;
+    color: #000000;
     background-color: #252526;
     white-space: pre-wrap;
     display: none;
@@ -224,24 +268,31 @@ header .container1 {
     max-height: 300px;
     overflow-y: auto;
 }
-
+.custom-differences {
+        background-color: #252526;
+        color: #000000;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #444444;
+        white-space: pre-wrap;
+    }
 .comparison-result.show {
     display: block;
 }
 
 .comparison-result span {
-    background-color: #ffcccc;
-    color: #000;
+    background-color: #000000;
+    color: #000000;
 }
 
 .result-message {
     margin-top: 10px;
     font-size: 16px;
-    color: #ff6347;
+    color: #000000;
 }
 
 .result-message.success {
-    color: #32cd32;
+    color: #000000;
 }
 
 .custom-select {

@@ -14,6 +14,7 @@
     <div class="main-content">
         <h1>File Comparison</h1>
         <button id="save-changes-btn" class="action-btn">Save Changes</button>
+        <input type="text" id="filename-suffix" placeholder="Input File name">
         <div id="result-message" class="result-message"></div>
         <div class="results">
             <div class="column content-column">
@@ -56,7 +57,7 @@
                 <input type="text" id="username" placeholder="Your Name" class="input-field" required>
                 <textarea id="user-comment" placeholder="Your Comment" class="textarea-field" required></textarea>
                 <input type="hidden" id="page" value="home">
-                <button type="submit" class="submit-btn">Submit</button>
+                <button id="submit-btn" type="submit" class="submit-btn">Submit</button>
             </form>
             <div id="comments-list">
                 {% for comment in comments %}

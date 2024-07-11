@@ -4,18 +4,49 @@
 
 {% block content %}
 <div class="container">
-    <h1>Save Files</h1>
-    <p>Below are the saved files with their contents:</p>
-    {% if saved_files %}
-    <ul>
-        {% for file in saved_files %}
-        <li>
-            <strong>{{ file.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong>: <a href="{{ url_for('main.download_file', filename=file.filename) }}">{{ file.filename }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>No saved files found.</p>
-    {% endif %}
+    <div class="sidebar">
+        <h2>Saved Files</h2>
+        {% if saved_files %}
+        <ul>
+            {% for file in saved_files %}
+            <li>
+                <button class="file-button" data-id="{{ file.id }}">{{ file.name }}</button>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No saved files found.</p>
+        {% endif %}
+    </div>
+    <div class="main-content" id="file-content">
+        <h2>Select a file to view its content</h2>
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.file-button').forEach(button => {
+            button.addEventListener('click', async function() {
+                const fileId = this.getAttribute('data-id');
+                try {
+                    let response = await fetch(`/get_file_content/${fileId}`);
+                    let data = await response.json();
+                    if (data.result === "success") {
+                        document.getElementById('file-content').innerHTML = `
+                            <h2>${data.file.name}</h2>
+                            <p><strong>${new Date(data.file.timestamp).toLocaleString()}</strong></p>
+                            <p>${data.file.content}</p>
+                            <p class="custom-differences">${data.file.differences}</p>
+                        `;
+                    } else {
+                        document.getElementById('file-content').innerHTML = `<p>Failed to load file content.</p>`;
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('file-content').innerHTML = `<p>Error loading file content.</p>`;
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
