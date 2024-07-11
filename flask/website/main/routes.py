@@ -6,9 +6,10 @@ import re
 from flask import render_template, request, redirect, url_for, flash, jsonify, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from website.model import db, User, Comment
+from website.model import db, User, Comment, SaveFile
 from website.decorators import admin_required
 from markupsafe import Markup
+from datetime import datetime
 
 main = Blueprint('main', __name__)
 UPLOAD_FOLDER = tempfile.mkdtemp()
@@ -17,6 +18,11 @@ UPLOAD_FOLDER = tempfile.mkdtemp()
 def index():
     comments = Comment.query.filter_by(page='home').all()
     return render_template('index.html', comments=comments)
+
+@main.route('/savefiles')
+def savefiles():
+    saved_files = SaveFile.query.all()
+    return render_template('savefiles.html', saved_files=saved_files)
 
 @main.route('/upload', methods=['POST'])
 def upload():
@@ -228,21 +234,40 @@ def java_to_c(code):
     code = '#include <stdio.h>\n\n' + code.strip()
     return code
 
+from datetime import datetime
 
+@main.route('/get_file_content/<int:file_id>')
+def get_file_content(file_id):
+    file = SaveFile.query.get_or_404(file_id)
+    return jsonify(result="success", file={
+        "name": file.name,
+        "timestamp": file.timestamp.isoformat(),
+        "content": file.content,
+        "differences": file.differences
+    })
 
 @main.route('/save_changes', methods=['POST'])
 def save_changes():
     data = request.get_json()
-    changed_content = data.get('changed')
+    name = data.get('name')
+    content = data.get('content')
+    differences = data.get('differences')
 
-    if not changed_content:
-        return jsonify(result="No file content to save."), 400
+    if not name or not content or not differences:
+        return jsonify(result="Missing data"), 400
 
-    save_path = os.path.join(UPLOAD_FOLDER, 'changed_file.txt')
+    timestamp = datetime.now()  # Save Changes 버튼을 누른 시간
+
+    new_savefile = SaveFile(name=name, content=content, differences=differences, timestamp=timestamp)
 
     try:
-        with open(save_path, 'w', encoding='utf-8') as f:
-            f.write(changed_content)
-        return jsonify(result="File saved successfully.", file_path=save_path)
+        db.session.add(new_savefile)
+        db.session.commit()
+        print(f"Data saved: {new_savefile}")  # 디버그를 위한 출력
+        return jsonify(result="File saved successfully.")
     except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")  # 디버그를 위한 출력
         return jsonify(result=f"Failed to save changes: {e}"), 500
+
+

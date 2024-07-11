@@ -81,6 +81,9 @@ async function compareFiles() {
 
 async function saveChanges() {
     var changedContent = document.getElementById('changed-file-content').innerText;
+    var differencesContent = document.getElementById('comparison-result').innerHTML;
+    var fileName = document.getElementById('file2-name').textContent;
+    var filenameSuffix = document.getElementById('filename-suffix').value;
 
     try {
         let response = await fetch('/save_changes', {
@@ -89,7 +92,9 @@ async function saveChanges() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                changed: changedContent
+                name: fileName + filenameSuffix,
+                content: changedContent,
+                differences: differencesContent
             })
         });
         let data = await response.json();
@@ -99,7 +104,6 @@ async function saveChanges() {
         if (data.result === "File saved successfully.") {
             resultMessageElement.classList.add('success');
             resultMessageElement.classList.remove('error');
-            await reloadOriginalFile(data.file_path);
         } else {
             resultMessageElement.classList.add('error');
             resultMessageElement.classList.remove('success');
@@ -112,6 +116,9 @@ async function saveChanges() {
         console.error('Error:', error);
     }
 }
+
+
+
 
 async function reloadOriginalFile(filePath) {
     try {
@@ -227,77 +234,3 @@ function addFileClickEvent() {
         }
     }
 }
-
-document.getElementById('convert-btn').addEventListener('click', async function() {
-    const selectedLanguage = document.getElementById('language-select').value;
-    const codeInput = document.getElementById('code-input').value;
-
-    try {
-        let response = await fetch('/convert', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                language: selectedLanguage,
-                code: codeInput
-            }),
-        });
-        let data = await response.json();
-        document.getElementById('code-output').textContent = data.converted_code;
-    } catch (error) {
-        console.error('Error:', error);
-    }
-});
-
-document.getElementById('comment-form').addEventListener('submit', async function(event) {
-    event.preventDefault();
-    const username = document.getElementById('username').value;
-    const comment = document.getElementById('user-comment').value;
-    const page = document.getElementById('page').value;
-
-    const response = await fetch('/add_comment', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            username: username,
-            comment: comment,
-            page: page
-        }),
-    });
-
-    const data = await response.json();
-    if (data.result === "Comment added successfully") {
-        location.reload();
-    } else {
-        alert('Failed to add comment');
-    }
-});
-
-document.querySelectorAll('.response-form').forEach(form => {
-    form.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const commentId = form.getAttribute('data-id');
-        const responseText = form.querySelector('textarea').value;
-
-        const response = await fetch('/add_response', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                comment_id: commentId,
-                response: responseText
-            }),
-        });
-
-        const data = await response.json();
-        if (data.result === "Response added successfully") {
-            location.reload();
-        } else {
-            alert('Failed to add response');
-        }
-    });
-});

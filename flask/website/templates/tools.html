@@ -1,16 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}About{% endblock %}
+{% block title %}Tools{% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="sidebar">
-        <h2>Project Directory Structure</h2>
-        <span id="file1-name" class="file-name"></span>
-        <div class="structure-container" id="original-structure-container">
-            <!-- Original file structure will be displayed here -->
-        </div>
-    </div>
     <div class="main-content">
         <h2>아무코드 변환 테스트</h2>
         <p>아무코드나 일단 틀어</p>
@@ -41,7 +34,7 @@
             <form id="comment-form">
                 <input type="text" id="username" placeholder="Your Name" class="input-field" required>
                 <textarea id="user-comment" placeholder="Your Comment" class="textarea-field" required></textarea>
-                <input type="hidden" id="page" value="about">
+                <input type="hidden" id="page" value="tools">
                 <button type="submit" class="submit-btn">Submit</button>
             </form>
             <div id="comments-list">
