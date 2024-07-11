@@ -94,7 +94,7 @@
     width : 160px ; /* 너비 조정 */
     height : 60px ; /* 높이 조정 */
     background : linear-gradient(25deg , rgba(255,255,255,.1) , rgba(255,255,255,0)) ;
-    clip-path : path('M160,0H0V60H110.47c0-26.5,25.48-49.37,62.3-60Z') ; /* 클립 패스 조정 */
+
 }
 
 .button_center__text::after{
@@ -106,7 +106,7 @@
     width : 190px ; /* 너비 조정 */
     height : 30px ; /* 높이 조정 */
     background : linear-gradient(25deg , rgba(255,255,255,.3) , rgba(255,255,255,0)) ;
-    clip-path : path('M190,6.92V0H0V30H.32C35.71,16.94,112.53,7.69,190,6.92Z') ; /* 클립 패스 조정 */
+
 }
 
 .button_center__wrapper::before,
