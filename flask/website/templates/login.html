@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container">
     <h2>Login</h2>
-    <form method="post" action="{{ url_for('main.login') }}">
+    <form id="login-form" method="POST">
         <div>
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
@@ -16,5 +16,6 @@
         </div>
         <button type="submit">Login</button>
     </form>
+    <div id="login-message"></div>
 </div>
 {% endblock %}

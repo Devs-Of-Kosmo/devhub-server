@@ -3,6 +3,7 @@ import zipfile
 import tempfile
 import difflib
 import re
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from flask import render_template, request, redirect, url_for, flash, jsonify, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -116,20 +117,36 @@ def compare():
 def tools():
     comments = Comment.query.filter_by(page='tools').all()
     return render_template('tools.html', comments=comments)
-
-@main.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
-            login_user(user)
-            flash('Logged in successfully.', 'success')
-            return redirect(url_for('main.index'))
-        else:
-            flash('Invalid username or password.', 'danger')
+@main.route('/login', methods=['GET'])
+def login_page():
     return render_template('login.html')
+@main.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    user = User.query.filter_by(username=username).first()
+
+    if user and check_password_hash(user.password, password):
+        access_token = create_access_token(identity=user.id)
+        refresh_token = create_refresh_token(identity=user.id)
+        return jsonify(access_token=access_token, refresh_token=refresh_token), 200
+    else:
+        return jsonify({"msg": "Invalid username or password"}), 401
+
+
+@main.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    current_user = get_jwt_identity()
+    new_access_token = create_access_token(identity=current_user)
+    return jsonify(access_token=new_access_token), 200
+
+@main.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
 
 @main.route('/logout')
 @login_required
@@ -234,7 +251,6 @@ def java_to_c(code):
     code = '#include <stdio.h>\n\n' + code.strip()
     return code
 
-from datetime import datetime
 
 @main.route('/get_file_content/<int:file_id>')
 def get_file_content(file_id):
