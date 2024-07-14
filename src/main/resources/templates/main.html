@@ -60,7 +60,7 @@
                     <li><a href="login">로그인</a></li>
                     <li><a href="register">회원가입</a></li>
                     <li><a href="password-reset">Password Reset</a></li>
-                    <li><a href="http://192.168.0.135:5000/">나만의 레포지토리</a></li>
+                    <li><a href="http://192.168.0.4:5000/">나만의 레포지토리</a></li>
                     <li><a href="contact">팀 레포지토리</a></li>
                 </ul>
             </nav>
@@ -158,11 +158,8 @@
                             </div>
                         </a>
                     </div>
-                    </a>
                 </div>
-
             </div>
-        </div>
         </div>
 
         <div class="video-wrap">
@@ -224,27 +221,16 @@
         </div>
     </div>
 
-
     <!-- Footer will be loaded here -->
     <div id="footer-placeholder"></div>
-
 
     <!-- JAVASCRIPT FILES -->
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script src="/js/countdown.js"></script>
-    <script src="/js/footer.js"></script>
     <script src="/js/lang-switch.js"></script>
-    <!-- Tawk.to Script -->
     <script src="/js/tawkto.js"></script>
-    <script>
-        $(document).ready(function() {
-            var userName = localStorage.getItem('name');
-            if (userName) {
-                $('#login-link').text(userName + '님');
-            }
-        });
-    </script>
+    <script src="/js/main.js"></script>
 </main>
 </body>
 </html>
