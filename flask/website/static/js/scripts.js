@@ -18,15 +18,38 @@ document.getElementById('save-changes-btn').addEventListener('click', async func
     await saveChanges();
 });
 
+document.getElementById('login-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+    });
+
+    const data = await response.json();
+    if (response.status === 200) {
+        localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('refresh_token', data.refresh_token);
+        document.getElementById('login-message').textContent = 'Login successful!';
+        document.getElementById('login-message').style.color = 'green';
+        window.location.href = '/';
+    } else {
+        document.getElementById('login-message').textContent = data.msg;
+        document.getElementById('login-message').style.color = 'red';
+    }
+});
+
 async function uploadFile(input, type) {
     var formData = new FormData();
     formData.append(input.name, input.files[0]);
 
     try {
-        let response = await fetch('/upload', {
-            method: 'POST',
-            body: formData
-        });
+        let response = await fetch('/upload', { method: 'POST', body: formData });
         let data = await response.json();
 
         if (type === 'original') {
@@ -62,13 +85,8 @@ async function compareFiles() {
     try {
         let response = await fetch('/compare', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                original: originalContent,
-                changed: changedContent
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ original: originalContent, changed: changedContent }),
         });
         let data = await response.json();
         var resultElement = document.getElementById('comparison-result');
@@ -88,14 +106,8 @@ async function saveChanges() {
     try {
         let response = await fetch('/save_changes', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: fileName + filenameSuffix,
-                content: changedContent,
-                differences: differencesContent
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: fileName + filenameSuffix, content: changedContent, differences: differencesContent }),
         });
         let data = await response.json();
         var resultMessageElement = document.getElementById('result-message');
@@ -116,9 +128,6 @@ async function saveChanges() {
         console.error('Error:', error);
     }
 }
-
-
-
 
 async function reloadOriginalFile(filePath) {
     try {

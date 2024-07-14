@@ -9,7 +9,19 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+    role_type = db.Column(db.String(50), nullable=False, default='USER')
+    delete_condition = db.Column(db.String(50), nullable=False, default='N')
+
+    def to_entity(self):
+        return {
+            'email': self.email,
+            'password': self.password,
+            'name': self.username,
+            'roleType': self.role_type,
+            'deleteCondition': self.delete_condition,
+        }
 
 class Comment(db.Model):
     __tablename__ = 'comment'
