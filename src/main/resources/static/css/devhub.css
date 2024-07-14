@@ -627,7 +627,7 @@ b, strong {
 .new-section .showcase h1 {
     font-size: 4rem;
     margin-bottom: 0;
-    color: cyan;
+    color: white;
     position: relative;
     z-index: 2;
 }
@@ -635,7 +635,7 @@ b, strong {
 .new-section .showcase p {
     font-size: 1.3rem;
     margin-top: 0;
-    color: cyan;
+    color: white;
     position: relative;
     z-index: 2;
 }
