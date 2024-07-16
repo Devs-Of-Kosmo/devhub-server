@@ -13,11 +13,6 @@ import java.util.Map;
 @Controller
 public class ViewController {
 
-    @GetMapping("/main")
-    public String welcome() {
-        return "main";
-    }
-
     @GetMapping("/login")
     public String login() {
         return "login";

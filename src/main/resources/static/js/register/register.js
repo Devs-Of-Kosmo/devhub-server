@@ -1,6 +1,16 @@
+
 $(document).ready(function() {
     $('#registerForm').on('submit', function(event) {
         event.preventDefault();
+
+        // 이메일 형식 검증
+        var email = $('#email').val();
+        var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (!emailPattern.test(email)) {
+            alert('Please enter a valid email address.');
+            return; // 폼 제출 중단
+        }
 
         var formData = {
             name: $('#name').val(),

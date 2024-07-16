@@ -6,13 +6,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const hours = now.getHours(); // 현재 시간
         const minutes = now.getMinutes(); // 현재 분
         const seconds = now.getSeconds(); // 현재 초
-        
 
-        document.querySelector('.countdown .months').innerText = months;
-        document.querySelector('.countdown .days').innerText = days;
-        document.querySelector('.countdown .hours').innerText = hours;
-        document.querySelector('.countdown .minutes').innerText = minutes;
-        document.querySelector('.countdown .seconds').innerText = seconds;
+        const monthsElement = document.querySelector('.countdown .months');
+        const daysElement = document.querySelector('.countdown .days');
+        const hoursElement = document.querySelector('.countdown .hours');
+        const minutesElement = document.querySelector('.countdown .minutes');
+        const secondsElement = document.querySelector('.countdown .seconds');
+
+        if (monthsElement) monthsElement.innerText = months;
+        if (daysElement) daysElement.innerText = days;
+        if (hoursElement) hoursElement.innerText = hours;
+        if (minutesElement) minutesElement.innerText = minutes;
+        if (secondsElement) secondsElement.innerText = seconds;
     };
 
     setInterval(updateTime, 1000);

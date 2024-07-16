@@ -14,7 +14,6 @@
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/devhub.css" rel="stylesheet">
     <link href="/css/custom.css" rel="stylesheet">
-
 </head>
 
 <body>
@@ -23,7 +22,7 @@
         <div class="container">
             <div class="row justify-content-between">
                 <div class="col-lg-12 col-12 d-flex align-items-center">
-                    <a class="site-header-text d-flex justify-content-center align-items-center me-auto" href="main">
+                    <a class="site-header-text d-flex justify-content-center align-items-center me-auto" href="/">
                         <i class="bi-box"></i>
                         <span class="nav-link">DEVHUV</span>
                     </a>
@@ -35,10 +34,11 @@
                         <li class="nav-item"><a href="#" class="nav-link">팀의 프로젝트</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">팀원 구하기</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">쪽지 보내기</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#messageModal">받은 쪽지</a></li>
                     </ul>
 
                     <div>
-                        <a href="#" class="custom-btn custom-border-btn btn" data-bs-toggle="modal" data-bs-target="#subscribeModal">초대 하기
+                        <a href="#" class="custom-btn custom-border-btn btn" data-bs-toggle="modal" data-bs-target="#inviteModal">초대 하기
                             <i class="bi-arrow-right ms-2"></i>
                         </a>
                     </div>
@@ -59,7 +59,7 @@
                 <ul>
                     <li><a href="login">로그인</a></li>
                     <li><a href="register">회원가입</a></li>
-                    <li><a href="password-reset">Password Reset</a></li>
+                    <li><a href="#">팀원구하기</a></li>
                     <li><a href="http://192.168.0.4:5000/">나만의 레포지토리</a></li>
                     <li><a href="contact">팀 레포지토리</a></li>
                 </ul>
@@ -67,7 +67,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="subscribeModal" tabindex="-1" aria-labelledby="subscribeModalLabel" aria-hidden="true">
+    <!-- 초대 모달 -->
+    <div class="modal fade" id="inviteModal" tabindex="-1" aria-labelledby="inviteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -75,16 +76,34 @@
                 </div>
 
                 <div class="modal-body">
-                    <form action="#" method="get" class="custom-form mt-lg-4 mt-2" role="form">
-                        <h2 class="modal-title" id="subscribeModalLabel">아이디를 입력해주세요</h2>
-
-                        <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="your@email.com" required="">
-                        <button type="submit" class="form-control">보내기</button>
+                    <form id="inviteForm" class="custom-form mt-lg-4 mt-2" role="form">
+                        <h2 class="modal-title" id="inviteModalLabel">초대하기</h2>
+                        <input type="email" name="receiverEmail" id="receiverEmail" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="받는 사람의 이메일" required="">
+                        <textarea name="messageContent" id="messageContent" class="form-control mt-3" placeholder="메시지 내용" required=""></textarea>
+                        <button type="submit" class="form-control mt-3">보내기</button>
                     </form>
                 </div>
 
                 <div class="modal-footer justify-content-center">
-                    <p>please,Check the Email about your member </p>
+                    <p>쪽지를 보내시면 수신자가 팀 레포지토리에 접근할 수 있습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 메시지 확인 모달 -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <h2 class="modal-title" id="messageModalLabel">받은 쪽지</h2>
+                    <ul id="messageList" class="list-group mt-3">
+                        <!-- 메시지 항목이 여기에 추가됩니다 -->
+                    </ul>
                 </div>
             </div>
         </div>
@@ -211,8 +230,8 @@
 
             <!-- Info Section -->
             <section class="info">
-                <img src="https://image.ibb.co/j4Qz8x/pic1.jpg" alt="">
-                <div>
+                <video src="/videos/info.mp4" autoplay loop muted playsinline class="background-video"></video>
+                <div class="content">
                     <h2>웹에서 당신의 비즈니스를</h2>
                     <p>형상관리를 통해 코드 비교, 디렉토리 구조 파악, 코드 리뷰 등 다양한 기능을 제공합니다. 우리의 서비스를 통해 비즈니스의 효율성을 높이고 시간을 절약하세요.</p>
                     <a href="#" class="btn">자세히 알아보기</a>
@@ -230,7 +249,7 @@
     <script src="/js/countdown.js"></script>
     <script src="/js/lang-switch.js"></script>
     <script src="/js/tawkto.js"></script>
-    <script src="/js/main.js"></script>
+    <script src="/js/script.js"></script>
 </main>
 </body>
 </html>
