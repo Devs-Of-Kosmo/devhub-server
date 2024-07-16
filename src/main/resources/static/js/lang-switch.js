@@ -32,7 +32,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
         '나만의 레포지토리': ['My Repository', '나만의 레포지토리'],
         '팀 레포지토리': ['Team Repository', '팀 레포지토리'],
         '회원가입': ['Register', '회원가입'],
-        'Password Reset': ['Password Reset', '비밀번호 재설정']
+        'Password Reset': ['Password Reset', '비밀번호 재설정'],
+        '받은 쪽지' : ['Mail Box','받은 쪽지']
     };
 
     document.querySelectorAll('a.nav-link, .modal-title, .form-control[placeholder], .countdown-text, .button_center__text, h1, small').forEach(el => {
@@ -47,4 +48,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
             }
         }
     });
+
+    // '받은 쪽지' 부분 번역 처리
+    const messageModalTitle = document.querySelector('#messageModalLabel');
+    if (messageModalTitle && elements[messageModalTitle.textContent.trim()]) {
+        messageModalTitle.textContent = lang === 'kr' ? elements[messageModalTitle.textContent.trim()][1] : elements[messageModalTitle.textContent.trim()][0];
+    }
 });

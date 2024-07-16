@@ -712,7 +712,7 @@ b, strong {
 }
 
 .new-section .box.globe {
-    background-image: url('../images/business-service.png');
+    background-image: url('../images/markting.png');
 }
 
 .new-section .box.cog {
@@ -732,8 +732,9 @@ b, strong {
     padding: 3rem;
 }
 
-.new-section .info img {
-    width: 100%;
+.new-section .info video {
+    width: max-content;
+    height: max-content;
 }
 
 @media (max-width: 700px) {

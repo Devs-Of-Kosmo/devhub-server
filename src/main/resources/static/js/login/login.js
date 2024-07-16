@@ -38,7 +38,7 @@ $(document).ready(function() {
             success: function(response) {
                 var accessToken = response.accessToken;
                 localStorage.setItem('accessToken', accessToken);
-                window.location.href = 'main';
+                location.href = '/';
             },
             error: function(error) {
                 if (error.responseJSON) {
