@@ -8,6 +8,7 @@
     <title>Devhub-register</title>
     <!-- jQuery 라이브러리 포함 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <!-- CSS FILES -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -108,15 +109,33 @@
                                     <label for="password">Password</label>
                                 </div>
                                 <div class="form-check mb-4">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                    <label class="form-check-label" for="flexCheckDefault">
-                                        I agree to the Terms of Service and Privacy Policy.
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckAll">
+                                    <label class="form-check-label" for="flexCheckAll">
+                                        전체동의를 선택하시면 아래의 모든 약관에 동의하게 됩니다.
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="" id="termsCheck1">
+                                    <label class="form-check-label" for="termsCheck1">
+                                        서비스 이용약관에 동의합니다.
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="" id="termsCheck2">
+                                    <label class="form-check-label" for="termsCheck2">
+                                        개인정보 처리방침에 동의합니다.
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="" id="termsCheck3">
+                                    <label class="form-check-label" for="termsCheck3">
+                                        마케팅 정보 수신에 동의합니다.
                                     </label>
                                 </div>
                             </div>
                             <div class="row justify-content-center align-items-center">
                                 <div class="col-lg-5 col-md-5 col-5 ms-auto">
-                                    <button type="submit" class="form-control">Submit</button>
+                                    <button type="submit" class="form-control" id="submitBtn">Submit</button>
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-7">
                                     <p class="mb-0">Already have an account? <a href="login" class="ms-2">Login</a></p>

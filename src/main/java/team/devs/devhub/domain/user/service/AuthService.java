@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 import team.devs.devhub.domain.user.dto.auth.LoginRequest;
 import team.devs.devhub.domain.user.dto.auth.LoginResponse;
 import team.devs.devhub.global.error.exception.ErrorCode;
@@ -36,10 +37,12 @@ public class AuthService {
 
     public LoginResponse reissue(String accessToken, String refreshToken) {
         if (!tokenProvider.validateToken(refreshToken)) {
-            throw new TokenNotFoundException("잘못된 JWT 서명입니다." , ErrorCode.HANDLE_ACCESS_DENIED);
+            throw new TokenNotFoundException("잘못된 JWT 서명입니다.", ErrorCode.HANDLE_ACCESS_DENIED);
         }
 
         Authentication authentication = tokenProvider.getAuthentication(accessToken);
         return LoginResponse.of(tokenProvider.provideAccessToken(authentication));
     }
-}
+
+    }
+
