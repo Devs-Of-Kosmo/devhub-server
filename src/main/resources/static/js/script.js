@@ -10,9 +10,15 @@ $(document).ready(function() {
                 'Authorization': 'Bearer ' + accessToken
             },
             success: function(response) {
-                var userName = response.name;
-                userEmail = response.email; // 이메일 저장
+                userName = response.name;
+                userEmail = response.email;
                 $('#login-link').text(userName + '님');
+
+                $('#login-link').on('click', function() {
+                    $('#profileName').val(userName);
+                    $('#profileEmail').val(userEmail);
+                    $('#profileModal').modal('show');
+                });
             },
             error: function(error) {
                 console.error('사용자 정보를 가져오는데 실패했습니다:', error);
@@ -20,7 +26,7 @@ $(document).ready(function() {
         });
     }
 
-    document.querySelector('#inviteForm').addEventListener('submit', function(event) {
+    $('#inviteForm').on('submit', function(event) {
         event.preventDefault();
 
         if (!userEmail) {
@@ -28,8 +34,8 @@ $(document).ready(function() {
             return;
         }
 
-        const receiverEmail = document.querySelector('#receiverEmail').value;
-        const messageContent = document.querySelector('#messageContent').value;
+        const receiverEmail = $('#receiverEmail').val();
+        const messageContent = $('#messageContent').val();
 
         fetch('/api/messages/send', {
             method: 'POST',
@@ -46,8 +52,7 @@ $(document).ready(function() {
             .then(response => response.json())
             .then(data => {
                 alert('메시지가 성공적으로 전송되었습니다!');
-                var modal = bootstrap.Modal.getInstance(document.getElementById('inviteModal'));
-                modal.hide();
+                $('#inviteModal').modal('hide');
             })
             .catch(error => console.error('Error:', error));
     });
@@ -71,14 +76,12 @@ $(document).ready(function() {
                 if (!Array.isArray(data)) {
                     throw new Error("Invalid response format");
                 }
-                const messageList = document.getElementById('messageList');
-                messageList.innerHTML = '';
+                const messageList = $('#messageList');
+                messageList.empty();
 
                 data.forEach(message => {
-                    const listItem = document.createElement('li');
-                    listItem.className = 'list-group-item';
-                    listItem.textContent = `보낸 사람: ${message.senderEmail}, 내용: ${message.content}, 보낸 시간: ${new Date(message.timestamp).toLocaleString()}`;
-                    messageList.appendChild(listItem);
+                    const listItem = $('<li></li>').addClass('list-group-item').text(`보낸 사람: ${message.senderEmail}, 내용: ${message.content}, 보낸 시간: ${new Date(message.timestamp).toLocaleString()}`);
+                    messageList.append(listItem);
                 });
             })
             .catch(error => {

@@ -1,5 +1,11 @@
 
 $(document).ready(function() {
+    // 전체 동의 체크박스 클릭 시 개별 체크박스 모두 선택/해제
+    $('#flexCheckAll').on('change', function() {
+        var isChecked = $(this).is(':checked');
+        $('input[type="checkbox"]').prop('checked', isChecked);
+    });
+
     $('#registerForm').on('submit', function(event) {
         event.preventDefault();
 
@@ -9,6 +15,12 @@ $(document).ready(function() {
 
         if (!emailPattern.test(email)) {
             alert('Please enter a valid email address.');
+            return; // 폼 제출 중단
+        }
+
+        // 필수 이용약관 동의 확인
+        if (!$('#termsCheck1').is(':checked') || !$('#termsCheck2').is(':checked')) {
+            alert('서비스 이용약관과 개인정보 처리방침에 동의해야 합니다.');
             return; // 폼 제출 중단
         }
 
@@ -25,12 +37,13 @@ $(document).ready(function() {
             contentType: 'application/json',
             success: function(response) {
                 alert('Registration successful!');
-                location.href = 'main';
+                location.href = '/';
             },
             error: function(error) {
                 alert('Registration failed!');
                 // 회원가입 실패 시 처리할 내용 추가
             }
         });
+
     });
 });

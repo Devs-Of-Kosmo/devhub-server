@@ -3,6 +3,7 @@ import zipfile
 import tempfile
 import difflib
 import re
+import openai
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from flask import render_template, request, redirect, url_for, flash, jsonify, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
@@ -14,6 +15,9 @@ from datetime import datetime
 
 main = Blueprint('main', __name__)
 UPLOAD_FOLDER = tempfile.mkdtemp()
+
+openai.api_key = ''
+# 결제후키메모장
 
 @main.route('/')
 def index():
@@ -117,9 +121,11 @@ def compare():
 def tools():
     comments = Comment.query.filter_by(page='tools').all()
     return render_template('tools.html', comments=comments)
+
 @main.route('/login', methods=['GET'])
 def login_page():
     return render_template('login.html')
+
 @main.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -133,7 +139,6 @@ def login():
         return jsonify(access_token=access_token, refresh_token=refresh_token), 200
     else:
         return jsonify({"msg": "Invalid username or password"}), 401
-
 
 @main.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
@@ -251,7 +256,6 @@ def java_to_c(code):
     code = '#include <stdio.h>\n\n' + code.strip()
     return code
 
-
 @main.route('/get_file_content/<int:file_id>')
 def get_file_content(file_id):
     file = SaveFile.query.get_or_404(file_id)
@@ -286,4 +290,36 @@ def save_changes():
         print(f"Error: {e}")  # 디버그를 위한 출력
         return jsonify(result=f"Failed to save changes: {e}"), 500
 
+@main.route('/review_files', methods=['POST'])
+def review_files():
+    data = request.get_json()
+    file1_content = data.get('file1')
+    file2_content = data.get('file2')
 
+    if not file1_content or not file2_content:
+        return jsonify(result="Both files are required"), 400
+
+    # 파일 간의 차이점을 찾습니다
+    diff = difflib.ndiff(file1_content.splitlines(), file2_content.splitlines())
+    differences = '\n'.join(diff)
+
+    # OpenAI API를 사용하여 차이점에 대한 코드 리뷰 및 피드백을 요청합니다
+    review_prompt = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": f"Review the differences between two code files and provide feedback:\n\nDifferences:\n{differences}\n\nFeedback(한글로):"}
+    ]
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=review_prompt,
+            max_tokens=500,
+            n=1,
+            stop=None,
+            temperature=0.5,
+        )
+        review = response.choices[0].message['content'].strip()
+        return jsonify(result="success", review=review)
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify(result=f"Failed to get review: {e}"), 500
