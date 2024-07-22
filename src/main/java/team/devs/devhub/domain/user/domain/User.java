@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import team.devs.devhub.global.common.BaseTimeEntity;
-import team.devs.devhub.global.common.DeleteCondition;
 
 @Entity
 @Table(name = "users")
@@ -34,19 +33,14 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private RoleType roleType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 1, nullable = false)
-    private DeleteCondition deleteCondition;
-
     @Builder
-    public User(Long id, String email, String password, String name, Integer identificationCode, RoleType roleType, DeleteCondition deleteCondition) {
+    public User(Long id, String email, String password, String name, Integer identificationCode, RoleType roleType) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.identificationCode = identificationCode;
         this.roleType = roleType;
-        this.deleteCondition = deleteCondition;
     }
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
