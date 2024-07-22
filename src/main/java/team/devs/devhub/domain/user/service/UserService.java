@@ -13,6 +13,7 @@ import team.devs.devhub.domain.user.exception.EmailDuplicatedException;
 import team.devs.devhub.domain.user.exception.PasswordPatternException;
 import team.devs.devhub.domain.user.exception.UserNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
+import team.devs.devhub.global.policy.RegisterPolicy;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private static final int INITIAL_IDENTIFICATION_CODE = 0;
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[@$!%*?&]).{8,}$");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile(RegisterPolicy.PASSWORD_PATTERN.getValue());
 
 
     public SignupResponse saveUser(User user) {
