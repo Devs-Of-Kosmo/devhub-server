@@ -3,7 +3,11 @@ package team.devs.devhub.domain.user.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import team.devs.devhub.domain.personalproject.domain.PersonalProject;
 import team.devs.devhub.global.common.BaseTimeEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -32,6 +36,9 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoleType roleType;
+
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PersonalProject> personalProjects = new ArrayList<>();
 
     @Builder
     public User(Long id, String email, String password, String name, Integer identificationCode, RoleType roleType) {
