@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import team.devs.devhub.domain.user.domain.RoleType;
 import team.devs.devhub.domain.user.domain.User;
-import team.devs.devhub.global.common.DeleteCondition;
 
 @Getter
 public class SignupRequest {
@@ -27,7 +26,6 @@ public class SignupRequest {
                 .password(password)
                 .name(name)
                 .roleType(RoleType.USER)
-                .deleteCondition(DeleteCondition.N)
                 .build();
     }
 }

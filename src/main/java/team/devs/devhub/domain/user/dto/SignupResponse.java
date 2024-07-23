@@ -10,11 +10,17 @@ import team.devs.devhub.domain.user.domain.User;
 @AllArgsConstructor
 public class SignupResponse {
 
-    private Long id;
+    private Long userId;
+    private String email;
+    private String name;
+    private Integer identificationCode;
 
     public static SignupResponse of(User user) {
         return SignupResponse.builder()
-                .id(user.getId())
+                .userId(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .identificationCode(user.getIdentificationCode())
                 .build();
     }
 }
