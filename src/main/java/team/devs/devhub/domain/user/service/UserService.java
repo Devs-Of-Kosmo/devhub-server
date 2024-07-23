@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
-import team.devs.devhub.domain.user.dto.CommonUserResponse;
+import team.devs.devhub.domain.user.dto.UserInfoResponse;
 import team.devs.devhub.domain.user.dto.SignupResponse;
 import team.devs.devhub.domain.user.exception.EmailDuplicatedException;
 import team.devs.devhub.domain.user.exception.PasswordPatternException;
@@ -42,11 +42,12 @@ public class UserService {
         return SignupResponse.of(userRepository.save(user));
     }
 
-    public CommonUserResponse readUserInfo(Long id) {
-        User user = userRepository.findById(id)
+    @Transactional(readOnly = true)
+    public UserInfoResponse readUserInfo(long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        return CommonUserResponse.of(user);
+        return UserInfoResponse.of(user);
     }
 
     private void verifyDuplicatedEmail(String email) {

@@ -8,16 +8,16 @@ import team.devs.devhub.domain.user.domain.User;
 @Getter
 @Builder
 @AllArgsConstructor
-public class CommonUserResponse {
+public class UserInfoResponse {
 
-    private Long id;
+    private Long userId;
     private String email;
     private String name;
     private Integer identificationCode;
 
-    public static CommonUserResponse of(User user) {
-        return CommonUserResponse.builder()
-                .id(user.getId())
+    public static UserInfoResponse of(User user) {
+        return UserInfoResponse.builder()
+                .userId(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .identificationCode(user.getIdentificationCode())
