@@ -3,9 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>DEVHUV | Login Page</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,400;0,700;1,200&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
@@ -25,7 +23,6 @@
                         <i class="bi-box"></i>
                         <span class="nav-link">DEVHUV</span>
                     </a>
-
                     <ul class="nav d-flex justify-content-center align-items-center mx-auto">
                         <li class="nav-item">
                             <a href="login" id="login-link" class="nav-link">로그인</a>
@@ -43,24 +40,20 @@
                             <a href="#" class="nav-link">쪽지 보내기</a>
                         </li>
                     </ul>
-
                     <div>
                         <a href="#" class="custom-btn custom-border-btn btn" data-bs-toggle="modal" data-bs-target="#subscribeModal">초대 하기
                             <i class="bi-arrow-right ms-2"></i>
                         </a>
                     </div>
-
                     <a class="bi-list offcanvas-icon" data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasMenu"></a>
                 </div>
             </div>
         </div>
     </header>
-
     <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
         <div class="offcanvas-header">
             <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-
         <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
             <nav>
                 <ul>
@@ -83,15 +76,12 @@
             </nav>
         </div>
     </div>
-
-    <!-- Modal -->
     <div class="modal fade" id="subscribeModal" tabindex="-1" aria-labelledby="subscribeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
                 <div class="modal-body">
                     <form action="#" method="get" class="custom-form mt-lg-4 mt-2" role="form">
                         <h2 class="modal-title" id="subscribeModalLabel">Stay up to date</h2>
@@ -99,14 +89,31 @@
                         <button type="submit" class="form-control">Notify</button>
                     </form>
                 </div>
-
                 <div class="modal-footer justify-content-center">
                     <p>By signing up, you agree to our Privacy Notice</p>
                 </div>
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="findPasswordModal" tabindex="-1" aria-labelledby="findPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" method="post" class="custom-form mt-lg-4 mt-2" role="form">
+                        <h2 class="modal-title" id="findPasswordModalLabel">Find Password</h2>
+                        <input type="email" name="emailFindPassword" id="emailFindPassword" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="your@email.com" required="">
+                        <button type="submit" class="form-control">Send Reset Link</button>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <p>이메일로 임시비밀번호전송</p>
+                </div>
+            </div>
+        </div>
+    </div>
     <section class="hero-section d-flex justify-content-center align-items-center">
         <div class="container">
             <div class="row">
@@ -125,19 +132,36 @@
                             <input class="form-check-input" type="checkbox" value="" id="flexCheckDefaultLogin">
                             <label class="form-check-label" for="flexCheckDefaultLogin">Remember me</label>
                         </div>
-                        <div class="row justify-content-center align-items-center">
-                            <div class="col-lg-5 col-12">
-                                <button type="submit" class="form-control">Login</button>
+                        <div class="row justify-content-center align-items-center g-2">
+                            <div class="col-lg-6 col-12">
+                                <button type="submit" class="form-control login-btn">Login</button>
                             </div>
-                            <div class="col-lg-5 col-12">
-                                <a href="register" class="btn custom-btn custom-border-btn">Register</a>
+                            <div class="col-lg-6 col-12">
+                                <a href="register" class="btn form-control register-btn">Register</a>
+                            </div>
+                            <div class="col-lg-6 col-12 mt-2">
+                                <button type="button" class="btn form-control reset-password-btn" data-bs-toggle="modal" data-bs-target="#findPasswordModal">Reset Password</button>
+                            </div>
+                            <div class="col-lg-6 col-12 mt-2">
+                                <div id="g_id_onload"
+                                     data-client_id="57925909855-0usp7sikt9359qk1cl5qsu5k2f8v8f29.apps.googleusercontent.com"
+                                     data-login_uri="https://localhost:8080/login"
+                                     data-auto_prompt="false">
+                                </div>
+                                <div class="g_id_signin"
+                                     data-type="standard"
+                                     data-shape="rectangular"
+                                     data-theme="outline"
+                                     data-text="continue_with"
+                                     data-size="large"
+                                     data-logo_alignment="left">
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-
         <div class="video-wrap">
             <video autoplay="" loop="" muted="" class="custom-video" poster="">
                 <source src="/videos/video.mp4" type="video/mp4">

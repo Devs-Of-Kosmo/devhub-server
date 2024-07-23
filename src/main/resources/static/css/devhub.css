@@ -118,35 +118,6 @@ b, strong {
     color: var(--secondary-color);
 }
 
-.custom-btn {
-    background: var(--custom-btn-bg-color);
-    border: 2px solid transparent;
-    border-radius: var(--border-radius-large);
-    color: var(--white-color);
-    font-size: var(--btn-font-size);
-    font-weight: var(--font-weight-bold);
-    line-height: normal;
-    transition: all 0.3s;
-    padding: 6px 18px;
-}
-
-.custom-btn:hover {
-    background: var(--custom-btn-bg-hover-color);
-    color: var(--white-color);
-}
-
-.custom-border-btn {
-    background: transparent;
-    border: 2px solid var(--secondary-color);
-    color: var(--secondary-color);
-}
-
-.custom-border-btn:hover {
-    background: var(--secondary-color);
-    border-color: transparent;
-    color: var(--white-color);
-}
-
 .site-header {
     position: absolute;
     z-index: 22;
@@ -385,11 +356,11 @@ b, strong {
     border-radius: var(--border-radius-large);
     border-width: 2px;
     box-shadow: none;
-    color: var(--p-color);
-    margin-bottom: 20px;
+    color: black;
     padding: 10px;
     padding-left: 20px;
     outline: none;
+    margin: 4px;
 }
 
 .custom-form .form-control:focus, .custom-form .form-control:hover {
@@ -424,7 +395,7 @@ b, strong {
 }
 
 .custom-form .form-check-label {
-    color: var(--p-color);
+    color: whitesmoke;
 }
 
 .contact-form .form-floating > textarea {
@@ -587,7 +558,7 @@ b, strong {
 .new-section .wrapper {
     display: grid;
     grid-gap: 20px;
-    background-color: #181717; /* 추가된 배경 색상 */
+    background-color: #181717;
 }
 
 .new-section .top-container {
@@ -655,10 +626,16 @@ b, strong {
 
 .new-section .top-box-a {
     grid-area: top-box-a;
+    background-image: url("../images/pay.jpg");
+    background-size: cover; /* 요소 크기에 맞게 이미지 크기 조정 */
+    background-position: center; /* 이미지 중심으로 배치 */
 }
 
 .new-section .top-box-b {
     grid-area: top-box-b;
+    background-image: url("../images/pay2.jpg");
+    background-size: cover; /* 요소 크기에 맞게 이미지 크기 조정 */
+    background-position: center; /* 이미지 중심으로 배치 */
 }
 
 .new-section .boxes {
@@ -700,11 +677,11 @@ b, strong {
 
 /* 폰트 크기 변경 */
 .new-section .box h3 {
-    font-size: 2rem; /* h3 요소의 폰트 크기 설정 */
+    font-size: 2rem;
 }
 
 .new-section .box p {
-    font-size: 1.2rem; /* p 요소의 폰트 크기 설정 */
+    font-size: 1.2rem;
 }
 
 .new-section .box.chart-pie {
@@ -770,4 +747,52 @@ b, strong {
       'top-box-a'
       'top-box-b';
     }
+}
+
+.login-btn {
+    background: var(--custom-btn-bg-color);
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-large);
+    color: var(--white-color);
+    font-size: var(--btn-font-size);
+    font-weight: var(--font-weight-bold);
+    transition: all 0.3s;
+    padding: 6px 18px;
+}
+
+.login-btn:hover {
+    background: var(--custom-btn-bg-hover-color);
+    color: var(--white-color);
+}
+
+.register-btn {
+    background: #f2cc8f;
+    border: 2px solid var(--secondary-color);
+    font-family: var(--heading-font-family);
+    font-size: 18px;
+    font-weight: var(--font-weight-medium);
+    transition: all 0.3s;
+}
+
+.register-btn:hover {
+    background: #5fe09d;
+    border-color: transparent;
+    color: var(--white-color);
+}
+
+.reset-password-btn {
+    background: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius-small);
+    color: var(--white-color);
+    font-size: var(--btn-font-size);
+    font-weight: var(--font-weight-bold);
+    transition: all 0.3s;
+    padding: 6px 18px;
+}
+
+.reset-password-btn:hover {
+    background: var(--custom-btn-bg-hover-color);
+    border-color: var(--custom-btn-bg-hover-color);
+    color: var(--white-color);
 }

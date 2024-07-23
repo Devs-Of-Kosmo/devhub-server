@@ -1,0 +1,12 @@
+.email-group {
+    display: flex;
+    align-items: center;
+}
+.email-group .form-control {
+    flex: 1;
+}
+.email-group .btn {
+    margin-left: 10px;
+    background-color: var(--custom-btn-bg-color);
+    color: var(--white-color);
+}

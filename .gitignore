@@ -38,3 +38,9 @@ out/
 
 ### config file ###
 /src/main/resources/application.yml
+
+## node pure css 모듈##
+/package.json
+/package-lock.json
+/postcss.config.js
+/node_modules
