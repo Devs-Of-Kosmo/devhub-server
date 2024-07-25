@@ -4,8 +4,12 @@ import tempfile
 import difflib
 import re
 import openai
+import jwt
+from functools import wraps
+
+import requests
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from flask import render_template, request, redirect, url_for, flash, jsonify, Blueprint
+from flask import render_template, request, redirect, url_for, flash, jsonify, Blueprint, Flask
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from website.model import db, User, Comment, SaveFile
@@ -22,8 +26,10 @@ openai.api_key = ''
 @main.route('/')
 def index():
     comments = Comment.query.filter_by(page='home').all()
-    return render_template('index.html', comments=comments)
-
+    token = request.args.get('token')
+    if token:
+        return render_template('index.html', token=token,comments=comments)
+    return render_template('index.html')
 @main.route('/savefiles')
 def savefiles():
     saved_files = SaveFile.query.all()
@@ -82,6 +88,54 @@ def get_subdirectories_html(path, type):
     subdirs += "</ul>"
     return subdirs
 
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization'].split(" ")[1]
+
+        if not token:
+            return jsonify({'message': 'Token is missing!'}), 403
+
+        try:
+            data = jwt.decode(token, main.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = data['user']
+        except:
+            return jsonify({'message': 'Token is invalid!'}), 403
+
+        return f(current_user, *args, **kwargs)
+    return decorated
+
+
+@main.route('/user_info', methods=['GET'])
+def user_info():
+    SPRING_BOOT_API_URL = 'http://localhost:8080/api/user/info'
+
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        token = auth_header.split(" ")[1]
+    else:
+        token = None
+
+    if not token:
+        return jsonify({'message': 'Token is missing!'}), 403
+
+    headers = {'Authorization': f'Bearer {token}'}
+    try:
+        response = requests.get(SPRING_BOOT_API_URL, headers=headers)
+        response.raise_for_status()  # 요청이 성공했는지 확인
+        user_info = response.json()
+        return jsonify({
+            'userId': user_info.get('userId'),
+            'email': user_info.get('email'),
+            'name': user_info.get('name'),
+            'identificationCode': user_info.get('identificationCode')
+        })
+    except requests.exceptions.RequestException as e:
+        return jsonify({'message': 'Failed to fetch user info', 'error': str(e)}), 500
+
+
 @main.route('/subdirectories', methods=['GET'])
 def get_subdirectories():
     path = request.args.get('path')
@@ -122,23 +176,6 @@ def tools():
     comments = Comment.query.filter_by(page='tools').all()
     return render_template('tools.html', comments=comments)
 
-@main.route('/login', methods=['GET'])
-def login_page():
-    return render_template('login.html')
-
-@main.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    user = User.query.filter_by(username=username).first()
-
-    if user and check_password_hash(user.password, password):
-        access_token = create_access_token(identity=user.id)
-        refresh_token = create_refresh_token(identity=user.id)
-        return jsonify(access_token=access_token, refresh_token=refresh_token), 200
-    else:
-        return jsonify({"msg": "Invalid username or password"}), 401
 
 @main.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
@@ -152,13 +189,6 @@ def refresh():
 def protected():
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
-
-@main.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    flash('Logged out successfully.', 'success')
-    return redirect(url_for('main.index'))
 
 @main.route('/add_comment', methods=['POST'])
 def add_comment():
