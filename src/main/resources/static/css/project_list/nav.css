@@ -1,0 +1,110 @@
+:root {
+    --color: #3c3163;
+    --transition-time: 0.5s;
+}
+
+nav#slide-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    background: #555653;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.4);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    color: #fff;
+    z-index: 1000;
+}
+
+nav#slide-menu ul {
+    margin: 60px 20px 0;
+    padding: 0;
+    list-style: none;
+}
+
+nav#slide-menu ul li {
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+nav#slide-menu ul li:hover {
+    background: #2a2347;
+}
+
+nav#slide-menu ul li:before {
+    content: attr(data-icon);
+    font-family: "ico";
+    margin-right: 12px;
+    font-size: 1.2em;
+    color: #59e9df;
+}
+
+nav#slide-menu ul li.sep {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.3);
+}
+
+body.menu-active nav#slide-menu {
+    transform: translateX(0);
+}
+
+div#content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 60px;
+    overflow: scroll;
+    background: #fcfeff;
+    box-sizing: border-box;
+    box-shadow: -3px 0 6px #4b5762;
+    transition: all 0.3s ease;
+    transition: left 0.3s ease;
+}
+
+div.menu-trigger {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 36px;
+    height: 36px;
+    background: #dfe5eb;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+div.menu-trigger:before {
+    content: '\2630';
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    font-size: 1.5em;
+    line-height: 36px;
+    text-align: center;
+    color: black;
+}
+
+div.menu-trigger:hover {
+    background: #556270;
+}
+
+div.menu-trigger:hover:before {
+    color: #fcfeff;
+}
+
+body.menu-active div#content {
+    left: 240px;
+    border-radius: 0;
+}
+
+body.menu-active div#content .menu-trigger {
+    left: 250px;
+}
