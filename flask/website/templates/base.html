@@ -6,8 +6,6 @@
     <title>{% block title %} DEVHUV {% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
 </head>
 <body>
 <header>
@@ -18,12 +16,13 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="/tools">Tools</a></li>
                 <li><a href="/savefiles">Save Files</a></li>
-                <li><a href="/login">Login</a></li>
+                <li id="login-nav-item"><a href="/login" id="login-link" class="nav-link"></a></li>
             </ul>
         </nav>
     </div>
 </header>
 {% block content %}{% endblock %}
 <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/files.js') }}"></script>
 </body>
 </html>

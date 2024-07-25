@@ -409,3 +409,11 @@ $(document).ready(function() {
 
     $('#messageModal').on('show.bs.modal', receiverLoadMessages);
 });
+document.addEventListener('DOMContentLoaded', function() {
+            var token = localStorage.getItem('accessToken');
+            console.log('Token from localStorage:', token);  // 토큰을 콘솔에 출력하여 확인
+            if (token) {
+                var myProjectsLink = document.getElementById('my-projects-link');
+                myProjectsLink.href = 'http://192.168.0.191:5000/?token=' + token;
+            }
+        });

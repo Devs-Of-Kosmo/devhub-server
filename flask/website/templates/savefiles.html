@@ -22,31 +22,5 @@
         <h2>Select a file to view its content</h2>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.file-button').forEach(button => {
-            button.addEventListener('click', async function() {
-                const fileId = this.getAttribute('data-id');
-                try {
-                    let response = await fetch(`/get_file_content/${fileId}`);
-                    let data = await response.json();
-                    if (data.result === "success") {
-                        document.getElementById('file-content').innerHTML = `
-                            <h2>${data.file.name}</h2>
-                            <p><strong>${new Date(data.file.timestamp).toLocaleString()}</strong></p>
-                            <p>${data.file.content}</p>
-                            <p class="custom-differences">${data.file.differences}</p>
-                        `;
-                    } else {
-                        document.getElementById('file-content').innerHTML = `<p>Failed to load file content.</p>`;
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    document.getElementById('file-content').innerHTML = `<p>Error loading file content.</p>`;
-                }
-            });
-        });
-    });
-</script>
+<script src="{{ url_for('static', filename='js/files.js') }}"></script>
 {% endblock %}
