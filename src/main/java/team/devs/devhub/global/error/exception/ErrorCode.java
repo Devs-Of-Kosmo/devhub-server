@@ -19,8 +19,15 @@ public enum ErrorCode {
 
     // PersonalProject
     REPOSITORY_CREATION_ERROR(500, "PP001", "레포지토리 생성 중 오류가 발생했습니다"),
-    REPOSITORY_NAME_DUPLICATED(500, "PP002", "레포지토리 이름이 존재합니다");
+    REPOSITORY_NAME_DUPLICATED(500, "PP002", "레포지토리 이름이 존재합니다"),
 
+    // Message
+    MESSAGE_NOT_FOUND(500, "M001", "메시지를 찾을 수 없습니다"),
+    MESSAGE_COUNTING_NULL(500, "M002", "메시지 카운팅 중 널 값이 발생했습니다"),
+
+    // WebSocket
+    EMAIL_NOT_FOUND(500, "W001", "이메일을 찾을 수 없습니다"),
+    INVALID_WEBSOCKET_SESSION(500, "W002", "유효하지 않은 웹소켓 세션입니다");
 
     private final String code;
     private final String message;
