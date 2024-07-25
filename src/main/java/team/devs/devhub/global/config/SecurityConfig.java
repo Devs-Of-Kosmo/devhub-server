@@ -30,9 +30,11 @@ import team.devs.devhub.global.security.CustomUserDetailsService;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final String[] AUTH_WHITELIST = {
-            "/", "/swagger-ui/**", "/error", "/favicon.ico",
-            "/api/*/public/**","/register", "/test","/login","/v3/api-docs/**",
-            "/css/**", "/js/**", "/images/**", "/videos/**", "/fonts/**", "/footer.html", "/templates/**"
+            "/favicon.ico", "/error",
+            "/api/*/public/**","/ws/message",
+            "/", "/register", "/login",
+            "/footer.html", "/templates/**", "/css/**", "/js/**", "/images/**", "/videos/**", "/fonts/**",
+            "/swagger-ui/**", "/v3/api-docs/**",
     };
     private final TokenProvider tokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
