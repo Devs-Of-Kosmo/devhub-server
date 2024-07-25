@@ -6,7 +6,6 @@ import re
 import openai
 import jwt
 from functools import wraps
-
 import requests
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from flask import render_template, request, redirect, url_for, flash, jsonify, Blueprint, Flask
@@ -20,7 +19,7 @@ from datetime import datetime
 main = Blueprint('main', __name__)
 UPLOAD_FOLDER = tempfile.mkdtemp()
 
-openai.api_key = ''
+#openai.api_key = ''
 # 결제후키메모장
 
 @main.route('/')
@@ -35,6 +34,9 @@ def savefiles():
     saved_files = SaveFile.query.all()
     return render_template('savefiles.html', saved_files=saved_files)
 
+@main.route('/group')
+def grupt():
+    return render_template('group.html')
 @main.route('/upload', methods=['POST'])
 def upload():
     file1 = request.files.get('file1')
@@ -134,6 +136,34 @@ def user_info():
         })
     except requests.exceptions.RequestException as e:
         return jsonify({'message': 'Failed to fetch user info', 'error': str(e)}), 500
+
+@main.route('/api/personal/create', methods=['POST'])
+def create_personal_project():
+    data = request.get_json()
+    projectName = data.get('projectName')
+    description = data.get('description')
+    projectsToken = data.get('projectsToken')  # 요청 본문에서 projectsToken 가져오기
+
+    if not projectName or not description or not projectsToken:
+        return jsonify({'message': 'Missing required data'}), 400
+
+    # 프로젝트 생성 로직 추가
+    new_project = {
+        'personalProjectId': 123,  # 예시 ID
+        'projectName': projectName,
+        'description': description,
+        'masterId': 1  # 예시 마스터 ID
+    }
+    #db.session.add(new_project)
+    #db.session.commit()
+
+    #return jsonify({
+    #    'personalProjectId': new_project.id,  # 생성된 프로젝트의 ID
+    #    'projectName': new_project.project_name,
+    #    'description': new_project.description,
+    #    'masterId': new_project.master_id
+    #}), 200
+    return jsonify(new_project), 200
 
 
 @main.route('/subdirectories', methods=['GET'])

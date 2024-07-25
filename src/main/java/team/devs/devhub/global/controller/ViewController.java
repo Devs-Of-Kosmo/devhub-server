@@ -43,4 +43,16 @@ public class ViewController {
         ResponseEntity<String> response = restTemplate.postForEntity(flaskUrl, data, String.class);
         return response;
     }
+    @GetMapping("/loading")
+    public String loadingPage() {
+        return "loading";
+    }
+    @GetMapping("/personal_project")
+    public String personalProject() {
+        return "personal_project";
+    }
+    @GetMapping("/project_list")
+    public String projectList() {
+        return "project_list";
+    }
 }
