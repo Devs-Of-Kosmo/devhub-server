@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}File Comparison{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="sidebar">
+        <h2>팀프로젝트</h2>
+        <span id="file1-name" class="file-name"></span>
+        <div class="structure-container" id="original-structure-container">
+            <!-- Original file structure will be displayed here -->
+        </div>
+    </div>
+        <!-- 댓글 섹션 -->
+        <div id="comment-section">
+            <h2>댓글</h2>
+            <form id="comment-form">
+                <input type="text" id="username" placeholder="Your Name" class="input-field" required>
+                <textarea id="user-comment" placeholder="Your Comment" class="textarea-field" required></textarea>
+                <input type="hidden" id="page" value="home">
+                <button id="submit-btn" type="submit" class="submit-btn">작성</button>
+            </form>
+            <div id="comments-list">
+                {% for comment in comments %}
+                <div class="comment">
+                    <p><strong>{{ comment.username }}</strong>: {{ comment.user_comment }}</p>
+                    {% if comment.admin_response %}
+                    <p><em>Admin:</em> {{ comment.admin_response }}</p>
+                    {% elif current_user.is_authenticated and current_user.is_admin %}
+                    <form class="response-form" data-id="{{ comment.id }}">
+                        <textarea placeholder="Admin Response" class="textarea-field"></textarea>
+                        <button type="submit" class="submit-btn">쓰기</button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/comments.js') }}"></script>
+<script src="{{ url_for('static', filename='js/files.js') }}"></script>
+{% endblock %}

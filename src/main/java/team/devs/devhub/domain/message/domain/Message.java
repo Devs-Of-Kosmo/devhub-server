@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.common.BaseTimeEntity;
-import team.devs.devhub.global.common.DeleteCondition;
 
 import java.time.LocalDateTime;
 

@@ -29,24 +29,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Authorization': 'Bearer ' + accessToken
             }
         })
-            .then(response => {
-                console.log('Response status:', response.status);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Response data:', data);
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Response data:', data);
 
-                if (data.name) {
-                    var loginNavItem = document.getElementById('login-nav-item');
-                    if (loginNavItem) {
-                        loginNavItem.innerHTML = '<a href="/profile" class="nav-link">' + data.name + '님</a>';
-                    }
+            if (data.name) {
+                var loginNavItem = document.getElementById('login-nav-item');
+                if (loginNavItem) {
+                    loginNavItem.innerHTML = '<a href="/profile" class="nav-link">' + data.name + '님</a>';
                 }
-            })
-            .catch(error => console.error('Error:', error));
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     if (projectsToken) {
@@ -59,24 +59,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 'projectsToken': projectsToken
             })
         })
-            .then(response => {
-                console.log('Projects Response status:', response.status);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Projects data:', data);
+        .then(response => {
+            console.log('Projects Response status:', response.status);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Projects data:', data);
 
-                if (data.projects) {
-                    localStorage.setItem('projects', JSON.stringify(data.projects));
-                    console.log('Projects data saved to localStorage.');
-                } else {
-                    console.error('Projects data is missing or malformed');
-                }
-            })
-            .catch(error => console.error('Error fetching projects:', error));
+            if (data.projects) {
+                localStorage.setItem('projects', JSON.stringify(data.projects));
+                console.log('Projects data saved to localStorage.');
+            } else {
+                console.error('Projects data is missing or malformed');
+            }
+        })
+        .catch(error => console.error('Error fetching projects:', error));
     } else {
         console.warn('No projects token found in URL or localStorage.');
     }
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var card = event.target.closest('.card');
             if (card) {
                 var index = card.getAttribute('data-index');
-                var url = 'http://127.0.0.1:5000/';
+                var url = 'http://localhost:5000';
                 if (accessToken) {
                     url += '?token=' + accessToken;
                 }
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (accessToken) {
         var myProjectsLink = document.getElementById('my-projects-link');
         if (myProjectsLink) {
-            myProjectsLink.href = 'http://127.0.0.1:5000/?token=' + accessToken;
+            myProjectsLink.href = 'http://localhost:5000/?token=' + accessToken;
             if (projectsToken) {
                 myProjectsLink.href += '&projects=' + projectsToken;
             }
@@ -177,18 +177,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         projectsToken: projectsToken // 요청 본문에 projectsToken 포함
                     })
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Project creation response:', data);
-                        if (data.personalProjectId) {
-                            projectsArray.push(data);
-                            localStorage.setItem('projects', JSON.stringify(projectsArray));
-                            window.location.reload();
-                        } else {
-                            console.error('Project creation failed:', data);
-                        }
-                    })
-                    .catch(error => console.error('Error creating project:', error));
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Project creation response:', data);
+                    if (data.personalProjectId) {
+                        projectsArray.push(data);
+                        localStorage.setItem('projects', JSON.stringify(projectsArray));
+                        window.location.reload();
+                    } else {
+                        console.error('Project creation failed:', data);
+                    }
+                })
+                .catch(error => console.error('Error creating project:', error));
             } else {
                 console.error('Missing access token or project details.');
             }
