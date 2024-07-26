@@ -16,13 +16,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import team.devs.devhub.domain.user.domain.repository.UserRepository;
 import team.devs.devhub.global.jwt.JwtAccessDeniedHandler;
 import team.devs.devhub.global.jwt.JwtAuthenticationEntryPoint;
 import team.devs.devhub.global.jwt.JwtFilter;
 import team.devs.devhub.global.jwt.TokenProvider;
 import team.devs.devhub.global.security.CustomAuthenticationProvider;
 import team.devs.devhub.global.security.CustomUserDetailsService;
+import team.devs.devhub.global.security.oauth2.CustomAuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -38,6 +41,7 @@ public class SecurityConfig {
     };
     private final TokenProvider tokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
+    private final UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -61,6 +65,18 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().authenticated()
+                )
+
+                .oauth2Login(oauth2Login ->
+                        oauth2Login
+                                .loginPage("/login")
+                                .successHandler(authenticationSuccessHandler())
+                )
+                .logout(logout ->
+                        logout
+                                .logoutSuccessUrl("/").permitAll()
+                                .invalidateHttpSession(true) // 세션 무효화
+                                .deleteCookies("JSESSIONID") // 쿠키 삭제
                 );
 
         return http.build();
@@ -90,5 +106,10 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         return new CustomAuthenticationProvider(customUserDetailsService, encoder());
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomAuthenticationSuccessHandler(userRepository);
     }
 }

@@ -30,8 +30,8 @@ public class PersonalProjectService {
     public PersonalProjectService(
             UserRepository userRepository,
             PersonalProjectRepository personalProjectRepository,
-            @Value("${repository.path.personal}") String fixedPathHead)
-    {
+            @Value("${repository.path.personal}") String fixedPathHead
+    ) {
         this.userRepository = userRepository;
         this.personalProjectRepository = personalProjectRepository;
         this.fixedPathHead = fixedPathHead;

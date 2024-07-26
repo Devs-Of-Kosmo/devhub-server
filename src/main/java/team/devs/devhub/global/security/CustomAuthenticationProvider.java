@@ -24,7 +24,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
-        if (!(passwordEncoder.matches(password, userDetails.getPassword()))) {
+        if (!(passwordEncoder.matches(password, userDetails.getPassword())
+                || userDetails.getPassword().equals(password)) ) {
             throw new PasswordNotMatchedException(ErrorCode.PASSWORD_NOT_MATCHED);
         }
 

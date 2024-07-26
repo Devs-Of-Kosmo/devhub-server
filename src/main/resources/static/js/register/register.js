@@ -58,7 +58,7 @@ $(document).ready(function() {
             contentType: 'application/json',
             success: function(response) {
                 alert('Registration successful!');
-                location.href = '/';
+                location.href = '/login';
             },
             error: function(error) {
                 console.error('Error:', error);

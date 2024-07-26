@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -150,10 +150,13 @@
         </div>
     </section>
 </main>
+<div id="emailElement" style="display: none;" th:data-email="${email}"></div>
+<div id="nameElement" style="display: none;" th:data-name="${name}"></div>
 
 <!-- JAVASCRIPT FILES -->
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/countdown.js"></script>
 <script src="/js/register/register.js"></script>
+<script src="/js/register/google-register.js"></script>
 </body>
 </html>

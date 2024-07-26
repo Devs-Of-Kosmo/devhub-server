@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -142,20 +142,11 @@
                             <div class="col-lg-6 col-12 mt-2">
                                 <button type="button" class="btn form-control reset-password-btn" data-bs-toggle="modal" data-bs-target="#findPasswordModal">Reset Password</button>
                             </div>
+                            <!-- 구글 로그인 버튼 -->
                             <div class="col-lg-6 col-12 mt-2">
-                                <div id="g_id_onload"
-                                     data-client_id="57925909855-0usp7sikt9359qk1cl5qsu5k2f8v8f29.apps.googleusercontent.com"
-                                     data-login_uri="https://localhost:8080/login"
-                                     data-auto_prompt="false">
-                                </div>
-                                <div class="g_id_signin"
-                                     data-type="standard"
-                                     data-shape="rectangular"
-                                     data-theme="outline"
-                                     data-text="continue_with"
-                                     data-size="large"
-                                     data-logo_alignment="left">
-                                </div>
+                                <button type="button" class="btn form-control" onclick="window.location.href='/oauth2/authorization/google'">
+                                    <img src="https://developers.google.com/identity/images/btn_google_signin_light_normal_web.png" alt="Google 로그인" style="width: 100%; height: auto;">
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -170,10 +161,12 @@
         </div>
     </section>
 </main>
+<div id="accessTokenElement" style="display: none;" th:data-access-token="${accessToken}"></div>
 
 <!-- JAVASCRIPT FILES -->
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/countdown.js"></script>
 <script src="/js/login/login.js"></script>
+<script src="/js/login/google-login.js"></script>
 </body>
 </html>

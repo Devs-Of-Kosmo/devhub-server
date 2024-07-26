@@ -5,8 +5,6 @@ import lombok.*;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.common.BaseTimeEntity;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "messages")
 @Getter
