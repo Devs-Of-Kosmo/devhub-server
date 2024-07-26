@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import team.devs.devhub.domain.message.domain.Message;
 import team.devs.devhub.domain.user.domain.User;
-import team.devs.devhub.global.common.DeleteCondition;
 
 @Getter
 public class MessageDtoRequest {

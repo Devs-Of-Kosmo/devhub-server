@@ -19,7 +19,7 @@ import team.devs.devhub.global.jwt.dto.TokenDto;
 @Tag(name = "인증 관련 API", description = "인증 관련 API 입니다")
 public class AuthController {
     private final AuthService authService;
-    private Long refreshTokenValidityInMillisecond;
+    private final long refreshTokenValidityInMillisecond;
 
     public AuthController(
             AuthService authService,
