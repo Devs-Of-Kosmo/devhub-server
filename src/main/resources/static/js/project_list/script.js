@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var card = event.target.closest('.card');
             if (card) {
                 var index = card.getAttribute('data-index');
-                var url = 'http://192.168.0.191:5000';
+                var url = 'http://localhost:5000';
                 if (accessToken) {
                     url += '?token=' + accessToken;
                 }
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (accessToken) {
         var myProjectsLink = document.getElementById('my-projects-link');
         if (myProjectsLink) {
-            myProjectsLink.href = 'http://192.168.0.191:5000/?token=' + accessToken;
+            myProjectsLink.href = 'http://localhost:5000/?token=' + accessToken;
             if (projectsToken) {
                 myProjectsLink.href += '&projects=' + projectsToken;
             }
