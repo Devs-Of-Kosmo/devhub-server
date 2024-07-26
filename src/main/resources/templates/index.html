@@ -14,7 +14,7 @@
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/devhub.css" rel="stylesheet">
     <link href="/css/custom.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
 </head>
 
 <body>
@@ -31,9 +31,9 @@
                     <ul class="nav d-flex justify-content-center align-items-center mx-auto">
                         <li class="nav-item"><a href="login" id="login-link" class="nav-link">로그인</a></li>
                         <li class="nav-item"><button id="lang-switch" class="btn btn-primary nav-link" style="color : white;">영어로 변경</button></li>
-                        <li class="nav-item"><a href="loading" class="nav-link">나의 프로젝트</a></li>
-                        <li class="nav-item"><a href="http://192.168.0.158:5000" class="nav-link" id="project-link">팀의 프로젝트</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">팀원 구하기</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link" id="my-projects-link">나의 프로젝트</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link" id="project-link">팀의 프로젝트</a></li>
+                        <li class="nav-item"><a href="boards" class="nav-link">팀원 구하기</a></li>
                         <li class="nav-item"><a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#inviteModal">쪽지 보내기</a></li>
                         <li class="nav-item"><a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#messageModal">쪽지함</a></li>
                     </ul>
@@ -61,9 +61,10 @@
         <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
             <nav>
                 <ul>
-                    <li><a href="login">로그인</a></li>
+                    <li><a href="login" id="login-side">로그인</a></li>
+                    <li class="nav-item"><a href="#" id="log-out" class="nav-link">로그아웃</a></li>
                     <li><a href="register">회원가입</a></li>
-                    <li><a href="#">팀원구하기</a></li>
+                    <li><a href="boards">팀원구하기</a></li>
                     <li><a href="http://192.168.0.4:5000/">나의 프로젝트</a></li>
                     <li><a href="contact">팀의 프로젝트</a></li>
                 </ul>
@@ -95,7 +96,6 @@
             </div>
             </div>
         </div>
-    </div>
 
     <!-- 메시지 확인 모달 -->
     <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
@@ -125,7 +125,7 @@
             <div class="row">
                 <div class="col-lg-6 col-12 mx-auto">
                     <small>Manage Configuration Easily with Us
-                        <a rel="nofollow" target="_blank" href="https://www.pexels.com/video/digital-projection-of-the-earth-mass-in-blue-lights-3129957/">To Improve Your Project</a>
+                        <a rel="nofollow" target="_blank" style ="color:wheat">To Improve Your Project</a>
                     </small>
 
                     <h1 class="text-white mt-2 mb-4 pb-2">더 쉽게, 더편하게</h1>
@@ -152,7 +152,7 @@
                             <span class="countdown-text">초</span>
                         </li>
                     </ul>
-                    <div class="container d-flex justify-content-center">
+                    <div id="login-container" class="container d-flex justify-content-center">
                         <a href="register" class="button_center me-3" style="margin-right: 20%;">
                             <div class="plate"></div>
                             <div class="plate"></div>
