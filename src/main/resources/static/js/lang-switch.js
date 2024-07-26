@@ -8,6 +8,7 @@ document.getElementById('lang-switch').addEventListener('click', function() {
     window.location.href = url.toString();
 });
 
+
 window.addEventListener('DOMContentLoaded', (event) => {
     const urlParams = new URLSearchParams(window.location.search);
     const lang = urlParams.get('lang') || 'kr'; // 기본값은 'kr'로 설정
@@ -21,6 +22,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         '팀원 구하기': ['Find Team Members', '팀원 구하기'],
         '쪽지 보내기': ['Send Messages', '쪽지 보내기'],
         '초대 하기': ['Invite', '초대 하기'],
+        '쪽지함': ['Postbox','쪽지함'],
         '아이디를 입력해주세요': ['Please enter your ID', '아이디를 입력해주세요'],
         '보내기': ['Submit', '보내기'],
         '더 쉽게, 더편하게': ['Easier and More Convenient', '더 쉽게, 더편하게'],
