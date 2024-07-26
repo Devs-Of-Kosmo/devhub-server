@@ -10,6 +10,8 @@ import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.service.OAuth2Service;
 import team.devs.devhub.global.jwt.dto.TokenDto;
 
+import java.util.Map;
+
 @Controller
 @RequestMapping("/api/oath2")
 @RequiredArgsConstructor
@@ -27,5 +29,16 @@ public class OAuth2Controller {
         redirectAttributes.addFlashAttribute("refreshToken", tokenDto.getRefreshToken());
 
         return "redirect:/login";
+    }
+
+    @GetMapping("/public/register")
+    public String registerByGoogleInfo(HttpSession session, RedirectAttributes redirectAttributes) {
+        Map<String, Object> oauth2User = (Map<String, Object>) session.getAttribute("oauth2User");
+        session.removeAttribute("oauth2User");
+
+        redirectAttributes.addFlashAttribute("email", oauth2User.get("email"));
+        redirectAttributes.addFlashAttribute("name", oauth2User.get("name"));
+
+        return "redirect:/register";
     }
 }
