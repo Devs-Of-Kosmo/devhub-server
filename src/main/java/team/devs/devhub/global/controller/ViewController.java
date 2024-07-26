@@ -1,20 +1,29 @@
 package team.devs.devhub.global.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import team.devs.devhub.global.util.CookieUtil;
 
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 public class ViewController {
 
+    private final CookieUtil cookieUtil;
+
     @GetMapping("/login")
-    public String login() {
+    public String login(HttpServletResponse response, Model model) {
+        if (model.containsAttribute("accessToken") && model.containsAttribute("refreshToken")) {
+            String refreshToken = (String) model.getAttribute("refreshToken");
+            response.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.getCookie(refreshToken).toString());
+        }
         return "login";
     }
 
