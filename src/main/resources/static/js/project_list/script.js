@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var urlParams = new URLSearchParams(window.location.search);
     console.log('URL Parameters:', urlParams.toString());
 
-    var accessToken = urlParams.get('access_token');
+    var accessToken = urlParams.get('token'); // 'access_token'에서 'token'으로 수정
     var projectsToken = urlParams.get('projects');
     console.log('Access Token from URL:', accessToken);
     console.log('Projects Token from URL:', projectsToken);
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (accessToken) {
         var myProjectsLink = document.getElementById('my-projects-link');
         if (myProjectsLink) {
-            myProjectsLink.href = 'http://127.0.0.1:5000//?token=' + accessToken;
+            myProjectsLink.href = 'http://127.0.0.1:5000/?token=' + accessToken;
             if (projectsToken) {
                 myProjectsLink.href += '&projects=' + projectsToken;
             }
