@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -19,6 +20,8 @@ import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.policy.MailAuthenticationPolicy;
 import team.devs.devhub.global.redis.RedisUtil;
 import team.devs.devhub.global.util.EmailVeificationCodeUtil;
+
+import java.io.UnsupportedEncodingException;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +42,7 @@ public class MailService {
         try {
             MimeMessage emailForm = createEmailForm(toEmail);
             javaMailSender.send(emailForm);
-        } catch (MessagingException e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             throw new MailSendException(ErrorCode.MAIL_SEND_FAILURE);
         }
 
@@ -55,14 +58,16 @@ public class MailService {
         return EmailAuthenticationResponse.of(Boolean.TRUE);
     }
 
-    private MimeMessage createEmailForm(String email) throws MessagingException {
+    private MimeMessage createEmailForm(String email) throws MessagingException, UnsupportedEncodingException {
         String authCode = EmailVeificationCodeUtil.createCode();
 
         MimeMessage message = javaMailSender.createMimeMessage();
-        message.addRecipients(MimeMessage.RecipientType.TO, email);
-        message.setSubject(MailAuthenticationPolicy.TITLE.getValue());
-        message.setFrom(senderEmail);
-        message.setText(setContext(authCode), "utf-8", "html");
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setTo(email);
+        helper.setSubject(MailAuthenticationPolicy.TITLE.getValue());
+        helper.setFrom(senderEmail, MailAuthenticationPolicy.SENDER_NAME.getValue());
+        helper.setText(setContext(authCode), true);
 
         redisUtil.setDataExpire(email, authCode, expirationSecond);
 
