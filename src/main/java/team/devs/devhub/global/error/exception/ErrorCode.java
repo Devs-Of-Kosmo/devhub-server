@@ -17,6 +17,9 @@ public enum ErrorCode {
     // Auth
     PASSWORD_NOT_MATCHED(500, "A001", "비밀번호가 일치하지 않습니다"),
 
+    // Email
+    MAIL_SEND_FAILURE(500, "E001", "메일을 보내는 중 오류가 발생했습니다"),
+
     // PersonalProject
     REPOSITORY_CREATION_ERROR(500, "PP001", "레포지토리 생성 중 오류가 발생했습니다"),
     REPOSITORY_NAME_DUPLICATED(500, "PP002", "레포지토리 이름이 존재합니다"),
