@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import team.devs.devhub.domain.user.dto.EmailAuthenticationRequest;
+import team.devs.devhub.domain.user.dto.EmailAuthenticationResponse;
 import team.devs.devhub.domain.user.dto.MailSendRequest;
 import team.devs.devhub.domain.user.dto.MailSendResponse;
 import team.devs.devhub.domain.user.service.MailService;
@@ -27,5 +29,12 @@ public class MailController {
             @RequestBody @Valid MailSendRequest request
     ) {
         return ResponseEntity.ok(emailService.sendEmail(request.getEmail()));
+    }
+
+    @PostMapping("/public/verify")
+    public ResponseEntity<EmailAuthenticationResponse> verify(
+            @RequestBody @Valid EmailAuthenticationRequest request
+    ) {
+        return ResponseEntity.ok(emailService.checkEmailCode(request.getEmail(), request.getAuthenticationCode()));
     }
 }

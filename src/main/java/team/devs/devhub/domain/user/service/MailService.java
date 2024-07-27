@@ -11,7 +11,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import team.devs.devhub.domain.user.dto.EmailAuthenticationResponse;
 import team.devs.devhub.domain.user.dto.MailSendResponse;
+import team.devs.devhub.domain.user.exception.AuthenticationCodeException;
 import team.devs.devhub.domain.user.exception.MailSendException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.policy.MailAuthenticationPolicy;
@@ -33,16 +35,26 @@ public class MailService {
         if (redisUtil.existData(toEmail)) {
             redisUtil.deleteData(toEmail);
         }
+
         try {
             MimeMessage emailForm = createEmailForm(toEmail);
             javaMailSender.send(emailForm);
         } catch (MessagingException e) {
             throw new MailSendException(ErrorCode.MAIL_SEND_FAILURE);
         }
+
         return MailSendResponse.of(toEmail);
     }
 
-    // 이메일 폼 생성
+    public EmailAuthenticationResponse checkEmailCode(String toEmail, String requestCode) {
+        String savedCode = redisUtil.getData(toEmail);
+
+        verifyExistAuthenticationCode(savedCode);
+        verifyMatchedAuthenticationCode(savedCode, requestCode);
+
+        return EmailAuthenticationResponse.of(Boolean.TRUE);
+    }
+
     private MimeMessage createEmailForm(String email) throws MessagingException {
         String authCode = EmailVeificationCodeUtil.createCode();
 
@@ -72,6 +84,18 @@ public class MailService {
         templateEngine.setTemplateResolver(templateResolver);
 
         return templateEngine.process("mailform/mail", context);
+    }
+
+    private void verifyExistAuthenticationCode(String savedCode) {
+        if (savedCode == null) {
+            throw new AuthenticationCodeException(ErrorCode.AUTHENTICATION_CODE_NOT_EXIST);
+        }
+    }
+
+    private void verifyMatchedAuthenticationCode(String savedCode, String requestCode) {
+        if (!savedCode.equals(requestCode)) {
+            throw new AuthenticationCodeException(ErrorCode.AUTHENTICATION_CODE_NOT_MATCHED);
+        }
     }
 
 }
