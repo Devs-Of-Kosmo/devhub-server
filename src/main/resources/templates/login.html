@@ -10,72 +10,16 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/devhub.css" rel="stylesheet">
+    <link href="/css/login/style.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
 <main>
-    <header class="site-header">
-        <div class="container">
-            <div class="row justify-content-between">
-                <div class="col-lg-12 col-12 d-flex align-items-center">
-                    <a class="site-header-text d-flex justify-content-center align-items-center me-auto" href="/">
-                        <i class="bi-box"></i>
-                        <span class="nav-link">DEVHUV</span>
-                    </a>
-                    <ul class="nav d-flex justify-content-center align-items-center mx-auto">
-                        <li class="nav-item">
-                            <a href="login" id="login-link" class="nav-link">로그인</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">나의 프로젝트</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">팀의 프로젝트</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">팀원 구하기</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">쪽지 보내기</a>
-                        </li>
-                    </ul>
-                    <div>
-                        <a href="#" class="custom-btn custom-border-btn btn" data-bs-toggle="modal" data-bs-target="#subscribeModal">초대 하기
-                            <i class="bi-arrow-right ms-2"></i>
-                        </a>
-                    </div>
-                    <a class="bi-list offcanvas-icon" data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasMenu"></a>
-                </div>
-            </div>
-        </div>
-    </header>
-    <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column justify-content-center align-items-center">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="login">로그인</a>
-                    </li>
-                    <li>
-                        <a href="register">회원가입</a>
-                    </li>
-                    <li>
-                        <a href="#">팀원구하기</a>
-                    </li>
-                    <li>
-                        <a href="#">나만의 레포지토리</a>
-                    </li>
-                    <li>
-                        <a href="contact">팀 레포지토리</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
+    <a class="site-header-text d-flex justify-content-center align-items-center me-auto" href="/">
+        <i class="bi-box"></i>
+        <span class="nav-link">DEVHUV</span>
+    </a>
     <div class="modal fade" id="subscribeModal" tabindex="-1" aria-labelledby="subscribeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -119,7 +63,7 @@
             <div class="row">
                 <div class="col-lg-5 col-12 mx-auto">
                     <form id="loginForm" class="custom-form login-form" role="form" method="post">
-                        <h2 class="hero-title text-center mb-4 pb-2">Login Form</h2>
+                        <h2 class="hero-title text-center mb-4 pb-2">Login</h2>
                         <div class="form-floating mb-4 p-0">
                             <input type="email" name="email" id="emailLogin" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" required="">
                             <label for="emailLogin">Email address</label>
@@ -132,22 +76,13 @@
                             <input class="form-check-input" type="checkbox" value="" id="flexCheckDefaultLogin">
                             <label class="form-check-label" for="flexCheckDefaultLogin">Remember me</label>
                         </div>
-                        <div class="row justify-content-center align-items-center g-2">
-                            <div class="col-lg-6 col-12">
-                                <button type="submit" class="form-control login-btn">Login</button>
-                            </div>
-                            <div class="col-lg-6 col-12">
-                                <a href="register" class="btn form-control register-btn">Register</a>
-                            </div>
-                            <div class="col-lg-6 col-12 mt-2">
-                                <button type="button" class="btn form-control reset-password-btn" data-bs-toggle="modal" data-bs-target="#findPasswordModal">Reset Password</button>
-                            </div>
-                            <!-- 구글 로그인 버튼 -->
-                            <div class="col-lg-6 col-12 mt-2">
-                                <button type="button" class="btn form-control" onclick="window.location.href='/oauth2/authorization/google'">
-                                    <img src="https://developers.google.com/identity/images/btn_google_signin_light_normal_web.png" alt="Google 로그인" style="width: 100%; height: auto;">
-                                </button>
-                            </div>
+                        <div class="button-container">
+                            <button type="submit" class="btn login-btn">Login</button>
+                            <a href="register" class="btn register-btn">Register</a>
+                            <button type="button" class="btn google-login-btn" onclick="window.location.href='/oauth2/authorization/google'">
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google 아이콘" class="google-icon">
+                                Sign in with Google
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -162,7 +97,6 @@
     </section>
 </main>
 <div id="accessTokenElement" style="display: none;" th:data-access-token="${accessToken}"></div>
-
 <!-- JAVASCRIPT FILES -->
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/countdown.js"></script>
