@@ -24,15 +24,16 @@ public class MailController {
     private final MailService emailService;
 
     @PostMapping("/public/send")
-    @Operation(summary = "이메일 인증 코드 요청 API", description = "인증 할 email을 보내고 toEmail을 받는다")
+    @Operation(summary = "이메일 인증코드 요청 API", description = "인증할 email을 보내고 toEmail을 받는다")
     public ResponseEntity<MailSendResponse> send(
             @RequestBody @Valid MailSendRequest request
     ) {
         return ResponseEntity.ok(emailService.sendEmail(request.getEmail()));
     }
 
-    @PostMapping("/public/verify")
-    public ResponseEntity<EmailAuthenticationResponse> verify(
+    @PostMapping("/public/check")
+    @Operation(summary = "인증코드 검증 API", description = "인증할 email과 검증코드 authenticationCode를 보내고 검증여부 verified를 받는다")
+    public ResponseEntity<EmailAuthenticationResponse> check(
             @RequestBody @Valid EmailAuthenticationRequest request
     ) {
         return ResponseEntity.ok(emailService.checkEmailCode(request.getEmail(), request.getAuthenticationCode()));
