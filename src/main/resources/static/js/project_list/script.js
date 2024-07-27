@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var card = event.target.closest('.card');
             if (card) {
                 var index = card.getAttribute('data-index');
-                var url = 'http://localhost:5000';
+                var url = 'http://127.0.0.1:5000/';
                 if (accessToken) {
                     url += '?token=' + accessToken;
                 }
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (accessToken) {
         var myProjectsLink = document.getElementById('my-projects-link');
         if (myProjectsLink) {
-            myProjectsLink.href = 'http://localhost:5000/?token=' + accessToken;
+            myProjectsLink.href = 'http://127.0.0.1:5000/?token=' + accessToken;
             if (projectsToken) {
                 myProjectsLink.href += '&projects=' + projectsToken;
             }
@@ -177,18 +177,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         projectsToken: projectsToken // 요청 본문에 projectsToken 포함
                     })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Project creation response:', data);
-                    if (data.personalProjectId) {
-                        projectsArray.push(data);
-                        localStorage.setItem('projects', JSON.stringify(projectsArray));
-                        window.location.reload();
-                    } else {
-                        console.error('Project creation failed:', data);
-                    }
-                })
-                .catch(error => console.error('Error creating project:', error));
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Project creation response:', data);
+                        if (data.personalProjectId) {
+                            projectsArray.push(data);
+                            localStorage.setItem('projects', JSON.stringify(projectsArray));
+                            window.location.reload();
+                        } else {
+                            console.error('Project creation failed:', data);
+                        }
+                    })
+                    .catch(error => console.error('Error creating project:', error));
             } else {
                 console.error('Missing access token or project details.');
             }
