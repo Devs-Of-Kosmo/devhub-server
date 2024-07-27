@@ -6,13 +6,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.jwt.TokenProvider;
 import team.devs.devhub.global.jwt.dto.TokenDto;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OAuth2Service {
 
@@ -31,4 +29,5 @@ public class OAuth2Service {
 
         return TokenDto.of(atk, rtk);
     }
+
 }
