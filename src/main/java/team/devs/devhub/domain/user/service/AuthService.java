@@ -17,7 +17,6 @@ import team.devs.devhub.global.jwt.dto.TokenDto;
 import team.devs.devhub.global.jwt.error.TokenNotFoundException;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {

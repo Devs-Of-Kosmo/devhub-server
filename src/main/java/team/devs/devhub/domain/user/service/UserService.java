@@ -28,7 +28,6 @@ public class UserService {
     private static final int INITIAL_IDENTIFICATION_CODE = 0;
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(RegisterPolicy.PASSWORD_PATTERN.getValue());
 
-
     public SignupResponse saveUser(User user) {
         verifyDuplicatedEmail(user.getEmail());
         verifyPasswordPattern(user.getPassword());

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .header {
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-height: 80px;
+            margin-bottom: 20px;
+        }
+        .service-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #cccccc;
+            margin: 20px 0;
+        }
+        .code {
+            font-size: 32px;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            background-color: #2c2c2c;
+            padding: 15px;
+            display: inline-block;
+            margin: 20px 0;
+            border-radius: 8px;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img src="https://www.notion.so/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fa43eee0e-f09e-4c1f-8d06-438017bf0358%2F2b1a998b-81fd-4fea-bb17-36655ead14f5%2F%25EC%25A7%2584%25EC%25A7%259C%25EC%25B5%259C%25EC%25A2%2585%25EB%25A1%259C%25EA%25B3%25A0.webp?table=block&id=3419363d-6727-46df-b94e-cf8838b13a2a&spaceId=a43eee0e-f09e-4c1f-8d06-438017bf0358&width=250&userId=6a282e2f-f276-4c15-821f-6af32545dc3a&cache=v2" class="logo" alt="DevHub Logo"/>
+    </div>
+    <div class="service-name">[DEVHUB]</div>
+    <div class="code" th:text="${code}"></div>
+    <div class="subtitle">위의 코드를 사이트에 입력해주십시오</div>
+</div>
+</body>
+</html>
