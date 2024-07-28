@@ -6,7 +6,7 @@ import team.devs.devhub.domain.personalproject.domain.PersonalProject;
 import team.devs.devhub.domain.user.domain.User;
 
 @Getter
-public class PersonalProjectCreateRequest {
+public class PersonalProjectRepoCreateRequest {
 
     @NotBlank
     private String projectName;
