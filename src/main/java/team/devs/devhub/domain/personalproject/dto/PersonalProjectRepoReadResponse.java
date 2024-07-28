@@ -10,15 +10,15 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @AllArgsConstructor
-public class PersonalProjectReadResponse {
+public class PersonalProjectRepoReadResponse {
 
     private Long personalProjectId;
     private String projectName;
     private String description;
     private LocalDateTime createdDate;
 
-    public static PersonalProjectReadResponse of(PersonalProject personalProject) {
-        return PersonalProjectReadResponse.builder()
+    public static PersonalProjectRepoReadResponse of(PersonalProject personalProject) {
+        return PersonalProjectRepoReadResponse.builder()
                 .personalProjectId(personalProject.getId())
                 .projectName(personalProject.getName())
                 .description(personalProject.getDescription())

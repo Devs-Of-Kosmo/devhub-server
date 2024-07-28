@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import team.devs.devhub.domain.message.domain.Message;
+import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
 import team.devs.devhub.global.common.BaseTimeEntity;
 
@@ -40,6 +41,9 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PersonalProject> personalProjects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PersonalCommit> personalCommits = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> senderMessages = new ArrayList<>();
