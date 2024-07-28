@@ -1,9 +1,11 @@
 package team.devs.devhub.domain.personalproject.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalProjectRepository;
+import team.devs.devhub.domain.personalproject.dto.PersonalProjectReadResponse;
 import team.devs.devhub.domain.personalproject.exception.DuplicatedRepositoryException;
 import team.devs.devhub.domain.personalproject.exception.RepositoryCreationException;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
@@ -18,24 +20,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class PersonalProjectService {
 
     private final UserRepository userRepository;
     private final PersonalProjectRepository personalProjectRepository;
-    private final String fixedPathHead;
-
-    public PersonalProjectService(
-            UserRepository userRepository,
-            PersonalProjectRepository personalProjectRepository,
-            @Value("${repository.path.personal}") String fixedPathHead
-    ) {
-        this.userRepository = userRepository;
-        this.personalProjectRepository = personalProjectRepository;
-        this.fixedPathHead = fixedPathHead;
-    }
+    @Value("${repository.path.personal}")
+    private String fixedPathHead;
 
     public PersonalProjectCreateResponse savePersonalProject(PersonalProjectCreateRequest request, long userId) {
         User user = userRepository.findById(userId)
@@ -50,6 +46,17 @@ public class PersonalProjectService {
         createRepository(personalProject);
 
         return PersonalProjectCreateResponse.of(personalProject);
+    }
+
+    public List<PersonalProjectReadResponse> readPersonalProject(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        List<PersonalProjectReadResponse> results = personalProjectRepository.findAllByMaster(user)
+                .stream().map(e -> PersonalProjectReadResponse.of(e))
+                .collect(Collectors.toList());
+
+        return results;
     }
 
     private void createRepository(PersonalProject personalProject) {

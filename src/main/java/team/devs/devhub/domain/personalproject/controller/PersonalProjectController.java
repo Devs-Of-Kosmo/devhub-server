@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team.devs.devhub.domain.personalproject.dto.PersonalProjectCreateRequest;
 import team.devs.devhub.domain.personalproject.dto.PersonalProjectCreateResponse;
+import team.devs.devhub.domain.personalproject.dto.PersonalProjectReadResponse;
 import team.devs.devhub.domain.personalproject.service.PersonalProjectService;
 import team.devs.devhub.global.security.CustomUserDetails;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/personal")
@@ -31,5 +34,14 @@ public class PersonalProjectController {
     ) {
         PersonalProjectCreateResponse response = personalProjectService.savePersonalProject(request, customUserDetails.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/read")
+    @Operation(summary = "개인 프로젝트 목록 조회 API", description = "header에 accessToken을 담아 요청하면 레포지토리 목록을 리스트 형태로 반환한다")
+    public ResponseEntity<List<PersonalProjectReadResponse>> readProjects(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        List<PersonalProjectReadResponse> responses = personalProjectService.readPersonalProject(customUserDetails.getId());
+        return ResponseEntity.ok(responses);
     }
 }
