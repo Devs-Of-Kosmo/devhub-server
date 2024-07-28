@@ -57,6 +57,9 @@ dependencies {
 	// Mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	// JGit
+	implementation 'org.eclipse.jgit:org.eclipse.jgit:5.13.0.202109080827-r'
+
 	// Thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'

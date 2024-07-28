@@ -6,11 +6,12 @@ import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.common.BaseTimeEntity;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class PersonalProject extends BaseTimeEntity {
 
     @Id
@@ -31,6 +32,9 @@ public class PersonalProject extends BaseTimeEntity {
     @JoinColumn(name = "master_id", nullable = false)
     private User master;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PersonalCommit> personalCommits = new ArrayList<>();
+
     @Builder
     public PersonalProject(Long id, String name, String description, String repositoryPath, User master) {
         this.id = id;
@@ -40,8 +44,8 @@ public class PersonalProject extends BaseTimeEntity {
         this.master = master;
     }
 
-    public void createRepositoryPath(String fixedPathHead) {
-        this.repositoryPath = fixedPathHead
+    public void createRepositoryPath(String repositoryPathHead) {
+        this.repositoryPath = repositoryPathHead
                 + master.getId() + "_" + master.getName() + "/"
                 + name + "_" + getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
     }

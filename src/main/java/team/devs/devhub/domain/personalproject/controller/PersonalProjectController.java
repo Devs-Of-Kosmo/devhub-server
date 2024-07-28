@@ -4,10 +4,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import team.devs.devhub.domain.personalproject.dto.PersonalProjectInitResponse;
 import team.devs.devhub.domain.personalproject.dto.PersonalProjectRepoCreateRequest;
 import team.devs.devhub.domain.personalproject.dto.PersonalProjectRepoCreateResponse;
 import team.devs.devhub.domain.personalproject.dto.PersonalProjectRepoReadResponse;
@@ -20,25 +23,37 @@ import java.util.List;
 @RequestMapping("/api/personal")
 @RequiredArgsConstructor
 @Tag(name = "개인 프로젝트 관련 API", description = "개인 프로젝트 관련 API 입니다")
+@Slf4j
 public class PersonalProjectController {
     private final PersonalProjectService personalProjectService;
 
     @PostMapping("/create")
     @Operation(summary = "개인 프로젝트 생성 API", description = "header에 accessToken과 body에 projectName과 description을 담아 요청한다")
-    public ResponseEntity<PersonalProjectRepoCreateResponse> createProject(
+    public ResponseEntity<PersonalProjectRepoCreateResponse> createPersonalProjectRepo(
             @RequestBody @Valid PersonalProjectRepoCreateRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        PersonalProjectRepoCreateResponse response = personalProjectService.savePersonalProject(request, customUserDetails.getId());
+        PersonalProjectRepoCreateResponse response = personalProjectService.saveProjectRepo(request, customUserDetails.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/read")
     @Operation(summary = "개인 프로젝트 목록 조회 API", description = "header에 accessToken을 담아 요청하면 레포지토리 목록을 리스트 형태로 반환한")
-    public ResponseEntity<List<PersonalProjectRepoReadResponse>> readProjects(
+    public ResponseEntity<List<PersonalProjectRepoReadResponse>> readPersonalProjectRepo(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        List<PersonalProjectRepoReadResponse> responses = personalProjectService.readPersonalProject(customUserDetails.getId());
+        List<PersonalProjectRepoReadResponse> responses = personalProjectService.readProjectRepo(customUserDetails.getId());
         return ResponseEntity.ok(responses);
+    }
+
+    @PostMapping("/init")
+    public ResponseEntity<PersonalProjectInitResponse> initPersonalProject(
+            @RequestParam("projectId") Long projectId,
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("commitMessage") String commitMessage,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        PersonalProjectInitResponse response = personalProjectService.saveInitialProject(projectId, files, commitMessage, customUserDetails.getId());
+        return ResponseEntity.ok(response);
     }
 }
