@@ -22,13 +22,13 @@ public class VersionControlUtil {
         }
     }
 
-    public static RevCommit initializeProject(PersonalProject personalProject, String commitMessage) {
+    public static RevCommit initializeProject(PersonalProject personalProject, String recordMessage) {
         try {
             File dir = new File(personalProject.getRepositoryPath());
             Git git = Git.init().setDirectory(dir).call();
 
             git.add().addFilepattern(".").call();
-            RevCommit commit = git.commit().setMessage(commitMessage).call();
+            RevCommit commit = git.commit().setMessage(recordMessage).call();
             git.close();
             return commit;
         } catch (GitAPIException e) {

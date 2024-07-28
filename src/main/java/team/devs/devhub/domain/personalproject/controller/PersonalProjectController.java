@@ -47,13 +47,16 @@ public class PersonalProjectController {
     }
 
     @PostMapping("/init")
+    @Operation(summary = "개인 프로젝트 최초 저장 API",
+            description = "header에 accessToken과 " +
+                    "form-data 형식으로 projectId, files(파일 이름에 상대경로가 포함된 프로젝트 파일), recordMessage를 담아 요청한다")
     public ResponseEntity<PersonalProjectInitResponse> initPersonalProject(
             @RequestParam("projectId") Long projectId,
             @RequestParam("files") List<MultipartFile> files,
-            @RequestParam("commitMessage") String commitMessage,
+            @RequestParam("recordMessage") String recordMessage,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        PersonalProjectInitResponse response = personalProjectService.saveInitialProject(projectId, files, commitMessage, customUserDetails.getId());
+        PersonalProjectInitResponse response = personalProjectService.saveInitialProject(projectId, files, recordMessage, customUserDetails.getId());
         return ResponseEntity.ok(response);
     }
 }

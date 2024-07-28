@@ -64,7 +64,7 @@ public class PersonalProjectService {
         return results;
     }
 
-    public PersonalProjectInitResponse saveInitialProject(long projectId, List<MultipartFile> files, String commitMessage, long userId) {
+    public PersonalProjectInitResponse saveInitialProject(long projectId, List<MultipartFile> files, String recordMessage, long userId) {
         PersonalProject personalProject = personalProjectRepository.findById(projectId)
                 .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
         User user = userRepository.findById(userId)
@@ -73,7 +73,7 @@ public class PersonalProjectService {
 
         RepositoryUtil.saveProjectFiles(personalProject.getRepositoryPath(), files);
         VersionControlUtil.createGitIgnoreFile(personalProject);
-        RevCommit commit = VersionControlUtil.initializeProject(personalProject, commitMessage);
+        RevCommit commit = VersionControlUtil.initializeProject(personalProject, recordMessage);
 
         PersonalCommit personalCommit = personalCommitRepository.save(
                 PersonalCommit.builder()
@@ -83,7 +83,7 @@ public class PersonalProjectService {
                         .build()
         );
 
-        return PersonalProjectInitResponse.of(personalCommit, commitMessage);
+        return PersonalProjectInitResponse.of(personalCommit, recordMessage);
     }
 
     // exception
