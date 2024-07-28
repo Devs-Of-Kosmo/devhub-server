@@ -40,15 +40,15 @@ public class PersonalProjectService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        PersonalProject personalProject = request.toEntity(user);
+        PersonalProject project = request.toEntity(user);
 
-        validRepositoryName(personalProject);
-        personalProjectRepository.save(personalProject);
-        personalProject.createRepositoryPath(repositoryPathHead);
+        validRepositoryName(project);
+        personalProjectRepository.save(project);
+        project.createRepositoryPath(repositoryPathHead);
 
-        RepositoryUtil.createRepository(personalProject);
+        RepositoryUtil.createRepository(project);
 
-        return PersonalProjectRepoCreateResponse.of(personalProject);
+        return PersonalProjectRepoCreateResponse.of(project);
     }
 
     public List<PersonalProjectRepoReadResponse> readProjectRepo(long userId) {
@@ -63,25 +63,25 @@ public class PersonalProjectService {
     }
 
     public PersonalProjectInitResponse saveInitialProject(long projectId, List<MultipartFile> files, String commitMessage, long userId) {
-        PersonalProject personalProject = personalProjectRepository.findById(projectId)
+        PersonalProject project = personalProjectRepository.findById(projectId)
                 .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
-        validMatchedProjectMaster(personalProject, user);
+        validMatchedProjectMaster(project, user);
 
-        RepositoryUtil.saveProjectFiles(personalProject.getRepositoryPath(), files);
-        VersionControlUtil.createGitIgnoreFile(personalProject);
-        RevCommit commit = VersionControlUtil.initializeProject(personalProject, commitMessage);
+        RepositoryUtil.saveProjectFiles(project.getRepositoryPath(), files);
+        VersionControlUtil.createGitIgnoreFile(project);
+        RevCommit newCommit = VersionControlUtil.initializeProject(project, commitMessage);
 
-        PersonalCommit personalCommit = personalCommitRepository.save(
+        PersonalCommit commit = personalCommitRepository.save(
                 PersonalCommit.builder()
-                        .commitCode(commit.getName())
-                        .project(personalProject)
+                        .commitCode(newCommit.getName())
+                        .project(project)
                         .master(user)
                         .build()
         );
 
-        return PersonalProjectInitResponse.of(personalCommit, commitMessage);
+        return PersonalProjectInitResponse.of(commit, commitMessage);
     }
 
     public PersonalProjectSaveResponse saveWorkedProject(long commitId, List<MultipartFile> files, String commitMessage, long userId) {
@@ -94,11 +94,11 @@ public class PersonalProjectService {
 
         RepositoryUtil.deleteDirectory(project);
         RepositoryUtil.saveProjectFiles(project.getRepositoryPath(), files);
-        RevCommit childCommit = VersionControlUtil.saveWorkedProject(project, commitMessage);
+        RevCommit newCommit = VersionControlUtil.saveWorkedProject(project, commitMessage);
 
         PersonalCommit commit = personalCommitRepository.save(
                 PersonalCommit.builder()
-                        .commitCode(childCommit.getName())
+                        .commitCode(newCommit.getName())
                         .parentCommitCode(parentCommit.getCommitCode())
                         .project(project)
                         .master(user)
