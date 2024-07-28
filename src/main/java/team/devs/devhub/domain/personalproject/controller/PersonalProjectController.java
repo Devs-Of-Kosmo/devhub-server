@@ -10,10 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import team.devs.devhub.domain.personalproject.dto.PersonalProjectInitResponse;
-import team.devs.devhub.domain.personalproject.dto.PersonalProjectRepoCreateRequest;
-import team.devs.devhub.domain.personalproject.dto.PersonalProjectRepoCreateResponse;
-import team.devs.devhub.domain.personalproject.dto.PersonalProjectRepoReadResponse;
+import team.devs.devhub.domain.personalproject.dto.*;
 import team.devs.devhub.domain.personalproject.service.PersonalProjectService;
 import team.devs.devhub.global.security.CustomUserDetails;
 
@@ -38,7 +35,7 @@ public class PersonalProjectController {
     }
 
     @GetMapping("/read")
-    @Operation(summary = "개인 프로젝트 목록 조회 API", description = "header에 accessToken을 담아 요청하면 레포지토리 목록을 리스트 형태로 반환한")
+    @Operation(summary = "개인 프로젝트 목록 조회 API", description = "header에 accessToken을 담아 요청하면 레포지토리 목록을 리스트 형태로 반환한다")
     public ResponseEntity<List<PersonalProjectRepoReadResponse>> readPersonalProjectRepo(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
@@ -53,10 +50,21 @@ public class PersonalProjectController {
     public ResponseEntity<PersonalProjectInitResponse> initPersonalProject(
             @RequestParam("projectId") Long projectId,
             @RequestParam("files") List<MultipartFile> files,
-            @RequestParam("recordMessage") String recordMessage,
+            @RequestParam("commitMessage") String commitMessage,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        PersonalProjectInitResponse response = personalProjectService.saveInitialProject(projectId, files, recordMessage, customUserDetails.getId());
+        PersonalProjectInitResponse response = personalProjectService.saveInitialProject(projectId, files, commitMessage, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<PersonalProjectSaveResponse> savePersonalProject(
+            @RequestParam("commitId") Long commitId,
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("commitMessage") String commitMessage,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        PersonalProjectSaveResponse response = personalProjectService.saveWorkedProject(commitId, files, commitMessage, customUserDetails.getId());
         return ResponseEntity.ok(response);
     }
 }
