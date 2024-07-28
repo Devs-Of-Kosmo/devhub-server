@@ -46,7 +46,7 @@ public class PersonalProjectController {
     @PostMapping("/init")
     @Operation(summary = "개인 프로젝트 최초 저장 API",
             description = "header에 accessToken과 " +
-                    "form-data 형식으로 projectId, files(파일 이름에 상대경로가 포함된 프로젝트 파일), recordMessage를 담아 요청한다")
+                    "form-data 형식으로 projectId, files(파일 이름에 상대경로가 포함된 프로젝트 파일), commitMessage를 담아 요청한다")
     public ResponseEntity<PersonalProjectInitResponse> initPersonalProject(
             @RequestParam("projectId") Long projectId,
             @RequestParam("files") List<MultipartFile> files,
@@ -58,6 +58,9 @@ public class PersonalProjectController {
     }
 
     @PostMapping("/save")
+    @Operation(summary = "개인 프로젝트 다음 버전 저장 API",
+            description = "header에 accessToken과 " +
+                    "form-data 형식으로 commitId, files(파일 이름에 상대경로가 포함된 프로젝트 파일), commitMessage를 담아 요청한다")
     public ResponseEntity<PersonalProjectSaveResponse> savePersonalProject(
             @RequestParam("commitId") Long commitId,
             @RequestParam("files") List<MultipartFile> files,
