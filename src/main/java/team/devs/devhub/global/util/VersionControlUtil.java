@@ -1,6 +1,7 @@
 package team.devs.devhub.global.util;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
@@ -22,16 +23,33 @@ public class VersionControlUtil {
         }
     }
 
-    public static RevCommit initializeProject(PersonalProject personalProject, String recordMessage) {
+    public static RevCommit initializeProject(PersonalProject personalProject, String commitMessage) {
         try {
             File dir = new File(personalProject.getRepositoryPath());
             Git git = Git.init().setDirectory(dir).call();
 
             git.add().addFilepattern(".").call();
-            RevCommit commit = git.commit().setMessage(recordMessage).call();
+            RevCommit commit = git.commit().setMessage(commitMessage).call();
             git.close();
             return commit;
         } catch (GitAPIException e) {
+            throw new ProjectSaveException(ErrorCode.PROJECT_SAVE_ERROR);
+        }
+    }
+
+    public static RevCommit saveWorkedProject(PersonalProject personalProject, String commitMessage) {
+        try {
+            Git git = Git.open(new File(personalProject.getRepositoryPath()));
+            Status status = git.status().call();
+
+            git.add().addFilepattern(".").call();
+            for (String missing : status.getMissing()) {
+                git.rm().addFilepattern(missing).call();
+            }
+            RevCommit commit = git.commit().setMessage(commitMessage).call();
+            git.close();
+            return commit;
+        } catch (IOException | GitAPIException e) {
             throw new ProjectSaveException(ErrorCode.PROJECT_SAVE_ERROR);
         }
     }

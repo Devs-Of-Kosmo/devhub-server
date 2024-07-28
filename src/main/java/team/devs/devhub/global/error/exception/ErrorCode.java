@@ -28,6 +28,8 @@ public enum ErrorCode {
     PERSONAL_PROJECT_NOT_FOUND(500, "PP003", "개인 프로젝트를 찾을 수 없습니다"),
     PROJECT_SAVE_ERROR(500, "PP004", "프로젝트 저장 중 오류가 발생했습니다"),
     PERSONAL_PROJECT_MASTER_NOT_MATCH(500, "PP005", "프로젝트 소유자가 일치하지 않습니다"),
+    PERSONAL_COMMIT_NOT_FOUND(500, "PP006", "해당 커밋을 찾을 수 없습니다"),
+    DIRECTORY_DELETE_ERROR(500, "PP007", "프로젝트 삭제 중 오류가 발생했습니다"),
 
     // Message
     MESSAGE_NOT_FOUND(500, "M001", "메시지를 찾을 수 없습니다"),
