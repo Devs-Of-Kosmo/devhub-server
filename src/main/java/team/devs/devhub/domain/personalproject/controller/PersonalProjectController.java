@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import team.devs.devhub.domain.personalproject.dto.PersonalProjectCreateRequest;
 import team.devs.devhub.domain.personalproject.dto.PersonalProjectCreateResponse;
 import team.devs.devhub.domain.personalproject.dto.PersonalProjectReadResponse;
@@ -36,8 +33,8 @@ public class PersonalProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/read")
-    @Operation(summary = "개인 프로젝트 목록 조회 API", description = "header에 accessToken을 담아 요청하면 레포지토리 목록을 리스트 형태로 반환한다")
+    @GetMapping("/read")
+    @Operation(summary = "개인 프로젝트 목록 조회 API", description = "header에 accessToken을 담아 요청하면 레포지토리 목록을 리스트 형태로 반환한")
     public ResponseEntity<List<PersonalProjectReadResponse>> readProjects(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
