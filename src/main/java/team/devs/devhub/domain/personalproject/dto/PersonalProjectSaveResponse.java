@@ -16,13 +16,13 @@ public class PersonalProjectSaveResponse {
     private String parentCommitCode;
     private String commitMessage;
 
-    public static PersonalProjectSaveResponse of(PersonalCommit personalCommit, String commitMessage) {
+    public static PersonalProjectSaveResponse of(PersonalCommit commit) {
         return PersonalProjectSaveResponse.builder()
-                .personalCommitId(personalCommit.getId())
-                .personalProjectId(personalCommit.getProject().getId())
-                .masterId(personalCommit.getMaster().getId())
-                .parentCommitCode(personalCommit.getParentCommitCode())
-                .commitMessage(commitMessage)
+                .personalCommitId(commit.getId())
+                .personalProjectId(commit.getProject().getId())
+                .masterId(commit.getMaster().getId())
+                .parentCommitCode(commit.getParentCommitCode())
+                .commitMessage(commit.getCommitMessage())
                 .build();
     }
 }

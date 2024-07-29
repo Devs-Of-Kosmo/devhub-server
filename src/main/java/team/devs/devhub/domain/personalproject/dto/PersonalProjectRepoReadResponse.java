@@ -17,12 +17,12 @@ public class PersonalProjectRepoReadResponse {
     private String description;
     private LocalDateTime createdDate;
 
-    public static PersonalProjectRepoReadResponse of(PersonalProject personalProject) {
+    public static PersonalProjectRepoReadResponse of(PersonalProject project) {
         return PersonalProjectRepoReadResponse.builder()
-                .personalProjectId(personalProject.getId())
-                .projectName(personalProject.getName())
-                .description(personalProject.getDescription())
-                .createdDate(personalProject.getCreatedDate())
+                .personalProjectId(project.getId())
+                .projectName(project.getName())
+                .description(project.getDescription())
+                .createdDate(project.getCreatedDate())
                 .build();
     }
 }

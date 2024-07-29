@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import team.devs.devhub.domain.personalproject.dto.*;
 import team.devs.devhub.domain.personalproject.service.PersonalProjectService;
 import team.devs.devhub.global.security.CustomUserDetails;
@@ -48,12 +47,10 @@ public class PersonalProjectController {
             description = "header에 accessToken과 " +
                     "form-data 형식으로 projectId, files(파일 이름에 상대경로가 포함된 프로젝트 파일), commitMessage를 담아 요청한다")
     public ResponseEntity<PersonalProjectInitResponse> initPersonalProject(
-            @RequestParam("projectId") Long projectId,
-            @RequestParam("files") List<MultipartFile> files,
-            @RequestParam("commitMessage") String commitMessage,
+            @ModelAttribute PersonalProjectInitRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        PersonalProjectInitResponse response = personalProjectService.saveInitialProject(projectId, files, commitMessage, customUserDetails.getId());
+        PersonalProjectInitResponse response = personalProjectService.saveInitialProject(request, customUserDetails.getId());
         return ResponseEntity.ok(response);
     }
 
@@ -62,12 +59,10 @@ public class PersonalProjectController {
             description = "header에 accessToken과 " +
                     "form-data 형식으로 commitId, files(파일 이름에 상대경로가 포함된 프로젝트 파일), commitMessage를 담아 요청한다")
     public ResponseEntity<PersonalProjectSaveResponse> savePersonalProject(
-            @RequestParam("commitId") Long commitId,
-            @RequestParam("files") List<MultipartFile> files,
-            @RequestParam("commitMessage") String commitMessage,
+            @ModelAttribute PersonalProjectSaveRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        PersonalProjectSaveResponse response = personalProjectService.saveWorkedProject(commitId, files, commitMessage, customUserDetails.getId());
+        PersonalProjectSaveResponse response = personalProjectService.saveWorkedProject(request, customUserDetails.getId());
         return ResponseEntity.ok(response);
     }
 
