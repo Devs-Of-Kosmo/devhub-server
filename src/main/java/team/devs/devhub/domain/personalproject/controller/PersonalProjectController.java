@@ -72,6 +72,7 @@ public class PersonalProjectController {
     }
 
     @GetMapping("/project/meta-read")
+    @Operation(summary = "개인 프로젝트 메타데이터 조회 API", description = "header에 accessToken과 parameter에 projectId를 담아 요청을 보낸다")
     public ResponseEntity<PersonalProjectMetaReadResponse> savePersonalProject(
             @RequestParam("projectId") Long projectId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
