@@ -26,9 +26,10 @@ public class PersonalProjectMetaReadResponse {
                 .projectName(project.getName())
                 .description(project.getDescription())
                 .commitInfo(
-                        project.getPersonalCommits()
-                        .stream().map(e -> CommitInfoResponse.of(e))
-                        .collect(Collectors.toList())
+                        project.getPersonalCommits().stream()
+                                .filter(e -> !e.isDeleteCondition())
+                                .map(e -> CommitInfoResponse.of(e))
+                                .collect(Collectors.toList())
                 )
                 .build();
     }
@@ -39,12 +40,14 @@ public class PersonalProjectMetaReadResponse {
     private static class CommitInfoResponse {
         private Long commitId;
         private String commitCode;
+        private String commitMessage;
         private LocalDateTime createdDate;
 
         public static CommitInfoResponse of(PersonalCommit commit) {
             return CommitInfoResponse.builder()
                     .commitId(commit.getId())
                     .commitCode(commit.getCommitCode())
+                    .commitMessage(commit.getCommitMessage())
                     .createdDate(commit.getCreatedDate())
                     .build();
         }

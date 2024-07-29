@@ -69,19 +69,20 @@ public class PersonalProjectService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         validMatchedProjectMaster(project, user);
 
-        RepositoryUtil.saveProjectFiles(project.getRepositoryPath(), files);
+        RepositoryUtil.saveProjectFiles(project, files);
         VersionControlUtil.createGitIgnoreFile(project);
         RevCommit newCommit = VersionControlUtil.initializeProject(project, commitMessage);
 
         PersonalCommit commit = personalCommitRepository.save(
                 PersonalCommit.builder()
                         .commitCode(newCommit.getName())
+                        .commitMessage(commitMessage)
                         .project(project)
                         .master(user)
                         .build()
         );
 
-        return PersonalProjectInitResponse.of(commit, commitMessage);
+        return PersonalProjectInitResponse.of(commit);
     }
 
     public PersonalProjectSaveResponse saveWorkedProject(long commitId, List<MultipartFile> files, String commitMessage, long userId) {
@@ -93,13 +94,14 @@ public class PersonalProjectService {
         validMatchedProjectMaster(parentCommit.getProject(), user);
 
         RepositoryUtil.deleteDirectory(project);
-        RepositoryUtil.saveProjectFiles(project.getRepositoryPath(), files);
+        RepositoryUtil.saveProjectFiles(project, files);
         RevCommit newCommit = VersionControlUtil.saveWorkedProject(project, commitMessage);
 
         PersonalCommit commit = personalCommitRepository.save(
                 PersonalCommit.builder()
                         .commitCode(newCommit.getName())
                         .parentCommitCode(parentCommit.getCommitCode())
+                        .commitMessage(commitMessage)
                         .project(project)
                         .master(user)
                         .build()
@@ -119,14 +121,14 @@ public class PersonalProjectService {
     }
 
     // exception
-    private void validRepositoryName(PersonalProject personalProject) {
-        if (personalProjectRepository.existsByMasterAndName(personalProject.getMaster(), personalProject.getName())) {
+    private void validRepositoryName(PersonalProject project) {
+        if (personalProjectRepository.existsByMasterAndName(project.getMaster(), project.getName())) {
             throw new DuplicatedRepositoryException(ErrorCode.REPOSITORY_NAME_DUPLICATED);
         }
     }
 
-    private void validMatchedProjectMaster(PersonalProject personalProject, User user) {
-        if (personalProject.getMaster().getId() != user.getId()) {
+    private void validMatchedProjectMaster(PersonalProject project, User user) {
+        if (project.getMaster().getId() != user.getId()) {
             throw new NotMatchedPersonalProjectMasterException(ErrorCode.PERSONAL_PROJECT_MASTER_NOT_MATCH);
         }
     }
