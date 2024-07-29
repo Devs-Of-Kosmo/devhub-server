@@ -70,4 +70,13 @@ public class PersonalProjectController {
         PersonalProjectSaveResponse response = personalProjectService.saveWorkedProject(commitId, files, commitMessage, customUserDetails.getId());
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/project/meta-read")
+    public ResponseEntity<PersonalProjectMetaReadResponse> savePersonalProject(
+            @RequestParam("projectId") Long projectId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        PersonalProjectMetaReadResponse response = personalProjectService.readProjectMetadata(projectId, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
 }

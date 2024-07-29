@@ -108,6 +108,16 @@ public class PersonalProjectService {
         return PersonalProjectSaveResponse.of(commit, commitMessage);
     }
 
+    public PersonalProjectMetaReadResponse readProjectMetadata(long projectId, long userId) {
+        PersonalProject project = personalProjectRepository.findById(projectId)
+                .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(project, user);
+
+        return PersonalProjectMetaReadResponse.of(project);
+    }
+
     // exception
     private void validRepositoryName(PersonalProject personalProject) {
         if (personalProjectRepository.existsByMasterAndName(personalProject.getMaster(), personalProject.getName())) {
