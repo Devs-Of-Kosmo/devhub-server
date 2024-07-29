@@ -24,7 +24,7 @@ import java.util.List;
 public class PersonalProjectController {
     private final PersonalProjectService personalProjectService;
 
-    @PostMapping("/create")
+    @PostMapping("/repo/create")
     @Operation(summary = "개인 레포지토리 생성 API", description = "header에 accessToken과 body에 projectName과 description을 담아 요청한다")
     public ResponseEntity<PersonalProjectRepoCreateResponse> createPersonalProjectRepo(
             @RequestBody @Valid PersonalProjectRepoCreateRequest request,
@@ -34,7 +34,7 @@ public class PersonalProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/read")
+    @GetMapping("/repo/read")
     @Operation(summary = "개인 레포지토리 목록 조회 API", description = "header에 accessToken을 담아 요청하면 레포지토리 목록을 리스트 형태로 반환한다")
     public ResponseEntity<List<PersonalProjectRepoReadResponse>> readPersonalProjectRepo(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
@@ -43,7 +43,7 @@ public class PersonalProjectController {
         return ResponseEntity.ok(responses);
     }
 
-    @PostMapping("/init")
+    @PostMapping("/project/init")
     @Operation(summary = "개인 프로젝트 최초 저장 API",
             description = "header에 accessToken과 " +
                     "form-data 형식으로 projectId, files(파일 이름에 상대경로가 포함된 프로젝트 파일), commitMessage를 담아 요청한다")
@@ -57,7 +57,7 @@ public class PersonalProjectController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/save")
+    @PostMapping("/project/save")
     @Operation(summary = "개인 프로젝트 다음 버전 저장 API",
             description = "header에 accessToken과 " +
                     "form-data 형식으로 commitId, files(파일 이름에 상대경로가 포함된 프로젝트 파일), commitMessage를 담아 요청한다")
