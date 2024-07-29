@@ -14,8 +14,8 @@ import java.util.List;
 
 public class RepositoryUtil {
 
-    public static void createRepository(PersonalProject personalProject) {
-        Path path = Paths.get(personalProject.getRepositoryPath());
+    public static void createRepository(PersonalProject project) {
+        Path path = Paths.get(project.getRepositoryPath());
         try {
             Files.createDirectories(path);
         } catch (IOException e) {
@@ -23,11 +23,11 @@ public class RepositoryUtil {
         }
     }
 
-    public static void saveProjectFiles(String repositoryPath, List<MultipartFile> files) {
+    public static void saveProjectFiles(PersonalProject project, List<MultipartFile> files) {
         for (MultipartFile file : files) {
             try {
                 String relativePath = file.getOriginalFilename();
-                Path filePath = Paths.get(repositoryPath, relativePath);
+                Path filePath = Paths.get(project.getRepositoryPath(), relativePath);
                 Files.createDirectories(filePath.getParent());
                 Files.write(filePath, file.getBytes());
             } catch (IOException e) {
@@ -36,8 +36,8 @@ public class RepositoryUtil {
         }
     }
 
-    public static void deleteDirectory(PersonalProject personalProject){
-        Path path = Paths.get(personalProject.getRepositoryPath());
+    public static void deleteDirectory(PersonalProject project){
+        Path path = Paths.get(project.getRepositoryPath());
         try {
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 @Override

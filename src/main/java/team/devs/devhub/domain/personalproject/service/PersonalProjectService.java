@@ -5,7 +5,6 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalCommitRepository;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalProjectRepository;
@@ -62,30 +61,31 @@ public class PersonalProjectService {
         return results;
     }
 
-    public PersonalProjectInitResponse saveInitialProject(long projectId, List<MultipartFile> files, String commitMessage, long userId) {
-        PersonalProject project = personalProjectRepository.findById(projectId)
+    public PersonalProjectInitResponse saveInitialProject(PersonalProjectInitRequest request, long userId) {
+        PersonalProject project = personalProjectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         validMatchedProjectMaster(project, user);
 
-        RepositoryUtil.saveProjectFiles(project.getRepositoryPath(), files);
+        RepositoryUtil.saveProjectFiles(project, request.getFiles());
         VersionControlUtil.createGitIgnoreFile(project);
-        RevCommit newCommit = VersionControlUtil.initializeProject(project, commitMessage);
+        RevCommit newCommit = VersionControlUtil.initializeProject(project, request.getCommitMessage());
 
         PersonalCommit commit = personalCommitRepository.save(
                 PersonalCommit.builder()
                         .commitCode(newCommit.getName())
+                        .commitMessage(request.getCommitMessage())
                         .project(project)
                         .master(user)
                         .build()
         );
 
-        return PersonalProjectInitResponse.of(commit, commitMessage);
+        return PersonalProjectInitResponse.of(commit);
     }
 
-    public PersonalProjectSaveResponse saveWorkedProject(long commitId, List<MultipartFile> files, String commitMessage, long userId) {
-        PersonalCommit parentCommit = personalCommitRepository.findById(commitId)
+    public PersonalProjectSaveResponse saveWorkedProject(PersonalProjectSaveRequest request, long userId) {
+        PersonalCommit parentCommit = personalCommitRepository.findById(request.getCommitId())
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -93,30 +93,41 @@ public class PersonalProjectService {
         validMatchedProjectMaster(parentCommit.getProject(), user);
 
         RepositoryUtil.deleteDirectory(project);
-        RepositoryUtil.saveProjectFiles(project.getRepositoryPath(), files);
-        RevCommit newCommit = VersionControlUtil.saveWorkedProject(project, commitMessage);
+        RepositoryUtil.saveProjectFiles(project, request.getFiles());
+        RevCommit newCommit = VersionControlUtil.saveWorkedProject(project, request.getCommitMessage());
 
         PersonalCommit commit = personalCommitRepository.save(
                 PersonalCommit.builder()
                         .commitCode(newCommit.getName())
                         .parentCommitCode(parentCommit.getCommitCode())
+                        .commitMessage(request.getCommitMessage())
                         .project(project)
                         .master(user)
                         .build()
         );
 
-        return PersonalProjectSaveResponse.of(commit, commitMessage);
+        return PersonalProjectSaveResponse.of(commit);
+    }
+
+    public PersonalProjectMetaReadResponse readProjectMetadata(long projectId, long userId) {
+        PersonalProject project = personalProjectRepository.findById(projectId)
+                .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(project, user);
+
+        return PersonalProjectMetaReadResponse.of(project);
     }
 
     // exception
-    private void validRepositoryName(PersonalProject personalProject) {
-        if (personalProjectRepository.existsByMasterAndName(personalProject.getMaster(), personalProject.getName())) {
+    private void validRepositoryName(PersonalProject project) {
+        if (personalProjectRepository.existsByMasterAndName(project.getMaster(), project.getName())) {
             throw new DuplicatedRepositoryException(ErrorCode.REPOSITORY_NAME_DUPLICATED);
         }
     }
 
-    private void validMatchedProjectMaster(PersonalProject personalProject, User user) {
-        if (personalProject.getMaster().getId() != user.getId()) {
+    private void validMatchedProjectMaster(PersonalProject project, User user) {
+        if (project.getMaster().getId() != user.getId()) {
             throw new NotMatchedPersonalProjectMasterException(ErrorCode.PERSONAL_PROJECT_MASTER_NOT_MATCH);
         }
     }

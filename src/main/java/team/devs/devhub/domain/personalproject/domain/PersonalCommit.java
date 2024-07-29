@@ -29,6 +29,10 @@ public class PersonalCommit extends BaseTimeEntity {
     @Column(length = 40)
     private String parentCommitCode;
 
+    @ColumnDefault("''")
+    @Column(length = 200, nullable = false)
+    private String commitMessage;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private PersonalProject project;
@@ -42,10 +46,11 @@ public class PersonalCommit extends BaseTimeEntity {
     private boolean deleteCondition;
 
     @Builder
-    public PersonalCommit(Long id, String commitCode, String parentCommitCode, PersonalProject project, User master) {
+    public PersonalCommit(Long id, String commitCode, String parentCommitCode, String commitMessage, PersonalProject project, User master) {
         this.id = id;
         this.commitCode = commitCode;
         this.parentCommitCode = parentCommitCode;
+        this.commitMessage = commitMessage;
         this.project = project;
         this.master = master;
     }

@@ -15,12 +15,12 @@ public class PersonalProjectInitResponse {
     private Long masterId;
     private String commitMessage;
 
-    public static PersonalProjectInitResponse of(PersonalCommit personalCommit, String commitMessage) {
+    public static PersonalProjectInitResponse of(PersonalCommit commit) {
         return PersonalProjectInitResponse.builder()
-                .personalCommitId(personalCommit.getId())
-                .personalProjectId(personalCommit.getProject().getId())
-                .masterId(personalCommit.getMaster().getId())
-                .commitMessage(commitMessage)
+                .personalCommitId(commit.getId())
+                .personalProjectId(commit.getProject().getId())
+                .masterId(commit.getMaster().getId())
+                .commitMessage(commit.getCommitMessage())
                 .build();
     }
 }
