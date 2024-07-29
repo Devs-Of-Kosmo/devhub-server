@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+$(document).ready(function() {
     var accessToken = localStorage.getItem('accessToken');
     var userEmail = null;
 
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Authorization': 'Bearer ' + accessToken
             },
             success: function(response) {
-                var userName = response.name;
+                userName = response.name;
                 userEmail = response.email;
 
                 document.getElementById('login-container').style.cssText = 'display: none !important;';
@@ -69,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function() {
             error: function(error) {
                 console.error('사용자 정보를 가져오는데 실패했습니다:', error);
             }
-
         });
     } else {
         // 로그인되지 않은 경우 링크를 비활성화
@@ -450,4 +449,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     $('#messageModal').on('show.bs.modal', receiverLoadMessages);
+
+    var token = localStorage.getItem('accessToken');
+                console.log('Token from localStorage:', token);  // 토큰을 콘솔에 출력하여 확인
+                if (token) {
+                    var myProjectsLink = document.getElementById('my-projects-link');
+                    myProjectsLink.href = 'http://127.0.0.1:5000/?token=' + token;
+                }
 });
