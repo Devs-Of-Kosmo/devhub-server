@@ -1,3 +1,12 @@
+document.getElementById('next').onclick = function(){
+        let lists = document.querySelectorAll('.item');
+        document.getElementById('slide').appendChild(lists[0]);
+    }
+    document.getElementById('prev').onclick = function(){
+        let lists = document.querySelectorAll('.item');
+        document.getElementById('slide').prepend(lists[lists.length - 1]);
+    }
+
 document.addEventListener('DOMContentLoaded', function() {
     // URL에서 토큰을 추출하고 로컬 스토리지에 저장
     var urlParams = new URLSearchParams(window.location.search);
@@ -86,4 +95,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    // 프로젝트 토큰에서 프로젝트 명을 추출하여 표시
+    if (projectsToken) {
+                var projects = JSON.parse(projectsToken);
+                var slideContainer = document.getElementById('slide');
+                projects.forEach(function(project) {
+                    var projectItem = document.createElement('div');
+                    projectItem.className = 'item';
+                    projectItem.style.backgroundImage = "url('/static/img/background.jpg')"; // 기본 배경 이미지
+                    projectItem.innerHTML = `
+                        <div class="content">
+                            <div class="name">${project.projectName}</div>
+                            <div class="des">${project.description}</div>
+                            <button>See more</button>
+                        </div>
+                    `;
+                    slideContainer.appendChild(projectItem);
+                });
+            }
 });

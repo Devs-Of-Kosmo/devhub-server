@@ -4,12 +4,17 @@ from flask_login import LoginManager
 from website.model import db, User, SaveFile
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
+from dotenv import load_dotenv
+import os
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:admin1234@localhost/flask_comments'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = 'VGhpcy1Jcy1EZXZIdWItUHJvamVjdC1Kc29uLVdlYi1Ub2tlbi1TZWNyZXQtS2V5LUNvZGUtSEFIQUhBSEEhCg=='
+
+    load_dotenv()
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS') == 'True'
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 
     db.init_app(app)
