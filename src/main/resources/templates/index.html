@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,12 +34,11 @@
                         <li class="nav-item"><a href="loading" class="nav-link">나의 프로젝트</a></li>
                         <li class="nav-item"><a href="http://127.0.0.1:5000/group" class="nav-link" id="project-link">팀의 프로젝트</a></li>
                         <li class="nav-item"><a href="boards" class="nav-link">팀원 구하기</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#inviteModal">쪽지 보내기</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#messageModal">쪽지함</a></li>
+                        <li class="nav-item"><a href="#" id="message-box" class="nav-link" data-bs-toggle="modal" data-bs-target="#messageModal">쪽지함</a></li>
                     </ul>
 
                     <div>
-                        <a href="#" class="custom-btn custom-border-btn btn" data-bs-toggle="modal" data-bs-target="#inviteModal"
+                        <a href="#" id="message-send" class="custom-btn custom-border-btn btn" data-bs-toggle="modal" data-bs-target="#inviteModal"
                            style="color: white; background-color: transparent; border: 1px solid beige; padding: 0.5rem 1rem;text-decoration: none;">
                             초대 하기
                             <i class="bi-arrow-right ms-2"></i>
@@ -260,6 +259,8 @@
     <script src="/js/lang-switch.js"></script>
     <script src="/js/tawkto.js"></script>
     <script src="/js/script.js"></script>
+    <script src="/js/message.js"></script>
+
 </main>
 </body>
 </html>
