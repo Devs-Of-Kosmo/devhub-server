@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Retrieved Projects Token:', projectsToken);  // projects 토큰을 콘솔에 출력하여 확인
 
     if (token) {
-        fetch('/user_info', {
+        fetch('api/user/info', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + token
