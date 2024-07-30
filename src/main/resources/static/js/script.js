@@ -38,6 +38,7 @@ $(document).ready(function() {
                 document.getElementById('log-out').addEventListener('click', function() {
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('projects');
+
                     alert('로그아웃 되었습니다.');
                     window.location.href = '/';
                 });
