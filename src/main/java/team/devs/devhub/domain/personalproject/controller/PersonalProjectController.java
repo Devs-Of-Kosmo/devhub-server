@@ -77,6 +77,7 @@ public class PersonalProjectController {
     }
 
     @GetMapping("/project/commit-read")
+    @Operation(summary = "개인 프로젝트 특정 커밋 조회 API", description = "header에 accessToken과 parameter에 commitId를 담아 요청을 보낸다")
     public ResponseEntity<PersonalProjectCommitReadResponse> readPersonalProjectCommit(
             @RequestParam("commitId") Long commitId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
