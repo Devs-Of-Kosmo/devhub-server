@@ -10,16 +10,16 @@ import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 @AllArgsConstructor
 public class PersonalProjectSaveResponse {
 
-    private Long personalCommitId;
-    private Long personalProjectId;
+    private Long newCommitId;
+    private Long projectId;
     private Long masterId;
     private String parentCommitCode;
     private String commitMessage;
 
     public static PersonalProjectSaveResponse of(PersonalCommit commit) {
         return PersonalProjectSaveResponse.builder()
-                .personalCommitId(commit.getId())
-                .personalProjectId(commit.getProject().getId())
+                .newCommitId(commit.getId())
+                .projectId(commit.getProject().getId())
                 .masterId(commit.getMaster().getId())
                 .parentCommitCode(commit.getParentCommitCode())
                 .commitMessage(commit.getCommitMessage())

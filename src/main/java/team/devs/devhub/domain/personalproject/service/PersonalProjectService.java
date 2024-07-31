@@ -119,6 +119,18 @@ public class PersonalProjectService {
         return PersonalProjectMetaReadResponse.of(project);
     }
 
+    public PersonalProjectCommitReadResponse readProjectCommit(long commitId, long userId) {
+        PersonalCommit commit = personalCommitRepository.findById(commitId)
+                .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(commit.getProject(), user);
+
+        List<String> results = VersionControlUtil.getFileNameWithPathList(commit);
+
+        return PersonalProjectCommitReadResponse.of(results);
+    }
+
     // exception
     private void validRepositoryName(PersonalProject project) {
         if (personalProjectRepository.existsByMasterAndName(project.getMaster(), project.getName())) {

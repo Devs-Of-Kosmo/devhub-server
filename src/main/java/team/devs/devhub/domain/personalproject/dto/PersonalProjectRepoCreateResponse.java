@@ -10,17 +10,17 @@ import team.devs.devhub.domain.personalproject.domain.PersonalProject;
 @AllArgsConstructor
 public class PersonalProjectRepoCreateResponse {
 
-    private Long personalProjectId;
+    private Long newProjectId;
     private String projectName;
     private String description;
     private Long masterId;
 
-    public static PersonalProjectRepoCreateResponse of(PersonalProject personalProject) {
+    public static PersonalProjectRepoCreateResponse of(PersonalProject project) {
         return PersonalProjectRepoCreateResponse.builder()
-                .personalProjectId(personalProject.getId())
-                .projectName(personalProject.getName())
-                .description(personalProject.getDescription())
-                .masterId(personalProject.getMaster().getId())
+                .newProjectId(project.getId())
+                .projectName(project.getName())
+                .description(project.getDescription())
+                .masterId(project.getMaster().getId())
                 .build();
     }
 }
