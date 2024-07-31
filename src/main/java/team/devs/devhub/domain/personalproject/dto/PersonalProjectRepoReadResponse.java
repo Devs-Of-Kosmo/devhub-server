@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PersonalProjectRepoReadResponse {
 
-    private Long personalProjectId;
+    private Long projectId;
     private String projectName;
     private String description;
     private LocalDateTime createdDate;
 
     public static PersonalProjectRepoReadResponse of(PersonalProject project) {
         return PersonalProjectRepoReadResponse.builder()
-                .personalProjectId(project.getId())
+                .projectId(project.getId())
                 .projectName(project.getName())
                 .description(project.getDescription())
                 .createdDate(project.getCreatedDate())
