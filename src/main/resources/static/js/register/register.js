@@ -59,6 +59,10 @@ $(document).ready(function() {
                 success: function(response) {
                     if (response.verified) {
                         alert('이메일 인증이 완료되었습니다.');
+                        $('#verifyCodeBtn').text('인증 완료');
+                        $('#verifyCodeBtn').css('background-color', 'green');
+                        $('#verifyCodeBtn').css('border-color', 'green');
+
                     } else {
                         alert('인증번호가 일치하지 않습니다.');
                     }
