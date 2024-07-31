@@ -64,6 +64,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .requestMatchers("/api/auth/logout").authenticated()
                         .anyRequest().authenticated()
                 )
 
@@ -74,9 +75,11 @@ public class SecurityConfig {
                 )
                 .logout(logout ->
                         logout
-                                .logoutSuccessUrl("/").permitAll()
+                                .logoutUrl("/api/auth/logout")
+                                .logoutSuccessUrl("/")
                                 .invalidateHttpSession(true) // 세션 무효화
-                                .deleteCookies("JSESSIONID") // 쿠키 삭제
+                                .deleteCookies("refreshToken", "JSESSIONID") // refreshToken 쿠키 삭제
+                                .clearAuthentication(true)
                 );
 
         return http.build();

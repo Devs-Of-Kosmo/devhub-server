@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 개인 프로젝트 목록 가져오기
     if (accessToken) {
-        fetch('/api/personal/read', {
+        fetch('/api/personal/repo/read', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var description = document.getElementById('description').value;
 
             if (accessToken && projectName && description) {
-                fetch('/api/personal/create', {
+                fetch('/api/personal/repo/create', {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Bearer ' + accessToken,

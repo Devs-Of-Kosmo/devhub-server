@@ -18,5 +18,12 @@ public class CookieUtil {
                 .maxAge(refreshTokenValidityInMillisecond)
                 .build();
     }
-
+    public ResponseCookie deleteCookie(String name) {
+        return ResponseCookie.from(name, "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)  // 즉시 만료
+                .build();
+    }
 }

@@ -34,14 +34,35 @@ $(document).ready(function() {
                 if (projectLink) {
                     projectLink.href = 'http://192.168.0.158:5000/?token=' + accessToken;
                 }
-                //로그아웃 기능
+                // 로그아웃 요청 보내기 - JavaScript
                 document.getElementById('log-out').addEventListener('click', function() {
+                    // localStorage에서 토큰 제거
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('projects');
 
-                    alert('로그아웃 되었습니다.');
-                    window.location.href = '/';
+                    // 서버에 로그아웃 요청 보내기
+                    fetch('/api/auth/logout', {
+                        method: 'GET',
+                        credentials: 'same-origin', // 인증된 요청을 보낼 때 필요
+                        headers: {
+                            'Authorization': 'Bearer ' + accessToken // 여기에 토큰을 포함해야 할 수도 있습니다.
+                        }
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                alert('로그아웃 되었습니다.');
+                                window.location.href = '/';
+                            } else {
+                                alert('로그아웃에 실패했습니다.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('로그아웃 요청 중 오류 발생:', error);
+                            alert('로그아웃 중 오류가 발생했습니다.');
+                        });
                 });
+
+
                 // 웹소켓 연결 설정
                 var socket = new WebSocket("ws://localhost:8080/ws/message?email=" + userEmail);
 

@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var projectsToken = localStorage.getItem('projects'); // localStorage에서 projectsToken 가져오기
 
             if (token && projectName && description && projectsToken) {
-                fetch('/api/personal/create', {
+                fetch('/api/personal/repo/create', {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Bearer ' + token,

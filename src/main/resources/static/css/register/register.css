@@ -7,7 +7,6 @@
 .email-group .form-control {
     flex: 1;
     height: calc(3.5rem + 2px);
-    border-radius: 0.25rem;
 }
 
 .email-group .btn {
@@ -15,6 +14,5 @@
     height: calc(3.5rem + 2px);
     background-color: var(--custom-btn-bg-color);
     color: var(--white-color);
-    border-radius: 0.25rem;
 }
 
