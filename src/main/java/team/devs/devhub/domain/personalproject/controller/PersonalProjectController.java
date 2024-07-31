@@ -51,7 +51,7 @@ public class PersonalProjectController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         PersonalProjectInitResponse response = personalProjectService.saveInitialProject(request, customUserDetails.getId());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/project/save")
@@ -63,16 +63,25 @@ public class PersonalProjectController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         PersonalProjectSaveResponse response = personalProjectService.saveWorkedProject(request, customUserDetails.getId());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/project/meta-read")
     @Operation(summary = "개인 프로젝트 메타데이터 조회 API", description = "header에 accessToken과 parameter에 projectId를 담아 요청을 보낸다")
-    public ResponseEntity<PersonalProjectMetaReadResponse> savePersonalProject(
+    public ResponseEntity<PersonalProjectMetaReadResponse> readPersonalProjectMeta(
             @RequestParam("projectId") Long projectId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         PersonalProjectMetaReadResponse response = personalProjectService.readProjectMetadata(projectId, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/project/commit-read")
+    public ResponseEntity<PersonalProjectCommitReadResponse> readPersonalProjectCommit(
+            @RequestParam("commitId") Long commitId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        PersonalProjectCommitReadResponse response = personalProjectService.readProjectCommit(commitId, customUserDetails.getId());
         return ResponseEntity.ok(response);
     }
 }

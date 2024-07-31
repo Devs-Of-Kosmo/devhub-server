@@ -3,14 +3,22 @@ package team.devs.devhub.global.util;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.treewalk.TreeWalk;
+import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
+import team.devs.devhub.domain.personalproject.exception.CommitSearchException;
 import team.devs.devhub.domain.personalproject.exception.ProjectSaveException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VersionControlUtil {
 
@@ -52,6 +60,37 @@ public class VersionControlUtil {
         } catch (IOException | GitAPIException e) {
             throw new ProjectSaveException(ErrorCode.PROJECT_SAVE_ERROR);
         }
+    }
+
+    public static List<String> getFileNameWithPathList(PersonalCommit personalCommit) {
+        List<String> fileNameWithPathList = new ArrayList<>();
+        try {
+            Git git = Git.open(new File(personalCommit.getProject().getRepositoryPath()));
+            Repository repository = git.getRepository();
+
+            ObjectId objectId = ObjectId.fromString(personalCommit.getCommitCode());
+
+            RevWalk revWalk = new RevWalk(repository);
+            RevCommit commit = revWalk.parseCommit(objectId);
+
+            TreeWalk treeWalk = new TreeWalk(repository);
+            treeWalk.addTree(commit.getTree());
+            treeWalk.setRecursive(true);
+
+            while (treeWalk.next()) {
+                String path = treeWalk.getPathString();
+                if (path.contains(".gitignore")) {
+                    continue;
+                }
+                fileNameWithPathList.add(path);
+            }
+
+            git.close();
+        } catch (Exception e) {
+            throw new CommitSearchException(ErrorCode.COMMIT_SEARCH_ERROR);
+        }
+
+        return fileNameWithPathList;
     }
 
     private VersionControlUtil() {}
