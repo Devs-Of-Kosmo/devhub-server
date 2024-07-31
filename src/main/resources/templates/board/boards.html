@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀원 구하기 - 게시판</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .hero-section {
+            background-color: #343a40; /* 약간 어두운 색상 */
+            color: #f8f9fa;
+            padding: 60px 0;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .hero-section .display-4 {
+            font-size: 3rem;
+        }
+        .hero-section .lead {
+            font-size: 1.25rem;
+        }
+        .card-img-top {
+            max-height: 200px;
+            object-fit: cover;
+        }
+        .boardDto-image {
+            max-width: 100%;
+            height: auto;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .card {
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">팀원 구하기</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/boards">프로젝트 목록</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/boards/new">프로젝트 생성</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<header class="hero-section text-center" data-aos="fade-up">
+    <div class="container">
+        <h1 class="display-4">팀원 구하기</h1>
+        <p class="lead">함께 할 팀원을 구하고 프로젝트를 시작하세요!</p>
+    </div>
+</header>
+
+<section class="container mt-5" id="projectList">
+    <div class="search-bar mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="프로젝트 검색...">
+    </div>
+    <div class="row" id="projectContainer">
+        <!-- 프로젝트 카드가 여기에 동적으로 추가됩니다. -->
+    </div>
+</section>
+
+<!-- 프로젝트 수정 모달 -->
+<div class="modal fade" id="updateProjectModal" tabindex="-1" aria-labelledby="updateProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateProjectModalLabel">프로젝트 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateProjectForm" enctype="multipart/form-data">
+                    <input type="hidden" id="update-project-id" name="id">
+                    <div class="mb-3">
+                        <label for="update-title" class="form-label">프로젝트 제목</label>
+                        <input type="text" class="form-control" id="update-title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="update-content" class="form-label">프로젝트 내용</label>
+                        <textarea class="form-control" id="update-content" name="content" rows="5" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="update-writer" class="form-label">작성자</label>
+                        <input type="text" class="form-control" id="update-writer" name="writer" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="update-createdDate" class="form-label">작성일</label>
+                        <input type="datetime-local" class="form-control" id="update-createdDate" name="createDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="update-file" class="form-label">이미지</label>
+                        <input type="file" class="form-control" id="update-file" name="file" onchange="previewUpdateImage(event)">
+                        <img src="#" alt="이미지 미리보기" id="update-imagePreview" style="display:none; max-width: 100%; height: auto;">
+                    </div>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-dark text-white text-center py-3">
+    <p class="mb-0">&copy; 2024 팀원 구하기. 모든 권리 보유.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+        AOS.init(); // AOS 초기화
+        loadProjects();
+
+        $("#searchInput").on("input", function() {
+            var keyword = $(this).val();
+            if (keyword) {
+                searchProjects(keyword);
+            } else {
+                loadProjects();
+            }
+        });
+
+        $("#updateProjectForm").on("submit", function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            var id = $("#update-project-id").val();
+            $.ajax({
+                url: "/api/boards/" + id,
+                type: "PUT",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $('#updateProjectModal').modal('hide');
+                    loadProjects();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error updating project:", status, error);
+                }
+            });
+        });
+    });
+
+    function loadProjects() {
+        $.ajax({
+            url: "/api/boards",
+            type: "GET",
+            dataType: "json",
+            success: function(projects) {
+                renderProjects(projects);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching projects:", status, error);
+            }
+        });
+    }
+
+    function searchProjects(keyword) {
+        $.ajax({
+            url: "/api/boards/search",
+            type: "GET",
+            data: { keyword: keyword },
+            dataType: "json",
+            success: function(projects) {
+                renderProjects(projects);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error searching projects:", status, error);
+            }
+        });
+    }
+
+    function renderProjects(projects) {
+        var projectContainer = $("#projectContainer");
+        projectContainer.empty();
+
+        if (projects.length === 0) {
+            projectContainer.append('<p class="text-center">프로젝트가 없습니다.</p>');
+            return;
+        }
+
+        projects.forEach(function(project) {
+            var projectHtml = `
+                <div class="col-md-4 mb-4" data-aos="fade-up">
+                    <div class="card">
+                        <img src="${project.imagePath ? project.imagePath + '?v=' + new Date().getTime() : '/images/default-image.jpg'}" class="card-img-top" alt="Project Image">
+                        <div class="card-body">
+                            <h5 class="card-title">${project.title}</h5>
+                            <p class="card-text">${project.content || '내용이 없습니다.'}</p>
+                            <p class="card-text"><small class="text-muted">작성자: ${project.writer}</small></p>
+                            <p class="card-text"><small class="text-muted">작성일: ${project.createDate ? new Date(project.createDate).toLocaleString() : '미작성'}</small></p>
+                            <a href="/boards/${project.id}" class="btn btn-info btn-sm">상세보기</a>
+                            <button class="btn btn-warning btn-sm" onclick="openUpdateModal(${project.id})">수정</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteProject(${project.id})">삭제</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            projectContainer.append(projectHtml);
+        });
+    }
+
+    function openUpdateModal(id) {
+    $.ajax({
+        url: "/api/boards/" + id,
+        type: "GET",
+        dataType: "json",
+        success: function(project) {
+            $("#update-project-id").val(project.id);
+            $("#update-title").val(project.title);
+            $("#update-content").val(project.content);
+            $("#update-writer").val(project.writer);
+
+            // 날짜와 시간 형식으로 변환
+            const date = new Date(project.createDate);
+            const formattedDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+                .toISOString()
+                .slice(0, 16);
+            $("#update-createdDate").val(formattedDate);
+
+            if (project.imagePath) {
+                $("#update-imagePreview").attr("src", project.imagePath).show();
+            } else {
+                $("#update-imagePreview").hide();
+            }
+
+            $('#updateProjectModal').modal('show');
+        },
+        error: function(xhr, status, error) {
+            console.error("Error fetching project details:", status, error);
+        }
+    });
+}
+
+
+
+    function deleteProject(id) {
+        if (!confirm("정말로 이 프로젝트를 삭제하시겠습니까?")) {
+            return;
+        }
+
+        $.ajax({
+            url: "/api/boards/" + id,
+            type: "DELETE",
+            success: function(response) {
+                loadProjects();
+            },
+            error: function(xhr, status, error) {
+                console.error("Error deleting project:", status, error);
+            }
+        });
+    }
+
+    function previewUpdateImage(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById('update-imagePreview');
+            output.src = reader.result;
+            output.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+</body>
+</html>
