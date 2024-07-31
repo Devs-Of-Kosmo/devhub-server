@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.devs.devhub.domain.user.dto.auth.LoginRequest;
@@ -41,5 +42,16 @@ public class AuthController {
             @CookieValue(name = "refreshToken") String refreshToken
     ) {
         return ResponseEntity.ok(authService.reissue(request.getAccessToken(), refreshToken));
+    }
+
+    @GetMapping("/logout")
+    @Operation(summary = "로그아웃 API", description = "로그아웃 시 refreshToken 쿠키를 삭제한다.")
+    public ResponseEntity<Void> logout() {
+
+        ResponseCookie deleteCookie = cookieUtil.deleteCookie("refreshToken");
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                .build();
     }
 }

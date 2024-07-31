@@ -56,7 +56,7 @@ var questions = [
             console.log("Creating project with name:", projectName, "and description:", description);
 
             // API 호출
-            fetch('/api/personal/create', {
+            fetch('/api/personal/repo/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
