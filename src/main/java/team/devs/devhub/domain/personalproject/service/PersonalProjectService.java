@@ -85,7 +85,7 @@ public class PersonalProjectService {
     }
 
     public PersonalProjectSaveResponse saveWorkedProject(PersonalProjectSaveRequest request, long userId) {
-        PersonalCommit parentCommit = personalCommitRepository.findById(request.getCommitId())
+        PersonalCommit parentCommit = personalCommitRepository.findById(request.getFromCommitId())
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
