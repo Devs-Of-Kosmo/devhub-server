@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 public class PersonalProjectSaveRequest {
 
-    private Long commitId;
+    private Long fromCommitId;
     private List<MultipartFile> files;
     private String commitMessage;
 }
