@@ -34,6 +34,7 @@ $(document).ready(function() {
                 if (projectLink) {
                     projectLink.href = 'http://192.168.0.158:5000/?token=' + accessToken;
                 }
+
                 // 로그아웃 요청 보내기 - JavaScript
                 document.getElementById('log-out').addEventListener('click', function() {
                     // localStorage에서 토큰 제거
@@ -50,18 +51,22 @@ $(document).ready(function() {
                     })
                         .then(response => {
                             if (response.ok) {
-                                alert('로그아웃 되었습니다.');
-                                window.location.href = '/';
+                                Swal.fire({
+                                    title: '로그아웃 되었습니다.',
+                                    icon: 'success',
+                                    confirmButtonText: '확인'
+                                }).then(() => {
+                                    window.location.href = '/';
+                                });
                             } else {
-                                alert('로그아웃에 실패했습니다.');
+                                Swal.fire('로그아웃에 실패했습니다.', '', 'error');
                             }
                         })
                         .catch(error => {
                             console.error('로그아웃 요청 중 오류 발생:', error);
-                            alert('로그아웃 중 오류가 발생했습니다.');
+                            Swal.fire('로그아웃 중 오류가 발생했습니다.', '', 'error');
                         });
                 });
-
 
                 // 웹소켓 연결 설정
                 var socket = new WebSocket("ws://localhost:8080/ws/message?email=" + userEmail);
@@ -101,7 +106,7 @@ $(document).ready(function() {
             myProjectsLink.href = '#';
             myProjectsLink.addEventListener('click', function(event) {
                 event.preventDefault();
-                alert('로그인이 필요합니다.');
+                Swal.fire('로그인이 필요합니다.', '', 'warning');
             });
         }
 
@@ -109,7 +114,7 @@ $(document).ready(function() {
             projectLink.href = '#';
             projectLink.addEventListener('click', function(event) {
                 event.preventDefault();
-                alert('로그인이 필요합니다.');
+                Swal.fire('로그인이 필요합니다.', '', 'warning');
             });
         }
     }

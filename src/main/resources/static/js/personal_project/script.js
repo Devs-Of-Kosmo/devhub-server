@@ -108,5 +108,42 @@ var questions = [
                 });
             }
         }
+
+        function showCurrent() {
+            console.log("Showing current question");
+            inputContainer.style.opacity = 1;
+            inputProgress.style.transition = '';
+            inputProgress.style.width = '100%';
+        }
+
+        function hideCurrent(callback) {
+            console.log("Hiding current question"); // 디버깅용 로그 추가
+            inputContainer.style.opacity = 0;
+            inputProgress.style.transition = 'none';
+            inputProgress.style.width = 0;
+            setTimeout(callback, wTime);
+        }
+
+        function transform(x, y) {
+            console.log("Transform: ", x, y); // 디버깅용 로그 추가
+            register.style.transform = 'translate(' + x + 'px ,  ' + y + 'px)';
+        }
+
+        function ok(callback) {
+            console.log("Input is valid, proceeding to next question"); // 디버깅용 로그 추가
+            register.className = '';
+            setTimeout(transform, tTime * 0, 0, 10);
+            setTimeout(transform, tTime * 1, 0, 0);
+            setTimeout(callback, tTime * 2);
+        }
+
+        function wrong(callback) {
+            console.log("Input is invalid, shaking the input field"); // 디버깅용 로그 추가
+            register.className = 'wrong';
+            for (var i = 0; i < 6; i++) // shaking motion
+                setTimeout(transform, tTime * i, (i % 2 * 2 - 1) * 20, 0);
+            setTimeout(transform, tTime * 6, 0, 0);
+            setTimeout(callback, tTime * 7);
+        }
     });
 }());
