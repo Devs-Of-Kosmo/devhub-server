@@ -18,6 +18,7 @@ public class MessageDtoResponse {
     private String content;
     private String inviteUrl;
     private LocalDateTime createdDate;
+    private boolean readCondition;
 
     public static MessageDtoResponse of(Message message) {
         return MessageDtoResponse.builder()
@@ -27,6 +28,7 @@ public class MessageDtoResponse {
                 .content(message.getContent())
                 .inviteUrl(message.getInviteUrl())
                 .createdDate(message.getCreatedDate())
+                .readCondition(message.isReadCondition())
                 .build();
     }
 }

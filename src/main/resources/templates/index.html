@@ -15,6 +15,10 @@
     <link href="/css/devhub.css" rel="stylesheet">
     <link href="/css/custom.css" rel="stylesheet">
     <script src="/js/jquery.min.js"></script>
+
+    <!-- SweetAlert2 CSS 및 JS 포함 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
 </head>
 
 <body>
@@ -34,7 +38,7 @@
                         <li class="nav-item"><a href="loading" class="nav-link">나의 프로젝트</a></li>
                         <li class="nav-item"><a href="http://127.0.0.1:5000/group" class="nav-link" id="project-link">팀의 프로젝트</a></li>
                         <li class="nav-item"><a href="boards" class="nav-link">팀원 구하기</a></li>
-                        <li class="nav-item"><a href="#" id="message-box" class="nav-link" data-bs-toggle="modal" data-bs-target="#messageModal">쪽지함</a></li>
+                        <li class="nav-item"><a href="#" id="message-box" class="nav-link-message" data-bs-toggle="modal" data-bs-target="#messageModal"></a></li>
                     </ul>
 
                     <div>
@@ -65,7 +69,7 @@
                     <li><a href="register">회원가입</a></li>
                     <li><a href="boards">팀원구하기</a></li>
                     <li><a href="http://192.168.0.4:5000/">나의 프로젝트</a></li>
-                    <li><a href="contact">팀의 프로젝트</a></li>
+                    <li><a href="http://127.0.0.1:5000/group">팀의 프로젝트</a></li>
                 </ul>
             </nav>
         </div>
@@ -105,12 +109,15 @@
                 </div>
 
                 <div class="modal-body">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="receivedTab" href="#">받은 쪽지함</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="sentTab" href="#">보낸 쪽지함</a>
-                    </li>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; padding : 2px;">
+                        <li style="margin-right: 10px; border: 2px solid #ffffff; padding : 5px; border-radius: 7px;">
+                            <a class="nav-link active" id="receivedTab" href="#">받은 쪽지함</a>
+                        </li>
+                        <li style="margin-right: 10px; border: 2px solid #ffffff; padding : 5px; border-radius: 7px;">
+                            <a class="nav-link" id="sentTab" href="#">보낸 쪽지함</a>
+                        </li>
+                        <li id="message-link" style="font-size: small; color: white; display: flex; align-items: flex-end; height: 35px;"></li>
+                    </ul>
                     <ul id="messageList" class="list-group mt-3">
                         <!-- 메시지 항목이 여기에 추가됩니다 -->
                     </ul>
