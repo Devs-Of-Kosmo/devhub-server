@@ -32,7 +32,7 @@ $(document).ready(function() {
                 }
 
                 if (projectLink) {
-                    projectLink.href = 'http://192.168.0.158:5000/?token=' + accessToken;
+                    projectLink.href = 'http://127.0.0.1:5000/?token=' + accessToken;
                 }
 
                 // 로그아웃 요청 보내기 - JavaScript
@@ -79,6 +79,7 @@ $(document).ready(function() {
                 socket.onmessage = function(event) {
                     console.log("서버로부터 메시지 수신:", event.data);
                     $('#message-link').text(event.data);
+                    updateMessageImg(event.data);
                 };
 
                 socket.onclose = function(event) {

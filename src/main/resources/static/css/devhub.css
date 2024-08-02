@@ -451,6 +451,20 @@ b, strong {
     color: var(--link-hover-color);
 }
 
+.nav-link-message {
+    background: url('../images/message.png') no-repeat center center;
+    background-size: 35px 35px;
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    padding: 0 32px;
+    box-sizing: border-box;
+    border-left: none;
+    text-align: center;
+
+}
+
+
 @media screen and (max-width: 1200px) {
     h1 { font-size: 50px; }
     h2 { font-size: 32px; }

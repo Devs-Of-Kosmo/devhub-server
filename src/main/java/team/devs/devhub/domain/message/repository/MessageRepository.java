@@ -11,10 +11,10 @@ import java.util.Optional;
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
     // 보낸 쪽지함
-    List<Message> findBySenderAndSenderDeleteCondition(User sender, Boolean senderDeleteCondition);
+    List<Message> findBySenderAndSenderDeleteConditionOrderByCreatedDateDesc(User sender, Boolean senderDeleteCondition);
 
     // 받은 쪽지함
-    List<Message> findByReceiverAndReceiverDeleteCondition(User receiver, Boolean receiverDeleteCondition);
+    List<Message> findByReceiverAndReceiverDeleteConditionOrderByCreatedDateDesc(User receiver, Boolean receiverDeleteCondition);
 
     // 읽지 않은 메시지 개수
     Optional<Long> countByReceiverAndReadConditionAndReceiverDeleteCondition(User user, Boolean readCondition, Boolean receiverDeleteCondition);
