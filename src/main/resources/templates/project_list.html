@@ -2,30 +2,92 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Repository List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link href="https://fonts.googleapis.com/css?family=Heebo:400,700|Open+Sans:400,700" rel="stylesheet">
     <link href="/css/project_list/style.css" rel="stylesheet">
     <link href="/css/project_list/nav.css" rel="stylesheet">
 </head>
 <body>
-<!-- Navigation -->
 <nav id="slide-menu">
     <ul>
-        <li class="timeline">Timeline</li>
-        <li class="events">Events</li>
-        <li class="calendar">Calendar</li>
-        <li class="sep settings">Settings</li>
-        <li class="logout">Logout</li>
+        <li class="timeline"><a href="personal_project">프로젝트 만들기</a></li>
+        <li class="message-send"><a href="#" id="send-message">쪽지 보내기</a></li>
+        <li class="message"><a href="#" id="open-messages">쪽지함</a></li>
+        <li class="sep settings" id="settings">Settings</li>
+        <li class="logout" id="logout">Logout</li>
     </ul>
 </nav>
-<!-- Content panel -->
 <div id="content">
     <div class="menu-trigger"></div>
 </div>
 <section class="cards-wrapper">
     <!-- 동적으로 카드가 추가될 영역 -->
 </section>
+
+<!-- 쪽지 보내기 모달 -->
+<div id="sendMessageModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">쪽지 보내기</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="sendMessageForm">
+                    <div class="form-group">
+                        <label for="recipientEmail">받는 사람 이메일</label>
+                        <input type="email" class="form-control" id="recipientEmail" placeholder="example@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="messageContent">메시지 내용</label>
+                        <textarea class="form-control" id="messageContent" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="inviteUrl">초대 URL</label>
+                        <input type="url" class="form-control" id="inviteUrl" placeholder="http://example.com" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">보내기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 메시지 모달 -->
+<div id="messageModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">쪽지함</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="receivedTab" href="#">받은 쪽지함</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="sentTab" href="#">보낸 쪽지함</a>
+                    </li>
+                </ul>
+                <ul id="messageList" class="list-group mt-3">
+                    <!-- 메시지 항목이 여기에 추가됩니다 -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 <script src="/js/project_list/script.js"></script>
 <script src="/js/project_list/nav.js"></script>
+<script src="/js/project_list/message.js"></script>
 </body>
 </html>

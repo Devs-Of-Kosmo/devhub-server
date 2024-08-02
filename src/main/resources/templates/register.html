@@ -100,11 +100,12 @@
                             <label for="email">Email address</label>
                             <button type="button" id="emailVerifyBtn" class="btn btn-secondary">이메일 인증</button>
                         </div>
-                        <div class="form-floating mb-3 email-group">
-                            <input type="text" name="verification_code" id="verification_code" class="form-control" placeholder="Verification Code" required="">
+                        <div class="form-floating mb-3 email-group" id="verificationCodeSection">
+                            <input type="text" name="verification_code" id="verification_code" class="form-control" placeholder="Verification Code">
                             <label for="verification_code">Verification Code</label>
                             <button type="button" id="verifyCodeBtn" class="btn btn-secondary email-verify-btn">인증 코드 필요</button>
                         </div>
+                        <div id="emailVerifiedMessage" style="display: none; color: #58fa90;font-weight :bolder;">이메일 인증이 완료되었습니다.</div>
                         <div class="form-floating mb-3">
                             <input type="password" name="password" id="password" class="form-control" placeholder="Password" required="">
                             <label for="password">Password</label>

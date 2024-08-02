@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
         accessToken = localStorage.getItem('accessToken');
     }
 
-    // 사용자 정보 가져오기
     if (accessToken) {
         fetch('/api/user/info', {
             method: 'GET',
@@ -90,7 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 cardsWrapper.insertAdjacentHTML('beforeend', cardHTML);
             });
 
-            // 카드 클릭 이벤트 추가
             cardsWrapper.addEventListener('click', function(event) {
                 var card = event.target.closest('.card');
                 if (card) {
@@ -107,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 프로젝트 생성 폼 처리
     var createProjectForm = document.getElementById('create-project-form');
     if (createProjectForm) {
         createProjectForm.addEventListener('submit', function(event) {
@@ -135,7 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(data => {
                     if (data.newProjectId) {
-                        // 서버 응답으로부터 프로젝트 정보 생성
                         var newProject = {
                             projectId: data.newProjectId,
                             projectName: projectName,
@@ -144,7 +140,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             createdDate: new Date().toISOString()
                         };
 
-                        // 프로젝트 배열에 추가
                         projectsArray.push(newProject);
                         window.location.reload(); // 페이지 새로고침
                     } else {
@@ -155,7 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 나의 프로젝트 링크 설정
     if (accessToken) {
         var myProjectsLink = document.getElementById('my-projects-link');
         if (myProjectsLink) {
