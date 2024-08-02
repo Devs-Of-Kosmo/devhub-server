@@ -14,7 +14,7 @@ $(document).ready(function() {
         var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
         if (!emailPattern.test(email)) {
-            alert('유효한 이메일 주소를 입력하세요.');
+            Swal.fire('유효한 이메일 주소를 입력하세요.', '', 'warning');
         } else {
             // 이메일이 유효할 때, 서버로 인증번호 발송 요청
             $.ajax({
@@ -28,14 +28,14 @@ $(document).ready(function() {
                         isCodeSent = true; // 인증 코드 발송 여부 플래그 설정
                         $('#verifyCodeBtn').text('인증 코드 확인');
                         $('#verifyCodeBtn').prop('disabled', false); // 인증 코드 확인 버튼 활성화
-                        alert('인증번호가 발송되었습니다. 이메일을 확인하세요.');
+                        Swal.fire('인증번호가 발송되었습니다.', '이메일을 확인하세요.', 'info');
                     } else {
-                        alert('인증번호 발송에 실패했습니다. 다시 시도해주세요.');
+                        Swal.fire('인증번호 발송에 실패했습니다.', '다시 시도해주세요.', 'error');
                     }
                 },
                 error: function(error) {
                     console.error('Error:', error);
-                    alert('인증번호 발송 중 오류가 발생했습니다.');
+                    Swal.fire('인증번호 발송 중 오류가 발생했습니다.', '', 'error');
                 }
             });
         }
@@ -44,7 +44,7 @@ $(document).ready(function() {
     // 인증 코드 확인 버튼 클릭 시
     $('#verifyCodeBtn').on('click', function() {
         if (!isCodeSent) {
-            alert('먼저 인증 코드를 발송해주세요.');
+            Swal.fire('먼저 인증 코드를 발송해주세요.', '', 'warning');
             return;
         }
 
@@ -58,22 +58,21 @@ $(document).ready(function() {
                 contentType: 'application/json',
                 success: function(response) {
                     if (response.verified) {
-                        alert('이메일 인증이 완료되었습니다.');
+                        Swal.fire('이메일 인증이 완료되었습니다.', '', 'success');
                         $('#verifyCodeBtn').text('인증 완료');
                         $('#verifyCodeBtn').css('background-color', 'green');
                         $('#verifyCodeBtn').css('border-color', 'green');
-
                     } else {
-                        alert('인증번호가 일치하지 않습니다.');
+                        Swal.fire('인증번호가 일치하지 않습니다.', '', 'error');
                     }
                 },
                 error: function(error) {
                     console.error('Error:', error);
-                    alert('인증번호 확인 중 오류가 발생했습니다.');
+                    Swal.fire('인증번호 확인 중 오류가 발생했습니다.', '', 'error');
                 }
             });
         } else {
-            alert('이메일과 인증번호를 입력해 주세요.');
+            Swal.fire('이메일과 인증번호를 입력해 주세요.', '', 'warning');
         }
     });
 
@@ -84,7 +83,7 @@ $(document).ready(function() {
         var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
         if (!emailPattern.test(email)) {
-            alert('유효한 이메일 주소를 입력하세요.');
+            Swal.fire('유효한 이메일 주소를 입력하세요.', '', 'warning');
             return;
         }
 
@@ -92,12 +91,12 @@ $(document).ready(function() {
         var confirmPassword = $('#confirm_password').val();
 
         if (password !== confirmPassword) {
-            alert('비밀번호가 일치하지 않습니다.');
+            Swal.fire('비밀번호가 일치하지 않습니다.', '', 'warning');
             return;
         }
 
         if (!$('#termsCheck1').is(':checked') || !$('#termsCheck2').is(':checked')) {
-            alert('서비스 이용약관과 개인정보 처리방침에 동의해야 합니다.');
+            Swal.fire('서비스 이용약관과 개인정보 처리방침에 동의해야 합니다.', '', 'warning');
             return;
         }
 
@@ -113,12 +112,13 @@ $(document).ready(function() {
             data: JSON.stringify(formData),
             contentType: 'application/json',
             success: function(response) {
-                alert('회원가입이 완료되었습니다!');
-                location.href = '/login';
+                Swal.fire('회원가입이 완료되었습니다!', '', 'success').then(() => {
+                    location.href = '/login';
+                });
             },
             error: function(error) {
                 console.error('Error:', error);
-                alert('회원가입 중 오류가 발생했습니다.');
+                Swal.fire('회원가입 중 오류가 발생했습니다.', '', 'error');
             }
         });
     });

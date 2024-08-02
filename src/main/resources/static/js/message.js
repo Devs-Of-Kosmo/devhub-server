@@ -68,23 +68,39 @@ $(document).ready(function() {
                 inviteUrl: inviteUrl
             })
         })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(errorData => {
-                    alert("받는 사람의 이메일이 존재하지 않습니다.");
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data) {
-                alert('메시지가 성공적으로 전송되었습니다!');
-                $('#inviteModal').modal('hide');
-            } else {
-                alert('메시지 전송에 실패했습니다.');
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        Swal.fire({
+                            title: '오류',
+                            text: '받는 사람의 이메일이 존재하지 않습니다.',
+                            icon: 'error',
+                            confirmButtonText: '확인'
+                        });
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    Swal.fire({
+                        title: '성공',
+                        text: '메시지가 성공적으로 전송되었습니다!',
+                        icon: 'success',
+                        confirmButtonText: '확인'
+                    }).then(() => {
+                        $('#inviteModal').modal('hide');
+                    });
+                } else {
+                    Swal.fire({
+                        title: '오류',
+                        text: '메시지 전송에 실패했습니다.',
+                        icon: 'error',
+                        confirmButtonText: '확인'
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
     });
 
     function loadMessages(url, messageType) {
@@ -94,13 +110,13 @@ $(document).ready(function() {
                 'Authorization': 'Bearer ' + accessToken
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
 
-            if (!Array.isArray(data)) {
-                throw new Error("Invalid response format");
-            }
+                if (!Array.isArray(data)) {
+                    throw new Error("Invalid response format");
+                }
 
             const messageList = $('#messageList');
             messageList.empty();
@@ -213,13 +229,24 @@ $(document).ready(function() {
                     .catch(error => console.error('Error:', error));
                 });
 
-                messageList.append(listItem);
+                                    messageList.empty();
+                                    messageList.append(messageItem);
+                                })
+                                .catch(error => console.error('Error:', error));
+                        });
+
+                    messageList.append(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: '오류',
+                    text: '메시지를 불러오는데 실패했습니다. 다시 시도해주세요.',
+                    icon: 'error',
+                    confirmButtonText: '확인'
+                });
             });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('메시지를 불러오는데 실패했습니다. 다시 시도해주세요.');
-        });
     }
 
     $('#receivedTab').on('click', function() {
