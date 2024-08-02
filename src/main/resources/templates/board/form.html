@@ -16,7 +16,7 @@
         .ck-editor__editable {
             min-height: 300px;
         }
-        .boardDto-image {
+        .boardRequest-image {
             max-width: 100%;
             height: auto;
         }
@@ -41,8 +41,8 @@
 
 <div class="container mt-5">
     <h2 class="text-center mb-4" id="form-title"></h2>
-    <form id="boardDto-form">
-        <input type="hidden" id="boardDto-id" name="id">
+    <form id="boardRequest-form">
+        <input type="hidden" id="boardRequest-id" name="id">
 
         <div class="mb-3">
             <label for="title" class="form-label">제목</label>
@@ -60,14 +60,9 @@
         </div>
 
         <div class="mb-3">
-            <label for="createDate" class="form-label">작성일</label>
-            <input type="datetime-local" class="form-control" id="createDate" name="createDate">
-        </div>
-
-        <div class="mb-3">
             <label for="file" class="form-label">이미지 업로드</label>
             <input type="file" class="form-control" id="file" name="file" onchange="previewImage(event)">
-            <img id="preview" src="#" alt="이미지 미리보기" class="boardDto-image mt-3" style="display: none;">
+            <img id="preview" src="#" alt="이미지 미리보기" class="boardRequest-image mt-3" style="display: none;">
         </div>
 
         <button type="submit" class="btn btn-primary">저장</button>
@@ -107,7 +102,7 @@
                 console.error(error);
             });
 
-        document.getElementById('boardDto-form').addEventListener('submit', function(event) {
+        document.getElementById('boardRequest-form').addEventListener('submit', function(event) {
             event.preventDefault();
             syncEditorData();
             submitForm();
@@ -122,21 +117,16 @@
     function initializeForm() {
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
-        const createDateInput = document.getElementById('createDate');
 
         if (id) {
             document.getElementById('form-title').textContent = '게시글 수정';
             fetch(`/api/boards/${id}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('boardDto-id').value = data.id;
+                    document.getElementById('boardRequest-id').value = data.id;
                     document.getElementById('title').value = data.title;
                     document.getElementById('content').value = data.content;
                     document.getElementById('writer').value = data.writer;
-
-                    const date = new Date(data.createDate);
-                    const formattedDate = date.toISOString().slice(0, 16); // 날짜와 시간이 나오게 변경
-                    createDateInput.value = formattedDate;
 
                     if (data.imagePath) {
                         document.getElementById('preview').src = `/images/${data.imagePath}`;
@@ -145,16 +135,12 @@
                 });
         } else {
             document.getElementById('form-title').textContent = '게시글 작성';
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // 타임존 오프셋 적용
-            const formattedNow = now.toISOString().slice(0, 16); // 현재 날짜와 시간 설정
-            createDateInput.value = formattedNow;
         }
     }
 
     function submitForm() {
-        const formData = new FormData(document.getElementById('boardDto-form'));
-        const id = document.getElementById('boardDto-id').value;
+        const formData = new FormData(document.getElementById('boardRequest-form'));
+        const id = document.getElementById('boardRequest-id').value;
         const method = id ? 'PUT' : 'POST';
         const url = id ? `/api/boards/${id}` : '/api/boards';
 

@@ -1,8 +1,7 @@
-package team.devs.devhub.domain.board.domain.domain.repository;
-
+package team.devs.devhub.domain.board.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import team.devs.devhub.domain.board.domain.entity.Board;
+import team.devs.devhub.domain.board.domain.domain.Board;
 
 import java.util.List;
 

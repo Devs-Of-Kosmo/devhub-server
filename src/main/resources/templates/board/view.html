@@ -40,7 +40,6 @@
             <h5 id="boardTitle" class="card-title"></h5>
             <h6 id="boardWriter" class="card-subtitle mb-2 text-muted"></h6>
             <p id="boardContent" class="card-text"></p>
-            <p id="boardCreateDate" class="card-text"></p>
             <img id="boardImage" class="img-fluid board-image" alt="게시글 이미지" style="display: none;">
         </div>
     </div>
@@ -65,7 +64,6 @@
                     $('#boardTitle').text(data.title);
                     $('#boardWriter').text(data.writer);
                     $('#boardContent').html(data.content);
-                    $('#boardCreateDate').text(new Date(data.createDate).toLocaleString());
 
                     if (data.imagePath) {
                         const imagePath = data.imagePath.startsWith('http') ? data.imagePath : `${window.location.origin}${data.imagePath}`;
