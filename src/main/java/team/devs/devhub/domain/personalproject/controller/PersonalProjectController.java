@@ -90,6 +90,7 @@ public class PersonalProjectController {
     }
 
     @GetMapping("/project/text-file")
+    @Operation(summary = "개인 프로젝트 텍스트 파일 조회 API", description = "header에 accessToken과 parameter에 commitId와 filePath(경로가 포함된 파일 이름)를 담아 요청을 보낸다")
     public ResponseEntity<String> readTextFile(
             @RequestParam("commitId") Long commitId,
             @RequestParam("filePath") String filePath,
