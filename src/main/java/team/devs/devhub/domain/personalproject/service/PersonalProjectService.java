@@ -102,10 +102,10 @@ public class PersonalProjectService {
         PersonalCommit commit = personalCommitRepository.save(
                 PersonalCommit.builder()
                         .commitCode(newCommit.getName())
-                        .parentCommitCode(parentCommit.getCommitCode())
                         .commitMessage(request.getCommitMessage())
                         .project(project)
                         .master(user)
+                        .parentCommit(parentCommit)
                         .build()
         );
 
@@ -159,6 +159,28 @@ public class PersonalProjectService {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(fileBytes);
 
         return new InputStreamResource(inputStream);
+    }
+
+    public void deleteCommitHistory(Long commitId, Long userId) {
+        PersonalCommit commit = personalCommitRepository.findById(commitId)
+                .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(commit.getProject(), user);
+
+        VersionControlUtil.resetCommitHistory(commit);
+
+        softDeleteChildCommit(commit);
+    }
+
+    /**
+     * 성능에 매우 비효율적, 성능 개선 필요
+     */
+    private void softDeleteChildCommit(PersonalCommit commit) {
+        commit.softDelete();
+        commit.getChildCommitList().stream()
+                .filter(e -> !e.isDeleteCondition())
+                .forEach(this::softDeleteChildCommit);
     }
 
     // exception

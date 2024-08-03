@@ -118,6 +118,16 @@ public class PersonalProjectController {
                 .body(response);
     }
 
+    @DeleteMapping("/project/commit/{commitId}")
+    @Operation(summary = "개인 프로젝트 커밋 이력 삭제 API", description = "header에 accessToken과 경로 {commitId}에 삭제할 commitId를 담아 요청을 보낸다")
+    public ResponseEntity<Void> deleteCommitHistory(
+            @PathVariable(name = "commitId") Long commitId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        personalProjectService.deleteCommitHistory(commitId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     private MediaType getMediaTypeForImage(String filePath) {
         String fileExtension = getFileExtension(filePath).toLowerCase();
 
