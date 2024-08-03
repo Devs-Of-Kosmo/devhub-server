@@ -15,7 +15,7 @@ $(document).ready(function() {
 
                 document.getElementById('login-container').style.cssText = 'display: none !important;';
                 $('#login-link').text(userName + '님');
-                $('#login-side').text(userName + '님')
+                $('#login-side').text(userName + '님');
 
                 $('#login-link').on('click', function() {
                     $('#profileName').val(userName);
@@ -98,6 +98,7 @@ $(document).ready(function() {
                 console.error('사용자 정보를 가져오는데 실패했습니다:', error);
             }
         });
+
     } else {
         // 로그인되지 않은 경우 링크를 비활성화
         var myProjectsLink = document.getElementById('my-projects-link');
