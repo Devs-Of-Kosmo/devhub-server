@@ -105,6 +105,7 @@ public class PersonalProjectController {
     }
 
     @GetMapping("/project/image-file")
+    @Operation(summary = "개인 프로젝트 이미지 파일 조회 API", description = "header에 accessToken과 parameter에 commitId와 filePath(경로가 포함된 파일 이름)를 담아 요청을 보낸다")
     public ResponseEntity<InputStreamResource> readImageFile(
             @RequestParam("commitId") Long commitId,
             @RequestParam("filePath") String filePath,
