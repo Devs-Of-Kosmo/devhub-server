@@ -8,22 +8,23 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.PathFilter;
 import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
 import team.devs.devhub.domain.personalproject.exception.CommitSearchException;
+import team.devs.devhub.domain.personalproject.exception.FileNotFoundException;
+import team.devs.devhub.domain.personalproject.exception.FileSearchException;
 import team.devs.devhub.domain.personalproject.exception.ProjectSaveException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VersionControlUtil {
 
-    public static void createGitIgnoreFile(PersonalProject personalProject) {
-        File gitIgnoreFile = new File(personalProject.getRepositoryPath(), ".gitignore");
+    public static void createGitIgnoreFile(PersonalProject project) {
+        File gitIgnoreFile = new File(project.getRepositoryPath(), ".gitignore");
         try (FileWriter writer = new FileWriter(gitIgnoreFile)) {
             writer.write(".DS_Store\n");
         } catch (IOException e) {
@@ -31,9 +32,9 @@ public class VersionControlUtil {
         }
     }
 
-    public static RevCommit initializeProject(PersonalProject personalProject, String commitMessage) {
+    public static RevCommit initializeProject(PersonalProject project, String commitMessage) {
         try {
-            File dir = new File(personalProject.getRepositoryPath());
+            File dir = new File(project.getRepositoryPath());
             Git git = Git.init().setDirectory(dir).call();
 
             git.add().addFilepattern(".").call();
@@ -45,9 +46,9 @@ public class VersionControlUtil {
         }
     }
 
-    public static RevCommit saveWorkedProject(PersonalProject personalProject, String commitMessage) {
+    public static RevCommit saveWorkedProject(PersonalProject project, String commitMessage) {
         try {
-            Git git = Git.open(new File(personalProject.getRepositoryPath()));
+            Git git = Git.open(new File(project.getRepositoryPath()));
             Status status = git.status().call();
 
             git.add().addFilepattern(".").call();
@@ -91,6 +92,35 @@ public class VersionControlUtil {
         }
 
         return fileNameWithPathList;
+    }
+
+    public static byte[] getFileDataFromCommit(PersonalCommit personalCommit, String filePath) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            Git git = Git.open(new File(personalCommit.getProject().getRepositoryPath()));
+            Repository repository = git.getRepository();
+
+            ObjectId objectId = ObjectId.fromString(personalCommit.getCommitCode());
+
+            RevWalk revWalk = new RevWalk(repository);
+            RevCommit commit = revWalk.parseCommit(objectId);
+
+            TreeWalk treeWalk = new TreeWalk(repository);
+            treeWalk.addTree(commit.getTree());
+            treeWalk.setRecursive(true);
+            treeWalk.setFilter(PathFilter.create(filePath));
+
+            if (!treeWalk.next()) {
+                throw new FileNotFoundException(ErrorCode.FILE_NOT_FOUND);
+            }
+
+            ObjectId blobId = treeWalk.getObjectId(0);
+            repository.open(blobId).copyTo(outputStream);
+        } catch (IOException e) {
+            throw new FileSearchException(ErrorCode.FILE_SEARCH_ERROR);
+        }
+
+        return outputStream.toByteArray();
     }
 
     private VersionControlUtil() {}

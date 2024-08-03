@@ -3,6 +3,7 @@ package team.devs.devhub.domain.personalproject.service;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
@@ -21,6 +22,7 @@ import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.util.RepositoryUtil;
 import team.devs.devhub.global.util.VersionControlUtil;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,6 +52,7 @@ public class PersonalProjectService {
         return PersonalProjectRepoCreateResponse.of(project);
     }
 
+    @Transactional(readOnly = true)
     public List<PersonalProjectRepoReadResponse> readProjectRepo(long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -109,6 +112,7 @@ public class PersonalProjectService {
         return PersonalProjectSaveResponse.of(commit);
     }
 
+    @Transactional(readOnly = true)
     public PersonalProjectMetaReadResponse readProjectMetadata(long projectId, long userId) {
         PersonalProject project = personalProjectRepository.findById(projectId)
                 .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
@@ -119,6 +123,7 @@ public class PersonalProjectService {
         return PersonalProjectMetaReadResponse.of(project);
     }
 
+    @Transactional(readOnly = true)
     public PersonalProjectCommitReadResponse readProjectCommit(long commitId, long userId) {
         PersonalCommit commit = personalCommitRepository.findById(commitId)
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
@@ -129,6 +134,31 @@ public class PersonalProjectService {
         List<String> results = VersionControlUtil.getFileNameWithPathList(commit);
 
         return PersonalProjectCommitReadResponse.of(results);
+    }
+
+    @Transactional(readOnly = true)
+    public String readTextFileContent(long commitId, String filePath, long userId) {
+        PersonalCommit commit = personalCommitRepository.findById(commitId)
+                .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(commit.getProject(), user);
+
+        return new String(VersionControlUtil.getFileDataFromCommit(commit, filePath));
+    }
+
+    @Transactional(readOnly = true)
+    public InputStreamResource readImageFileContent(long commitId, String filePath, long userId) {
+        PersonalCommit commit = personalCommitRepository.findById(commitId)
+                .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(commit.getProject(), user);
+
+        byte[] fileBytes = VersionControlUtil.getFileDataFromCommit(commit, filePath);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(fileBytes);
+
+        return new InputStreamResource(inputStream);
     }
 
     // exception

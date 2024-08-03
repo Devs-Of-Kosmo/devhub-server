@@ -5,7 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +16,7 @@ import team.devs.devhub.domain.personalproject.dto.*;
 import team.devs.devhub.domain.personalproject.service.PersonalProjectService;
 import team.devs.devhub.global.security.CustomUserDetails;
 
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -84,5 +88,59 @@ public class PersonalProjectController {
     ) {
         PersonalProjectCommitReadResponse response = personalProjectService.readProjectCommit(commitId, customUserDetails.getId());
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/project/text-file")
+    @Operation(summary = "개인 프로젝트 텍스트 파일 조회 API", description = "header에 accessToken과 parameter에 commitId와 filePath(경로가 포함된 파일 이름)를 담아 요청을 보낸다")
+    public ResponseEntity<String> readTextFile(
+            @RequestParam("commitId") Long commitId,
+            @RequestParam("filePath") String filePath,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        String response = personalProjectService.readTextFileContent(commitId, filePath, customUserDetails.getId());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + new File(filePath).getName())
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(response);
+    }
+
+    @GetMapping("/project/image-file")
+    @Operation(summary = "개인 프로젝트 이미지 파일 조회 API", description = "header에 accessToken과 parameter에 commitId와 filePath(경로가 포함된 파일 이름)를 담아 요청을 보낸다")
+    public ResponseEntity<InputStreamResource> readImageFile(
+            @RequestParam("commitId") Long commitId,
+            @RequestParam("filePath") String filePath,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        InputStreamResource response = personalProjectService.readImageFileContent(commitId, filePath, customUserDetails.getId());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + new File(filePath).getName())
+                .contentType(getMediaTypeForImage(filePath))
+                .body(response);
+    }
+
+    private MediaType getMediaTypeForImage(String filePath) {
+        String fileExtension = getFileExtension(filePath).toLowerCase();
+
+        switch (fileExtension) {
+            case "jpg":
+            case "jpeg":
+                return MediaType.IMAGE_JPEG;
+            case "png":
+                return MediaType.IMAGE_PNG;
+            case "gif":
+                return MediaType.IMAGE_GIF;
+            case "bmp":
+                return MediaType.valueOf("image/bmp");
+            default:
+                return MediaType.APPLICATION_OCTET_STREAM;
+        }
+    }
+
+    private String getFileExtension(String filePath) {
+        int lastIndexOfDot = filePath.lastIndexOf('.');
+        if (lastIndexOfDot == -1) {
+            return "";
+        }
+        return filePath.substring(lastIndexOfDot + 1);
     }
 }
