@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -101,5 +102,44 @@ public class PersonalProjectController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + new File(filePath).getName())
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(response);
+    }
+
+    @GetMapping("/project/image-file")
+    public ResponseEntity<InputStreamResource> readImageFile(
+            @RequestParam("commitId") Long commitId,
+            @RequestParam("filePath") String filePath,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        InputStreamResource response = personalProjectService.readImageFileContent(commitId, filePath, customUserDetails.getId());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + new File(filePath).getName())
+                .contentType(getMediaTypeForImage(filePath))
+                .body(response);
+    }
+
+    private MediaType getMediaTypeForImage(String filePath) {
+        String fileExtension = getFileExtension(filePath).toLowerCase();
+
+        switch (fileExtension) {
+            case "jpg":
+            case "jpeg":
+                return MediaType.IMAGE_JPEG;
+            case "png":
+                return MediaType.IMAGE_PNG;
+            case "gif":
+                return MediaType.IMAGE_GIF;
+            case "bmp":
+                return MediaType.valueOf("image/bmp");
+            default:
+                return MediaType.APPLICATION_OCTET_STREAM;
+        }
+    }
+
+    private String getFileExtension(String filePath) {
+        int lastIndexOfDot = filePath.lastIndexOf('.');
+        if (lastIndexOfDot == -1) {
+            return "";
+        }
+        return filePath.substring(lastIndexOfDot + 1);
     }
 }
