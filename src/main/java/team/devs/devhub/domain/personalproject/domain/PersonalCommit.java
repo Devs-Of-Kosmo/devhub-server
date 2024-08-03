@@ -40,10 +40,10 @@ public class PersonalCommit extends BaseTimeEntity {
     private User master;
 
     @OneToMany(mappedBy = "parentCommit", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PersonalCommit> childCommitList = new ArrayList<>(); // 자식 커밋
+    private List<PersonalCommit> childCommitList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_commit_id") // 부모 커밋과의 연관 관계
+    @JoinColumn(name = "parent_commit_id")
     private PersonalCommit parentCommit;
 
     @ColumnDefault("false")
