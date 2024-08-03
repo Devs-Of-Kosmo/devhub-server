@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import team.devs.devhub.domain.personalproject.dto.*;
 import team.devs.devhub.domain.personalproject.service.PersonalProjectService;
 import team.devs.devhub.global.security.CustomUserDetails;
 
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -84,5 +87,18 @@ public class PersonalProjectController {
     ) {
         PersonalProjectCommitReadResponse response = personalProjectService.readProjectCommit(commitId, customUserDetails.getId());
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/project/text-file")
+    public ResponseEntity<String> readTextFile(
+            @RequestParam("commitId") Long commitId,
+            @RequestParam("filePath") String filePath,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        String response = personalProjectService.readTextFileContent(commitId, filePath, customUserDetails.getId());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + new File(filePath).getName())
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(response);
     }
 }

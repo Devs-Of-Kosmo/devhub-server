@@ -50,6 +50,7 @@ public class PersonalProjectService {
         return PersonalProjectRepoCreateResponse.of(project);
     }
 
+    @Transactional(readOnly = true)
     public List<PersonalProjectRepoReadResponse> readProjectRepo(long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -109,6 +110,7 @@ public class PersonalProjectService {
         return PersonalProjectSaveResponse.of(commit);
     }
 
+    @Transactional(readOnly = true)
     public PersonalProjectMetaReadResponse readProjectMetadata(long projectId, long userId) {
         PersonalProject project = personalProjectRepository.findById(projectId)
                 .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
@@ -119,6 +121,7 @@ public class PersonalProjectService {
         return PersonalProjectMetaReadResponse.of(project);
     }
 
+    @Transactional(readOnly = true)
     public PersonalProjectCommitReadResponse readProjectCommit(long commitId, long userId) {
         PersonalCommit commit = personalCommitRepository.findById(commitId)
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
@@ -129,6 +132,17 @@ public class PersonalProjectService {
         List<String> results = VersionControlUtil.getFileNameWithPathList(commit);
 
         return PersonalProjectCommitReadResponse.of(results);
+    }
+
+    @Transactional(readOnly = true)
+    public String readTextFileContent(long commitId, String filePath, long userId) {
+        PersonalCommit commit = personalCommitRepository.findById(commitId)
+                .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(commit.getProject(), user);
+
+        return new String(VersionControlUtil.getFileDataFromCommit(commit, filePath));
     }
 
     // exception
