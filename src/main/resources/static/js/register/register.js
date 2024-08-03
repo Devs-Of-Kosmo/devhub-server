@@ -1,6 +1,13 @@
-$(document).ready(function() {
+$(document).ready(function () {
     let sentToEmail = '';
     let isCodeSent = false; // 인증 코드 발송 여부 플래그
+
+    // 개별 약관 모달 동의 버튼 클릭 시 체크박스 체크
+    $('.agree-btn').on('click', function() {
+        var checkId = $(this).data('check');
+        $('#' + checkId).prop('checked', true);
+        $('.modal').modal('hide');
+    });
 
     // 전체 동의 체크박스 클릭 시 개별 체크박스 모두 선택/해제
     $('#flexCheckAll').on('change', function() {

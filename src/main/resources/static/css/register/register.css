@@ -15,4 +15,14 @@
     background-color: var(--custom-btn-bg-color);
     color: var(--white-color);
 }
-
+.modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+.modal-body p, .modal-body ul li {
+    color: white !important;
+}
+.carousel-item {
+    min-height: 200px;
+    padding: 20px;
+}
