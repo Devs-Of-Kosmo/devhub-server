@@ -118,6 +118,15 @@ public class PersonalProjectController {
                 .body(response);
     }
 
+    @DeleteMapping("/project/commit/{commitId}")
+    public ResponseEntity<Void> deleteCommitHistory(
+            @PathVariable(name = "commitId") Long commitId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        personalProjectService.deleteCommitHistory(commitId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     private MediaType getMediaTypeForImage(String filePath) {
         String fileExtension = getFileExtension(filePath).toLowerCase();
 

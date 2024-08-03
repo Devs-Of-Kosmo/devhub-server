@@ -1,6 +1,7 @@
 package team.devs.devhub.global.util;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
@@ -11,10 +12,8 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
-import team.devs.devhub.domain.personalproject.exception.CommitSearchException;
+import team.devs.devhub.domain.personalproject.exception.*;
 import team.devs.devhub.domain.personalproject.exception.FileNotFoundException;
-import team.devs.devhub.domain.personalproject.exception.FileSearchException;
-import team.devs.devhub.domain.personalproject.exception.ProjectSaveException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 
 import java.io.*;
@@ -116,11 +115,35 @@ public class VersionControlUtil {
 
             ObjectId blobId = treeWalk.getObjectId(0);
             repository.open(blobId).copyTo(outputStream);
+
+            git.close();
         } catch (IOException e) {
             throw new FileSearchException(ErrorCode.FILE_SEARCH_ERROR);
         }
 
         return outputStream.toByteArray();
+    }
+
+    public static void resetCommitHistory(PersonalCommit personalCommit) {
+        try {
+            Git git = Git.open(new File(personalCommit.getProject().getRepositoryPath()));
+            Repository repository = git.getRepository();
+
+            ObjectId objectId = ObjectId.fromString(personalCommit.getParentCommit().getCommitCode());
+
+            RevWalk revWalk = new RevWalk(repository);
+            RevCommit commit = revWalk.parseCommit(objectId);
+            revWalk.dispose();
+
+            git.reset()
+                    .setMode(ResetCommand.ResetType.HARD)
+                    .setRef(commit.getName())
+                    .call();
+
+            git.close();
+        } catch (IOException | GitAPIException e) {
+            throw new CommitResetException(ErrorCode.COMMIT_RESET_ERROR);
+        }
     }
 
     private VersionControlUtil() {}

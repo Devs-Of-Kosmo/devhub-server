@@ -33,6 +33,7 @@ public enum ErrorCode {
     COMMIT_SEARCH_ERROR(500, "PP008", "커밋 이름 탐색 중 오류가 발생했습니다"),
     FILE_NOT_FOUND(500, "PP009", "파일을 찾지 못했습니다"),
     FILE_SEARCH_ERROR(500, "PP010", "파일을 찾는 중 오류가 발생했습니다"),
+    COMMIT_RESET_ERROR(500, "PP011", "커밋 삭제 중 오류가 발생했습니다"),
 
     // Message
     MESSAGE_NOT_FOUND(500, "M001", "메시지를 찾을 수 없습니다"),
