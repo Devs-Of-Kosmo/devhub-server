@@ -19,6 +19,8 @@ import team.devs.devhub.global.error.exception.ErrorCode;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class VersionControlUtil {
 
@@ -144,6 +146,53 @@ public class VersionControlUtil {
         } catch (IOException | GitAPIException e) {
             throw new CommitResetException(ErrorCode.COMMIT_RESET_ERROR);
         }
+    }
+
+    public static byte[] generateProjectFilesAsZip(PersonalCommit personalCommit) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            Git git = Git.open(new File(personalCommit.getProject().getRepositoryPath()));
+            Repository repository = git.getRepository();
+
+            ObjectId commit = ObjectId.fromString(personalCommit.getCommitCode());
+
+            ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
+
+            TreeWalk treeWalk = new TreeWalk(repository);
+            treeWalk.addTree(repository.parseCommit(commit).getTree());
+            treeWalk.setRecursive(true);
+
+            while (treeWalk.next()) {
+                String path = treeWalk.getPathString();
+
+                if (path.endsWith(".gitignore")) {
+                    continue;
+                }
+
+                ObjectId objectId = treeWalk.getObjectId(0);
+
+                if (treeWalk.isSubtree()) {
+                    zipOutputStream.putNextEntry(new ZipEntry(path + "/"));
+                    zipOutputStream.closeEntry();
+                } else {
+                    zipOutputStream.putNextEntry(new ZipEntry(path));
+                    InputStream inputStream = repository.open(objectId).openStream();
+                    byte[] buffer = new byte[1024];
+                    int length = inputStream.read(buffer);
+                    while (length != -1) {
+                        zipOutputStream.write(buffer, 0, length);
+                        length = inputStream.read(buffer);
+                    }
+                    zipOutputStream.closeEntry();
+                }
+            }
+
+            zipOutputStream.close();
+            git.close();
+        } catch (IOException e) {
+            throw new ZipFileGenerateException(ErrorCode.ZIP_FILE_GENERATE_ERROR);
+        }
+        return byteArrayOutputStream.toByteArray();
     }
 
     private VersionControlUtil() {}

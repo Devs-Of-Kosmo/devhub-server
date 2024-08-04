@@ -3,6 +3,7 @@ package team.devs.devhub.domain.personalproject.service;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -171,6 +172,18 @@ public class PersonalProjectService {
         VersionControlUtil.resetCommitHistory(commit);
 
         softDeleteChildCommit(commit);
+    }
+
+    public PersonalProjectDownloadDto provideProjectFilesAsZip(Long commitId, Long userId) {
+        PersonalCommit commit = personalCommitRepository.findById(commitId)
+                .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(commit.getProject(), user);
+
+        ByteArrayResource resource = new ByteArrayResource(VersionControlUtil.generateProjectFilesAsZip(commit));
+
+        return PersonalProjectDownloadDto.of(resource, commit);
     }
 
     /**

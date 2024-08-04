@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,8 @@ import team.devs.devhub.domain.personalproject.service.PersonalProjectService;
 import team.devs.devhub.global.security.CustomUserDetails;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
@@ -128,6 +131,21 @@ public class PersonalProjectController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @GetMapping("/project/download")
+    public ResponseEntity<ByteArrayResource> downloadFile(
+            @RequestParam("commitId") Long commitId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        PersonalProjectDownloadDto response = personalProjectService.provideProjectFilesAsZip(commitId, customUserDetails.getId());
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + getEncodedProjectName(response.getProjectName()) + ".zip\";"
+                )
+                .contentLength(response.getResource().contentLength())
+                .body(response.getResource());
+    }
+
     private MediaType getMediaTypeForImage(String filePath) {
         String fileExtension = getFileExtension(filePath).toLowerCase();
 
@@ -152,5 +170,14 @@ public class PersonalProjectController {
             return "";
         }
         return filePath.substring(lastIndexOfDot + 1);
+    }
+
+    private String getEncodedProjectName(String projectName) {
+        try {
+            return URLEncoder.encode(projectName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "project";
     }
 }
