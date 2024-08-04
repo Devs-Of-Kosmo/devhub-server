@@ -85,6 +85,18 @@ public class PersonalProjectService {
         return PersonalProjectRepoUpdateResponse.of(project);
     }
 
+    public void deleteProjectRepo(long projectId, long userId) {
+        PersonalProject project = personalProjectRepository.findById(projectId)
+                .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(project, user);
+
+        RepositoryUtil.deleteRepository(project);
+
+        personalProjectRepository.delete(project);
+    }
+
     public PersonalProjectInitResponse saveInitialProject(PersonalProjectInitRequest request, long userId) {
         PersonalProject project = personalProjectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
@@ -116,7 +128,7 @@ public class PersonalProjectService {
         PersonalProject project = parentCommit.getProject();
         validMatchedProjectMaster(parentCommit.getProject(), user);
 
-        RepositoryUtil.deleteDirectory(project);
+        RepositoryUtil.deleteFileForCommit(project);
         RepositoryUtil.saveProjectFiles(project, request.getFiles());
         RevCommit newCommit = VersionControlUtil.saveWorkedProject(project, request.getCommitMessage());
 
@@ -182,7 +194,7 @@ public class PersonalProjectService {
         return new InputStreamResource(inputStream);
     }
 
-    public void deleteCommitHistory(Long commitId, Long userId) {
+    public void deleteCommitHistory(long commitId, long userId) {
         PersonalCommit commit = personalCommitRepository.findById(commitId)
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
         User user = userRepository.findById(userId)
@@ -195,7 +207,7 @@ public class PersonalProjectService {
     }
 
     @Transactional(readOnly = true)
-    public PersonalProjectDownloadDto provideProjectFilesAsZip(Long commitId, Long userId) {
+    public PersonalProjectDownloadDto provideProjectFilesAsZip(long commitId, long userId) {
         PersonalCommit commit = personalCommitRepository.findById(commitId)
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
         User user = userRepository.findById(userId)
