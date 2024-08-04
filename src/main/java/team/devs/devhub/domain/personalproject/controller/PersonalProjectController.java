@@ -49,6 +49,15 @@ public class PersonalProjectController {
         return ResponseEntity.ok(responses);
     }
 
+    @PatchMapping("/repo/update")
+    public ResponseEntity<PersonalProjectRepoUpdateResponse> updatePersonalProjectRepo(
+            @RequestBody @Valid PersonalProjectRepoUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        PersonalProjectRepoUpdateResponse response = personalProjectService.updateProjectRepo(request, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/project/init")
     @Operation(summary = "개인 프로젝트 최초 저장 API",
             description = "header에 accessToken과 " +

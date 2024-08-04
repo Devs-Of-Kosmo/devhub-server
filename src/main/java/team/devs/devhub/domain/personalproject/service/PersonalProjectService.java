@@ -11,9 +11,9 @@ import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalCommitRepository;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalProjectRepository;
 import team.devs.devhub.domain.personalproject.dto.*;
-import team.devs.devhub.domain.personalproject.exception.DuplicatedRepositoryException;
+import team.devs.devhub.domain.personalproject.exception.RepositoryDuplicateException;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
-import team.devs.devhub.domain.personalproject.exception.NotMatchedPersonalProjectMasterException;
+import team.devs.devhub.domain.personalproject.exception.PersonalProjectMasterNotMatchException;
 import team.devs.devhub.domain.personalproject.exception.PersonalCommitNotFoundException;
 import team.devs.devhub.domain.personalproject.exception.PersonalProjectNotFoundException;
 import team.devs.devhub.domain.user.domain.User;
@@ -46,7 +46,7 @@ public class PersonalProjectService {
 
         validRepositoryName(project);
         personalProjectRepository.save(project);
-        project.createRepositoryPath(repositoryPathHead);
+        project.saveRepositoryPath(repositoryPathHead);
 
         RepositoryUtil.createRepository(project);
 
@@ -63,6 +63,26 @@ public class PersonalProjectService {
                 .collect(Collectors.toList());
 
         return results;
+    }
+
+    public PersonalProjectRepoUpdateResponse updateProjectRepo(PersonalProjectRepoUpdateRequest request, long userId) {
+        PersonalProject project = personalProjectRepository.findById(request.getProjectId())
+                .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        PersonalProject target = request.toEntity();
+
+        validMatchedProjectMaster(project, user);
+        validRepositoryName(target);
+
+        String oldRepoNamePath = project.getRepositoryPath();
+
+        project.update(target);
+        project.saveRepositoryPath(repositoryPathHead);
+
+        RepositoryUtil.changeRepositoryName(oldRepoNamePath, project);
+
+        return PersonalProjectRepoUpdateResponse.of(project);
     }
 
     public PersonalProjectInitResponse saveInitialProject(PersonalProjectInitRequest request, long userId) {
@@ -174,6 +194,7 @@ public class PersonalProjectService {
         softDeleteChildCommit(commit);
     }
 
+    @Transactional(readOnly = true)
     public PersonalProjectDownloadDto provideProjectFilesAsZip(Long commitId, Long userId) {
         PersonalCommit commit = personalCommitRepository.findById(commitId)
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
@@ -199,13 +220,13 @@ public class PersonalProjectService {
     // exception
     private void validRepositoryName(PersonalProject project) {
         if (personalProjectRepository.existsByMasterAndName(project.getMaster(), project.getName())) {
-            throw new DuplicatedRepositoryException(ErrorCode.REPOSITORY_NAME_DUPLICATED);
+            throw new RepositoryDuplicateException(ErrorCode.REPOSITORY_NAME_DUPLICATED);
         }
     }
 
     private void validMatchedProjectMaster(PersonalProject project, User user) {
         if (project.getMaster().getId() != user.getId()) {
-            throw new NotMatchedPersonalProjectMasterException(ErrorCode.PERSONAL_PROJECT_MASTER_NOT_MATCH);
+            throw new PersonalProjectMasterNotMatchException(ErrorCode.PERSONAL_PROJECT_MASTER_NOT_MATCH);
         }
     }
 }
