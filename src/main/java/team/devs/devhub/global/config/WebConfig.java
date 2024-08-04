@@ -12,10 +12,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/")
-                .setCachePeriod(3600);
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:///Users/woong/Downloads/board.images/");
     }
+
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
