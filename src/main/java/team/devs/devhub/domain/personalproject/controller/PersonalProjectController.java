@@ -50,6 +50,7 @@ public class PersonalProjectController {
     }
 
     @PatchMapping("/repo/update")
+    @Operation(summary = "개인 레포지토리 수정 API", description = "header에 accessToken과 body에 변경할 projectId, changedProjectName과 changedDescription을 담아 요청한다")
     public ResponseEntity<PersonalProjectRepoUpdateResponse> updatePersonalProjectRepo(
             @RequestBody @Valid PersonalProjectRepoUpdateRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
