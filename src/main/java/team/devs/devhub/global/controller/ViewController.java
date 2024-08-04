@@ -41,10 +41,12 @@ public class ViewController {
     public String contact() {
         return "contact";
     }
+
     @GetMapping("/test")
     public String test() {
         return "test";
     }
+
     @PostMapping("/send-data")
     public ResponseEntity<String> sendDataToFlask(@RequestBody Map<String, String> data) {
         String flaskUrl = "http://127.0.0.1:5000/";
@@ -56,10 +58,12 @@ public class ViewController {
     public String loadingPage() {
         return "loading";
     }
+
     @GetMapping("/personal_project")
     public String personalProject() {
         return "personal_project";
     }
+
     @GetMapping("/project_list")
     public String projectList() {
         return "project_list";
