@@ -29,7 +29,7 @@ public class VersionControlUtil {
         try (FileWriter writer = new FileWriter(gitIgnoreFile)) {
             writer.write(".DS_Store\n");
         } catch (IOException e) {
-            throw new ProjectSaveException(ErrorCode.PROJECT_SAVE_ERROR);
+            throw new VersionControlUtilException(ErrorCode.PROJECT_SAVE_ERROR);
         }
     }
 
@@ -43,7 +43,7 @@ public class VersionControlUtil {
             git.close();
             return commit;
         } catch (GitAPIException e) {
-            throw new ProjectSaveException(ErrorCode.PROJECT_SAVE_ERROR);
+            throw new VersionControlUtilException(ErrorCode.PROJECT_SAVE_ERROR);
         }
     }
 
@@ -60,7 +60,7 @@ public class VersionControlUtil {
             git.close();
             return commit;
         } catch (IOException | GitAPIException e) {
-            throw new ProjectSaveException(ErrorCode.PROJECT_SAVE_ERROR);
+            throw new VersionControlUtilException(ErrorCode.PROJECT_SAVE_ERROR);
         }
     }
 
@@ -89,7 +89,7 @@ public class VersionControlUtil {
 
             git.close();
         } catch (Exception e) {
-            throw new CommitSearchException(ErrorCode.COMMIT_SEARCH_ERROR);
+            throw new VersionControlUtilException(ErrorCode.COMMIT_SEARCH_ERROR);
         }
 
         return fileNameWithPathList;
@@ -120,7 +120,7 @@ public class VersionControlUtil {
 
             git.close();
         } catch (IOException e) {
-            throw new FileSearchException(ErrorCode.FILE_SEARCH_ERROR);
+            throw new VersionControlUtilException(ErrorCode.FILE_SEARCH_ERROR);
         }
 
         return outputStream.toByteArray();
@@ -144,7 +144,7 @@ public class VersionControlUtil {
 
             git.close();
         } catch (IOException | GitAPIException e) {
-            throw new CommitResetException(ErrorCode.COMMIT_RESET_ERROR);
+            throw new VersionControlUtilException(ErrorCode.COMMIT_RESET_ERROR);
         }
     }
 
@@ -190,7 +190,7 @@ public class VersionControlUtil {
             zipOutputStream.close();
             git.close();
         } catch (IOException e) {
-            throw new ZipFileGenerateException(ErrorCode.ZIP_FILE_GENERATE_ERROR);
+            throw new VersionControlUtilException(ErrorCode.ZIP_FILE_GENERATE_ERROR);
         }
         return byteArrayOutputStream.toByteArray();
     }

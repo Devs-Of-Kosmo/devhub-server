@@ -2,11 +2,10 @@ package team.devs.devhub.global.util;
 
 import org.springframework.web.multipart.MultipartFile;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
-import team.devs.devhub.domain.personalproject.exception.ProjectSaveException;
-import team.devs.devhub.domain.personalproject.exception.RepositoryCreationException;
-import team.devs.devhub.domain.personalproject.exception.DirectoryDeleteException;
+import team.devs.devhub.domain.personalproject.exception.*;
 import team.devs.devhub.global.error.exception.ErrorCode;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -19,7 +18,16 @@ public class RepositoryUtil {
         try {
             Files.createDirectories(path);
         } catch (IOException e) {
-            throw new RepositoryCreationException(ErrorCode.REPOSITORY_CREATION_ERROR);
+            throw new RepositoryUtilException(ErrorCode.REPOSITORY_CREATION_ERROR);
+        }
+    }
+
+    public static void changeRepositoryName(String oldRepoNamePath, PersonalProject project) {
+        File oldDirectory = new File(oldRepoNamePath);
+        File newDirectory = new File(project.getRepositoryPath());
+
+        if (!oldDirectory.renameTo(newDirectory)) {
+            throw new RepositoryUtilException(ErrorCode.REPOSITORY_UPDATE_ERROR);
         }
     }
 
@@ -31,7 +39,7 @@ public class RepositoryUtil {
                 Files.createDirectories(filePath.getParent());
                 Files.write(filePath, file.getBytes());
             } catch (IOException e) {
-                throw new ProjectSaveException(ErrorCode.PROJECT_SAVE_ERROR);
+                throw new RepositoryUtilException(ErrorCode.PROJECT_SAVE_ERROR);
             }
         }
     }
@@ -69,7 +77,7 @@ public class RepositoryUtil {
                 }
             });
         } catch (IOException e) {
-            throw new DirectoryDeleteException(ErrorCode.DIRECTORY_DELETE_ERROR);
+            throw new RepositoryUtilException(ErrorCode.DIRECTORY_DELETE_ERROR);
         }
     }
 

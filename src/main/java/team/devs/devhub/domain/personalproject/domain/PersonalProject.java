@@ -44,9 +44,15 @@ public class PersonalProject extends BaseTimeEntity {
         this.master = master;
     }
 
-    public void createRepositoryPath(String repositoryPathHead) {
+    public void saveRepositoryPath(String repositoryPathHead) {
         this.repositoryPath = repositoryPathHead
                 + master.getId() + "_" + master.getName() + "/"
                 + name + "_" + getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
+    }
+
+    public void update(PersonalProject project) {
+        this.name = project.getName();
+        this.description = project.getDescription();
+
     }
 }
