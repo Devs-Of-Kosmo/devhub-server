@@ -132,6 +132,8 @@ public class PersonalProjectController {
     }
 
     @GetMapping("/project/download")
+    @Operation(summary = "개인 프로젝트 다운로드 API", description = "header에 accessToken과 parmeter에 다운로드 받을 프로젝트 특정 시점의 commitId를 담아 요청을 보낸다 "
+                                                            + "(다운로드 시 파일 이름은 응답 헤더에 'Content-Disposition'의 filename 값으로 설정)")
     public ResponseEntity<ByteArrayResource> downloadFile(
             @RequestParam("commitId") Long commitId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
