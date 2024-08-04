@@ -31,6 +31,27 @@ public class RepositoryUtil {
         }
     }
 
+    public static void deleteRepository(PersonalProject project) {
+        Path path = Paths.get(project.getRepositoryPath());
+        try {
+            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new RepositoryUtilException(ErrorCode.REPOSITORY_DELETE_ERROR);
+        }
+    }
+
     public static void saveProjectFiles(PersonalProject project, List<MultipartFile> files) {
         for (MultipartFile file : files) {
             try {
@@ -44,7 +65,7 @@ public class RepositoryUtil {
         }
     }
 
-    public static void deleteDirectory(PersonalProject project){
+    public static void deleteFileForCommit(PersonalProject project) {
         Path path = Paths.get(project.getRepositoryPath());
         try {
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {

@@ -30,7 +30,7 @@ import java.util.List;
 public class PersonalProjectController {
     private final PersonalProjectService personalProjectService;
 
-    @PostMapping("/repo/create")
+    @PostMapping("/repo")
     @Operation(summary = "개인 레포지토리 생성 API", description = "header에 accessToken과 body에 projectName과 description을 담아 요청한다")
     public ResponseEntity<PersonalProjectRepoCreateResponse> createPersonalProjectRepo(
             @RequestBody @Valid PersonalProjectRepoCreateRequest request,
@@ -40,7 +40,7 @@ public class PersonalProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/repo/read")
+    @GetMapping("/repo/list")
     @Operation(summary = "개인 레포지토리 목록 조회 API", description = "header에 accessToken을 담아 요청하면 레포지토리 목록을 리스트 형태로 반환한다")
     public ResponseEntity<List<PersonalProjectRepoReadResponse>> readPersonalProjectRepo(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
@@ -49,7 +49,7 @@ public class PersonalProjectController {
         return ResponseEntity.ok(responses);
     }
 
-    @PatchMapping("/repo/update")
+    @PatchMapping("/repo")
     @Operation(summary = "개인 레포지토리 수정 API", description = "header에 accessToken과 body에 변경할 projectId, changedProjectName과 changedDescription을 담아 요청한다")
     public ResponseEntity<PersonalProjectRepoUpdateResponse> updatePersonalProjectRepo(
             @RequestBody @Valid PersonalProjectRepoUpdateRequest request,
@@ -57,6 +57,17 @@ public class PersonalProjectController {
     ) {
         PersonalProjectRepoUpdateResponse response = personalProjectService.updateProjectRepo(request, customUserDetails.getId());
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/repo/{projectId}")
+    @Operation(summary = "개인 레포지토리 삭제 API", description = "header에 accessToken과 경로 {projectId}에 삭제할 projectId를 담아 요청을 보낸다"
+                                                        + "(응답 데이터가 존재하지 않음 \"NO_CONTENT\")")
+    public ResponseEntity<Void> deletePersonalProjectRepo(
+            @PathVariable(name = "projectId") Long projectId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        personalProjectService.deleteProjectRepo(projectId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping("/project/init")
@@ -83,7 +94,7 @@ public class PersonalProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/project/meta-read")
+    @GetMapping("/project/metadata")
     @Operation(summary = "개인 프로젝트 메타데이터 조회 API", description = "header에 accessToken과 parameter에 projectId를 담아 요청을 보낸다")
     public ResponseEntity<PersonalProjectMetaReadResponse> readPersonalProjectMeta(
             @RequestParam("projectId") Long projectId,
@@ -93,7 +104,7 @@ public class PersonalProjectController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/project/commit-read")
+    @GetMapping("/project/commit")
     @Operation(summary = "개인 프로젝트 특정 커밋 조회 API", description = "header에 accessToken과 parameter에 commitId를 담아 요청을 보낸다")
     public ResponseEntity<PersonalProjectCommitReadResponse> readPersonalProjectCommit(
             @RequestParam("commitId") Long commitId,
@@ -104,7 +115,8 @@ public class PersonalProjectController {
     }
 
     @GetMapping("/project/text-file")
-    @Operation(summary = "개인 프로젝트 텍스트 파일 조회 API", description = "header에 accessToken과 parameter에 commitId와 filePath(경로가 포함된 파일 이름)를 담아 요청을 보낸다")
+    @Operation(summary = "개인 프로젝트 텍스트 파일 조회 API", description = "header에 accessToken과 parameter에 commitId와 filePath(경로가 포함된 파일 이름)를 담아 요청을 보낸다"
+                                                                + "(응답 데이터가 json 형식이 아님)")
     public ResponseEntity<String> readTextFile(
             @RequestParam("commitId") Long commitId,
             @RequestParam("filePath") String filePath,
@@ -118,7 +130,8 @@ public class PersonalProjectController {
     }
 
     @GetMapping("/project/image-file")
-    @Operation(summary = "개인 프로젝트 이미지 파일 조회 API", description = "header에 accessToken과 parameter에 commitId와 filePath(경로가 포함된 파일 이름)를 담아 요청을 보낸다")
+    @Operation(summary = "개인 프로젝트 이미지 파일 조회 API", description = "header에 accessToken과 parameter에 commitId와 filePath(경로가 포함된 파일 이름)를 담아 요청을 보낸다"
+                                                                + "(응답 데이터가 json 형식이 아님)")
     public ResponseEntity<InputStreamResource> readImageFile(
             @RequestParam("commitId") Long commitId,
             @RequestParam("filePath") String filePath,
@@ -132,7 +145,8 @@ public class PersonalProjectController {
     }
 
     @DeleteMapping("/project/commit/{commitId}")
-    @Operation(summary = "개인 프로젝트 커밋 이력 삭제 API", description = "header에 accessToken과 경로 {commitId}에 삭제할 commitId를 담아 요청을 보낸다")
+    @Operation(summary = "개인 프로젝트 커밋 이력 삭제 API", description = "header에 accessToken과 경로 {commitId}에 삭제할 commitId를 담아 요청을 보낸다"
+                                                                + "(응답 데이터가 존재하지 않음 \"NO_CONTENT\")")
     public ResponseEntity<Void> deleteCommitHistory(
             @PathVariable(name = "commitId") Long commitId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
@@ -143,7 +157,8 @@ public class PersonalProjectController {
 
     @GetMapping("/project/download")
     @Operation(summary = "개인 프로젝트 다운로드 API", description = "header에 accessToken과 parmeter에 다운로드 받을 프로젝트 특정 시점의 commitId를 담아 요청을 보낸다 "
-                                                            + "(다운로드 시 파일 이름은 응답 헤더에 'Content-Disposition'의 filename 값으로 설정)")
+                                                            + "(다운로드 시 파일 이름은 응답 헤더에 'Content-Disposition'의 filename 값으로 설정, "
+                                                            + "응답 데이터가 json 형식이 아님)")
     public ResponseEntity<ByteArrayResource> downloadFile(
             @RequestParam("commitId") Long commitId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
