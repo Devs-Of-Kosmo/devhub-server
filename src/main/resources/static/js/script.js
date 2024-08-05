@@ -1,3 +1,5 @@
+import connectWebSocket from './websocket.js';
+
 $(document).ready(function() {
     var accessToken = localStorage.getItem('accessToken');
     var userEmail = null;
@@ -10,18 +12,16 @@ $(document).ready(function() {
                 'Authorization': 'Bearer ' + accessToken
             },
             success: function(response) {
-                userName = response.name;
+                var userName = response.name;
                 userEmail = response.email;
 
-                document.getElementById('login-container').style.cssText = 'display: none !important;';
-                $('#login-link').text(userName + '님');
-                $('#login-side').text(userName + '님');
+                var socketEmail = userEmail;
+                connectWebSocket(socketEmail);
 
-                $('#login-link').on('click', function() {
-                    $('#profileName').val(userName);
-                    $('#profileEmail').val(userEmail);
-                    $('#profileModal').modal('show');
-                });
+                // 로그인된 경우 UI 변경
+                document.getElementById('login-container').style.cssText = 'display: none !important;';
+                $('#login-link').text(userName + '님').attr('href', '/mypage');
+                $('#login-side').text(userName + '님').attr('href', '/mypage');
 
                 // 로그인된 경우 링크를 활성화
                 var myProjectsLink = document.getElementById('my-projects-link');
@@ -67,38 +67,11 @@ $(document).ready(function() {
                             Swal.fire('로그아웃 중 오류가 발생했습니다.', '', 'error');
                         });
                 });
-
-                // 웹소켓 연결 설정
-                var socket = new WebSocket("ws://localhost:8080/ws/message?email=" + userEmail);
-
-                // 웹소켓 이벤트 리스너 정의
-                socket.onopen = function(event) {
-                    console.log("웹소켓 연결이 열렸습니다.");
-                };
-
-                socket.onmessage = function(event) {
-                    console.log("서버로부터 메시지 수신:", event.data);
-                    $('#message-link').text(event.data);
-                    updateMessageImg(event.data);
-                };
-
-                socket.onclose = function(event) {
-                    if (event.wasClean) {
-                        console.log(`웹소켓 연결이 정상적으로 닫혔습니다. 코드: ${event.code}, 이유: ${event.reason}`);
-                    } else {
-                        console.error(`웹소켓 연결이 비정상적으로 닫혔습니다.`);
-                    }
-                };
-
-                socket.onerror = function(error) {
-                    console.error("웹소켓 에러 발생:", error);
-                };
             },
             error: function(error) {
                 console.error('사용자 정보를 가져오는데 실패했습니다:', error);
             }
         });
-
     } else {
         // 로그인되지 않은 경우 링크를 비활성화
         var myProjectsLink = document.getElementById('my-projects-link');
