@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 import team.devs.devhub.global.util.CookieUtil;
 
 import java.util.Map;
-
 @Controller
 @RequiredArgsConstructor
 public class ViewController {
@@ -41,10 +40,7 @@ public class ViewController {
     public String contact() {
         return "contact";
     }
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
+
     @PostMapping("/send-data")
     public ResponseEntity<String> sendDataToFlask(@RequestBody Map<String, String> data) {
         String flaskUrl = "http://127.0.0.1:5000/";
@@ -52,16 +48,24 @@ public class ViewController {
         ResponseEntity<String> response = restTemplate.postForEntity(flaskUrl, data, String.class);
         return response;
     }
+
     @GetMapping("/loading")
     public String loadingPage() {
         return "loading";
     }
+
     @GetMapping("/personal_project")
     public String personalProject() {
         return "personal_project";
     }
+
     @GetMapping("/project_list")
     public String projectList() {
         return "project_list";
+    }
+
+    @GetMapping("/mypage")
+    public String mypage() {
+        return "mypage";
     }
 }
