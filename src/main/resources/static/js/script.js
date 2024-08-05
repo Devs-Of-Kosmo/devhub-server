@@ -10,18 +10,13 @@ $(document).ready(function() {
                 'Authorization': 'Bearer ' + accessToken
             },
             success: function(response) {
-                userName = response.name;
+                var userName = response.name;
                 userEmail = response.email;
 
+                // 로그인된 경우 UI 변경
                 document.getElementById('login-container').style.cssText = 'display: none !important;';
-                $('#login-link').text(userName + '님');
-                $('#login-side').text(userName + '님');
-
-                $('#login-link').on('click', function() {
-                    $('#profileName').val(userName);
-                    $('#profileEmail').val(userEmail);
-                    $('#profileModal').modal('show');
-                });
+                $('#login-link').text(userName + '님').attr('href', '/mypage');
+                $('#login-side').text(userName + '님').attr('href', '/mypage');
 
                 // 로그인된 경우 링크를 활성화
                 var myProjectsLink = document.getElementById('my-projects-link');
