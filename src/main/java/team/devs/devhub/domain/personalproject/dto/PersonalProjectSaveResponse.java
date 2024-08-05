@@ -13,7 +13,7 @@ public class PersonalProjectSaveResponse {
     private Long newCommitId;
     private Long projectId;
     private Long masterId;
-    private String parentCommitCode;
+    private Long parentCommitId;
     private String commitMessage;
 
     public static PersonalProjectSaveResponse of(PersonalCommit commit) {
@@ -21,7 +21,7 @@ public class PersonalProjectSaveResponse {
                 .newCommitId(commit.getId())
                 .projectId(commit.getProject().getId())
                 .masterId(commit.getMaster().getId())
-                .parentCommitCode(commit.getParentCommitCode())
+                .parentCommitId(commit.getParentCommit().getId())
                 .commitMessage(commit.getCommitMessage())
                 .build();
     }

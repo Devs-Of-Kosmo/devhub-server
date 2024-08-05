@@ -3,15 +3,17 @@ package team.devs.devhub.domain.personalproject.service;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalCommitRepository;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalProjectRepository;
 import team.devs.devhub.domain.personalproject.dto.*;
-import team.devs.devhub.domain.personalproject.exception.DuplicatedRepositoryException;
+import team.devs.devhub.domain.personalproject.exception.RepositoryDuplicateException;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
-import team.devs.devhub.domain.personalproject.exception.NotMatchedPersonalProjectMasterException;
+import team.devs.devhub.domain.personalproject.exception.PersonalProjectMasterNotMatchException;
 import team.devs.devhub.domain.personalproject.exception.PersonalCommitNotFoundException;
 import team.devs.devhub.domain.personalproject.exception.PersonalProjectNotFoundException;
 import team.devs.devhub.domain.user.domain.User;
@@ -21,6 +23,7 @@ import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.util.RepositoryUtil;
 import team.devs.devhub.global.util.VersionControlUtil;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,13 +46,14 @@ public class PersonalProjectService {
 
         validRepositoryName(project);
         personalProjectRepository.save(project);
-        project.createRepositoryPath(repositoryPathHead);
+        project.saveRepositoryPath(repositoryPathHead);
 
         RepositoryUtil.createRepository(project);
 
         return PersonalProjectRepoCreateResponse.of(project);
     }
 
+    @Transactional(readOnly = true)
     public List<PersonalProjectRepoReadResponse> readProjectRepo(long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -59,6 +63,38 @@ public class PersonalProjectService {
                 .collect(Collectors.toList());
 
         return results;
+    }
+
+    public PersonalProjectRepoUpdateResponse updateProjectRepo(PersonalProjectRepoUpdateRequest request, long userId) {
+        PersonalProject project = personalProjectRepository.findById(request.getProjectId())
+                .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        PersonalProject target = request.toEntity();
+
+        validMatchedProjectMaster(project, user);
+        validRepositoryName(target);
+
+        String oldRepoNamePath = project.getRepositoryPath();
+
+        project.update(target);
+        project.saveRepositoryPath(repositoryPathHead);
+
+        RepositoryUtil.changeRepositoryName(oldRepoNamePath, project);
+
+        return PersonalProjectRepoUpdateResponse.of(project);
+    }
+
+    public void deleteProjectRepo(long projectId, long userId) {
+        PersonalProject project = personalProjectRepository.findById(projectId)
+                .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(project, user);
+
+        RepositoryUtil.deleteRepository(project);
+
+        personalProjectRepository.delete(project);
     }
 
     public PersonalProjectInitResponse saveInitialProject(PersonalProjectInitRequest request, long userId) {
@@ -92,23 +128,24 @@ public class PersonalProjectService {
         PersonalProject project = parentCommit.getProject();
         validMatchedProjectMaster(parentCommit.getProject(), user);
 
-        RepositoryUtil.deleteDirectory(project);
+        RepositoryUtil.deleteFileForCommit(project);
         RepositoryUtil.saveProjectFiles(project, request.getFiles());
         RevCommit newCommit = VersionControlUtil.saveWorkedProject(project, request.getCommitMessage());
 
         PersonalCommit commit = personalCommitRepository.save(
                 PersonalCommit.builder()
                         .commitCode(newCommit.getName())
-                        .parentCommitCode(parentCommit.getCommitCode())
                         .commitMessage(request.getCommitMessage())
                         .project(project)
                         .master(user)
+                        .parentCommit(parentCommit)
                         .build()
         );
 
         return PersonalProjectSaveResponse.of(commit);
     }
 
+    @Transactional(readOnly = true)
     public PersonalProjectMetaReadResponse readProjectMetadata(long projectId, long userId) {
         PersonalProject project = personalProjectRepository.findById(projectId)
                 .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
@@ -119,6 +156,7 @@ public class PersonalProjectService {
         return PersonalProjectMetaReadResponse.of(project);
     }
 
+    @Transactional(readOnly = true)
     public PersonalProjectCommitReadResponse readProjectCommit(long commitId, long userId) {
         PersonalCommit commit = personalCommitRepository.findById(commitId)
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
@@ -131,16 +169,76 @@ public class PersonalProjectService {
         return PersonalProjectCommitReadResponse.of(results);
     }
 
+    @Transactional(readOnly = true)
+    public String readTextFileContent(long commitId, String filePath, long userId) {
+        PersonalCommit commit = personalCommitRepository.findById(commitId)
+                .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(commit.getProject(), user);
+
+        return new String(VersionControlUtil.getFileDataFromCommit(commit, filePath));
+    }
+
+    @Transactional(readOnly = true)
+    public InputStreamResource readImageFileContent(long commitId, String filePath, long userId) {
+        PersonalCommit commit = personalCommitRepository.findById(commitId)
+                .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(commit.getProject(), user);
+
+        byte[] fileBytes = VersionControlUtil.getFileDataFromCommit(commit, filePath);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(fileBytes);
+
+        return new InputStreamResource(inputStream);
+    }
+
+    public void deleteCommitHistory(long commitId, long userId) {
+        PersonalCommit commit = personalCommitRepository.findById(commitId)
+                .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(commit.getProject(), user);
+
+        VersionControlUtil.resetCommitHistory(commit);
+
+        softDeleteChildCommit(commit);
+    }
+
+    @Transactional(readOnly = true)
+    public PersonalProjectDownloadDto provideProjectFilesAsZip(long commitId, long userId) {
+        PersonalCommit commit = personalCommitRepository.findById(commitId)
+                .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validMatchedProjectMaster(commit.getProject(), user);
+
+        ByteArrayResource resource = new ByteArrayResource(VersionControlUtil.generateProjectFilesAsZip(commit));
+
+        return PersonalProjectDownloadDto.of(resource, commit);
+    }
+
+    /**
+     * 성능에 매우 비효율적, 성능 개선 필요
+     */
+    private void softDeleteChildCommit(PersonalCommit commit) {
+        commit.softDelete();
+        commit.getChildCommitList().stream()
+                .filter(e -> !e.isDeleteCondition())
+                .forEach(this::softDeleteChildCommit);
+    }
+
     // exception
     private void validRepositoryName(PersonalProject project) {
         if (personalProjectRepository.existsByMasterAndName(project.getMaster(), project.getName())) {
-            throw new DuplicatedRepositoryException(ErrorCode.REPOSITORY_NAME_DUPLICATED);
+            throw new RepositoryDuplicateException(ErrorCode.REPOSITORY_NAME_DUPLICATED);
         }
     }
 
     private void validMatchedProjectMaster(PersonalProject project, User user) {
         if (project.getMaster().getId() != user.getId()) {
-            throw new NotMatchedPersonalProjectMasterException(ErrorCode.PERSONAL_PROJECT_MASTER_NOT_MATCH);
+            throw new PersonalProjectMasterNotMatchException(ErrorCode.PERSONAL_PROJECT_MASTER_NOT_MATCH);
         }
     }
 }
