@@ -12,8 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var urlParams = new URLSearchParams(window.location.search);
     var token = urlParams.get('token');
     var projectsToken = urlParams.get('projects');
-    console.log('Token from URL:', token);  // URL에서 가져온 토큰을 콘솔에 출력하여 확인
-    console.log('Projects Token from URL:', projectsToken);  // URL에서 가져온 projects 토큰을 콘솔에 출력하여 확인
 
     if (token) {
         localStorage.setItem('accessToken', token);
@@ -63,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             var projectName = document.getElementById('projectName').value;
             var description = document.getElementById('description').value;
-            var projectsToken = localStorage.getItem('projects'); // localStorage에서 projectsToken 가져오기
+            var projectsToken = localStorage.getItem('projects');
 
             if (token && projectName && description && projectsToken) {
                 fetch('/api/personal/repo/create', {
@@ -95,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    // 프로젝트 토큰에서 프로젝트 명을 추출하여 표시
+
     if (projectsToken) {
                 var projects = JSON.parse(projectsToken);
                 var slideContainer = document.getElementById('slide');

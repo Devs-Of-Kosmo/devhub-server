@@ -1,6 +1,7 @@
 $(document).ready(function () {
     let sentToEmail = '';
     let isCodeSent = false; // 인증 코드 발송 여부 플래그
+    let isEmailVerified = false; // 이메일 인증 여부 플래그
 
     // 개별 약관 모달 동의 버튼 클릭 시 체크박스 체크
     $('.agree-btn').on('click', function() {
@@ -69,6 +70,7 @@ $(document).ready(function () {
                         $('#verifyCodeBtn').text('인증 완료');
                         $('#verifyCodeBtn').css('background-color', 'green');
                         $('#verifyCodeBtn').css('border-color', 'green');
+                        isEmailVerified = true; // 이메일 인증 여부 플래그 설정
                     } else {
                         Swal.fire('인증번호가 일치하지 않습니다.', '', 'error');
                     }
@@ -104,6 +106,11 @@ $(document).ready(function () {
 
         if (!$('#termsCheck1').is(':checked') || !$('#termsCheck2').is(':checked')) {
             Swal.fire('서비스 이용약관과 개인정보 처리방침에 동의해야 합니다.', '', 'warning');
+            return;
+        }
+
+        if (!isEmailVerified) {
+            Swal.fire('이메일 인증을 완료해 주세요.', '', 'warning');
             return;
         }
 
