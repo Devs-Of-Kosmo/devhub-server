@@ -48,7 +48,7 @@ public class MessageService {
                 .orElseThrow(() -> new MessageCountingNullException(ErrorCode.MESSAGE_COUNTING_NULL));
 
         String unreadCountString = unreadCount.toString();
-        sendNotification(receiver.getEmail(), "읽지 않은 쪽지 " + unreadCountString + "건");
+        sendNotification(receiver.getEmail(),unreadCountString);
 
         return messageSaveResponse;
 
@@ -110,7 +110,7 @@ public class MessageService {
                     .orElseThrow(() -> new MessageCountingNullException(ErrorCode.MESSAGE_COUNTING_NULL));
 
             String unreadCountString = unreadCount.toString();
-            sendNotification(receiver.getEmail(), "읽지 않은 쪽지 " + unreadCountString + "건");
+            sendNotification(receiver.getEmail(), unreadCountString);
 
             deleteCompleteMessage = getReceivedMessages(customUserDetails);
 
@@ -141,7 +141,7 @@ public class MessageService {
                     .orElseThrow(() -> new MessageCountingNullException(ErrorCode.MESSAGE_COUNTING_NULL));
 
             String unreadCountString = unreadCount.toString();
-            sendNotification(receiver.getEmail(), "읽지 않은 쪽지 " + unreadCountString + "건");
+            sendNotification(receiver.getEmail(), unreadCountString);
 
         }
 

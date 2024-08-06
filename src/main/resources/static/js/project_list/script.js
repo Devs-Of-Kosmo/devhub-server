@@ -1,3 +1,5 @@
+import connectWebSocket from '../websocket.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     var urlParams = new URLSearchParams(window.location.search);
     var accessToken = urlParams.get('token');
@@ -19,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+
                 return response.json();
             })
             .then(data => {
@@ -28,6 +31,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         loginNavItem.innerHTML = '<a href="/profile" class="nav-link">' + data.name + '님</a>';
                     }
                 }
+
+                var socketEmail = data.email;
+                connectWebSocket(socketEmail);
             })
             .catch(error => console.error('Error fetching user info:', error));
     }
@@ -52,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Personal projects:', data);
                 projectsArray = data;
                 displayProjects(projectsArray);
+
             })
             .catch(error => console.error('Error fetching personal projects:', error));
     } else {
