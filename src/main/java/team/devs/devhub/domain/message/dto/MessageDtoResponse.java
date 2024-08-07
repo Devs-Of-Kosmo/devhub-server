@@ -16,7 +16,6 @@ public class MessageDtoResponse {
     private String senderEmail;
     private String receiverEmail;
     private String content;
-    private String inviteUrl;
     private LocalDateTime createdDate;
     private boolean readCondition;
 
@@ -26,7 +25,6 @@ public class MessageDtoResponse {
                 .senderEmail(message.getSender().getEmail())
                 .receiverEmail(message.getReceiver().getEmail())
                 .content(message.getContent())
-                .inviteUrl(message.getInviteUrl())
                 .createdDate(message.getCreatedDate())
                 .readCondition(message.isReadCondition())
                 .build();

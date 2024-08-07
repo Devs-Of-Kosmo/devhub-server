@@ -23,7 +23,7 @@ public class MessageController {
     public final MessageService messageService;
 
     @PostMapping("/send")
-    @Operation(summary = "쪽지 발송(생성) API", description = "header에 accessToken과 body에 content, receiverEmail, inviteUrl을 담아 요청하고 저장된 쪽지의 식별자 id를 받는다")
+    @Operation(summary = "쪽지 발송(생성) API", description = "header에 accessToken과 body에 content, receiverEmail을 담아 요청하고 저장된 쪽지의 식별자 id를 받는다")
     public ResponseEntity<MessageSaveResponse> messageSend(@RequestBody MessageDtoRequest messageDtoRequest,
                                                            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.ok(messageService.saveMessage(messageDtoRequest, customUserDetails));
