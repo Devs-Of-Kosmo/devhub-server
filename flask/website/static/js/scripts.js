@@ -36,9 +36,46 @@ document.addEventListener('DOMContentLoaded', function() {
             // projects 데이터를 로컬 스토리지에 저장
             localStorage.setItem('projects', JSON.stringify(data));
         })
-        .catch(error => {
-            console.error('Error fetching personal projects:', error);
-            alert('Error fetching personal projects: ' + error.message);
+        .catch(error => console.error('Error:', error));
+    }
+
+    var createProjectForm = document.getElementById('create-project-form');
+    if (createProjectForm) {
+        createProjectForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var projectName = document.getElementById('projectName').value;
+            var description = document.getElementById('description').value;
+            var projectsToken = localStorage.getItem('projects');
+
+            if (token && projectName && description && projectsToken) {
+                fetch('/api/personal/repo', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        projectName: projectName,
+                        description: description,
+                        projectsToken: projectsToken // 요청 본문에 projectsToken 포함
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Project creation response:', data);
+                    if (data.personalProjectId) {
+                        projectsArray.push(data);
+                        localStorage.setItem('projects', JSON.stringify(projectsArray));
+                        window.location.reload();
+                    } else {
+                        console.error('Project creation failed:', data);
+                    }
+                })
+                .catch(error => console.error('Error creating project:', error));
+            } else {
+                console.error('Missing access token, project details, or projects token.');
+            }
         });
     } else {
         alert('Token is missing. Please log in.');

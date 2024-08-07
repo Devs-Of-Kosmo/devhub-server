@@ -44,10 +44,42 @@ $(document).ready(function() {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + accessToken
             },
-            body: JSON.stringify({
-                receiverEmail: receiverEmail,
-                content: messageContent,
-                inviteUrl: inviteUrl
+
+            body: JSON.stringify(requestBody)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        Swal.fire({
+                            title: '오류',
+                            text: errorData.message || '쪽지 전송에 실패했습니다.',
+                            icon: 'error',
+                            confirmButtonText: '확인'
+                        });
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    Swal.fire({
+                        title: '성공',
+                        text: '메시지가 성공적으로 전송되었습니다!',
+                        icon: 'success',
+                        confirmButtonText: '확인'
+                    }).then(() => {
+                        $('#sendMessageForm')[0].reset(); // 폼 초기화
+                        window.closeModal('sendMessageModal'); // 모달 닫기
+                    });
+                } else {
+                    Swal.fire({
+                        title: '오류',
+                        text: '메시지 전송에 실패했습니다.',
+                        icon: 'error',
+                        confirmButtonText: '확인'
+                    });
+                }
+
             })
         })
         .then(response => {
@@ -215,4 +247,5 @@ $(document).ready(function() {
     $('#messageModal').on('show.bs.modal', function() {
         loadMessages('/api/messages/received', 'received');
     });
+
 });
