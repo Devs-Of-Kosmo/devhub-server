@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var projectsToken = localStorage.getItem('projects');
 
             if (token && projectName && description && projectsToken) {
-                fetch('/api/personal/repo/create', {
+                fetch('/api/personal/repo', {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Bearer ' + token,

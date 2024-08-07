@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // 모달 닫기 함수
-    function closeModal(modalId) {
+    window.closeModal = function(modalId) { // window 객체에 함수 할당
         document.getElementById(modalId).style.display = "none";
     }
 
@@ -32,14 +32,17 @@ document.addEventListener("DOMContentLoaded", function() {
     // 모달 닫기 이벤트
     document.querySelectorAll('.close').forEach(function(element) {
         element.addEventListener('click', function() {
-            closeModal(this.getAttribute('data-close'));
+            var modalId = this.getAttribute('data-close');
+            if (modalId) {
+                closeModal(modalId);
+            }
         });
     });
 
     // 모달 외부 클릭 시 닫기
     window.onclick = function(event) {
         if (event.target.classList.contains('modal')) {
-            closeModal(event.target.id);
+            window.closeModal(event.target.id);
         }
     };
 
