@@ -8,3 +8,4 @@ Flask-Login
 Flask-JWT-Extended
 Flask-Cors
 Flask-Script
+marshmallow

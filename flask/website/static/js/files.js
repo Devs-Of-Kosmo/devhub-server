@@ -1,22 +1,129 @@
-document.addEventListener("DOMContentLoaded", function() {
-    // Ensure elements exist before adding event listeners
+document.addEventListener("DOMContentLoaded", function () {
     const file1 = document.getElementById('file1');
     const file2 = document.getElementById('file2');
     const compareBtn = document.getElementById('compare-btn');
-    const saveChangesBtn = document.getElementById('save-changes-btn');
-    const loginForm = document.getElementById('login-form');
-    const reviewBtn = document.getElementById('review-btn'); // Review button
+    const commitBtn = document.getElementById('commit-button');
+    const commitMessageInput = document.getElementById('commitMessage');
+    const reviewBtn = document.getElementById('review-btn');
+
+    // 로컬 스토리지에서 accessToken 가져오기
+    const accessToken = localStorage.getItem('accessToken');
+
+    if (commitBtn) {
+        commitBtn.addEventListener('click', async function () {
+            const files = file1.files;
+            const commitMessage = commitMessageInput.value.trim();
+            const personalProjects = JSON.parse(localStorage.getItem('personal_project') || '[]');
+
+            if (!files.length) {
+                alert('Please select files to commit.');
+                return;
+            }
+
+            if (!commitMessage) {
+                alert('Please enter a commit message.');
+                return;
+            }
+
+            // 로컬 스토리지에서 현재 프로젝트 ID 가져오기
+            const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+            const currentProject = projects[0]; // 첫 번째 프로젝트 선택 (필요 시 로직 수정)
+
+            if (!currentProject || !currentProject.projectId) {
+                alert('No project selected.');
+                return;
+            }
+
+            console.log('Access Token:', accessToken);
+            console.log('Project ID:', currentProject.projectId);
+            console.log('Files:', files);
+            for (let file of files) {
+                console.log(`File: ${file.name}, Size: ${file.size}`);
+            }
+            console.log('Commit Message:', commitMessage);
+
+            try {
+                // FormData 객체 생성 및 데이터 추가
+                const formData = new FormData();
+                for (let file of files) {
+                    formData.append('files', file, file.webkitRelativePath); // 상대 경로 포함
+                }
+                formData.append('commitMessage', commitMessage);
+
+                let apiUrl = 'http://localhost:8080/api/personal/project/init';
+                let method = 'POST';
+
+                // 로컬 스토리지에 personal_project가 존재하는지 확인
+                if (personalProjects.length > 0) {
+                    // 다음 버전 저장 API 호출 준비
+                    const latestProject = personalProjects[personalProjects.length - 1];
+                    formData.append('fromCommitId', latestProject.newCommitId); // 가장 최근 커밋 ID 사용
+                    apiUrl = 'http://localhost:8080/api/personal/project/save';
+                } else {
+                    // 최초 저장인 경우 projectId 추가
+                    formData.append('projectId', currentProject.projectId); // 실제 projectId 사용
+                }
+
+                // 스프링부트 서버로 POST 요청 보내기
+                const response = await fetch(apiUrl, {
+                    method: method,
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken // 헤더에 액세스 토큰 포함
+                    },
+                    body: formData
+                });
+
+                const contentType = response.headers.get('content-type');
+
+                if (!response.ok) {
+                    if (contentType && contentType.includes('application/json')) {
+                        const errorData = await response.json();
+                        alert('Commit failed: ' + errorData.message);
+                    } else {
+                        const errorText = await response.text();
+                        console.error('Commit failed:', errorText);
+                        alert('An unexpected error occurred.');
+                    }
+                    return;
+                }
+
+                const newCommitData = await response.json();
+
+                // 로컬 스토리지에 personal_project 리스트로 저장
+                personalProjects.push(newCommitData);
+                localStorage.setItem('personal_project', JSON.stringify(personalProjects));
+
+                alert('Commit successful!');
+                console.log(newCommitData); // 응답 데이터 로그 출력
+            } catch (error) {
+                console.error('Error committing files:', error);
+                alert('An error occurred while committing files.');
+            }
+        });
+    } // commitBtn 이벤트 리스너 블록 닫기
 
     if (file1) {
-        file1.addEventListener('change', async function() {
-            var fileName = this.files[0].name;
-            document.getElementById('file1-name').textContent = fileName;
-            await uploadFile(this, 'original');
+        file1.addEventListener('change', async function () {
+            var files = this.files;
+            try {
+                var fileContents = await getFileContents(files);
+                displayFileContents(fileContents, 'original');
+
+                // 파일 내용 콘솔에 출력
+                console.log('Files:', files);
+                for (let file of files) {
+                    let content = await readFileContent(file);
+                    console.log(`File: ${file.name}, Size: ${file.size}, Content:`, content.slice(0, 100)); // 첫 100자만 출력
+                }
+            } catch (error) {
+                console.error('Error reading files:', error);
+                alert('파일을 읽는 도중 오류가 발생했습니다.');
+            }
         });
     }
 
     if (file2) {
-        file2.addEventListener('change', async function() {
+        file2.addEventListener('change', async function () {
             var fileName = this.files[0].name;
             document.getElementById('file2-name').textContent = fileName;
             await readFile(this, 'changed');
@@ -24,47 +131,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (compareBtn) {
-        compareBtn.addEventListener('click', async function() {
+        compareBtn.addEventListener('click', async function () {
             await compareFiles();
         });
     }
 
-    if (saveChangesBtn) {
-        saveChangesBtn.addEventListener('click', async function() {
-            await saveChanges();
-        });
-    }
-
-    if (loginForm) {
-        loginForm.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
-
-            const data = await response.json();
-            if (response.status === 200) {
-                localStorage.setItem('access_token', data.access_token);
-                localStorage.setItem('refresh_token', data.refresh_token);
-                document.getElementById('login-message').textContent = 'Login successful!';
-                document.getElementById('login-message').style.color = 'green';
-                window.location.href = '/';
-            } else {
-                document.getElementById('login-message').textContent = data.msg;
-                document.getElementById('login-message').style.color = 'red';
-            }
-        });
-    }
-
     if (reviewBtn) {
-        reviewBtn.addEventListener('click', async function() {
+        reviewBtn.addEventListener('click', async function () {
             await reviewFiles();
         });
     }
@@ -81,6 +154,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById('original-structure-container').innerHTML = data.combined_structure.original_structure;
                 addDirectoryToggle();
                 addFileClickEvent();
+                // Read the original file content and display it
+                var originalFileContent = '';
+                for (let file of data.files) {
+                    originalFileContent += `<h3>${file.name}</h3><pre>${file.content}</pre>`;
+                }
+                document.getElementById('original-file-content').innerHTML = originalFileContent;
             } else if (type === 'changed') {
                 document.getElementById('changed-file-content').innerText = data.content;
             }
@@ -93,13 +172,24 @@ document.addEventListener("DOMContentLoaded", function() {
         var file = input.files[0];
         var reader = new FileReader();
 
-        reader.onload = function(event) {
+        reader.onload = function (event) {
             var content = event.target.result;
             if (type === 'changed') {
                 document.getElementById('changed-file-content').innerText = content;
             }
         };
 
+        reader.readAsText(file);
+    }
+
+    async function displayFileContent(file, type) {
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            var content = event.target.result;
+            if (type === 'original') {
+                document.getElementById('original-file-content').innerText = content;
+            }
+        };
         reader.readAsText(file);
     }
 
@@ -145,22 +235,25 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     async function saveChanges() {
-        var changedContent = document.getElementById('changed-file-content').innerText;
-        var differencesContent = document.getElementById('comparison-result').innerHTML;
-        var fileName = document.getElementById('file2-name').textContent;
-        var filenameSuffix = document.getElementById('filename-suffix').value;
+        var originalContent = Array.from(document.getElementById('original-file-content').querySelectorAll('pre'))
+            .map(pre => ({ name: pre.previousSibling.textContent, content: pre.textContent }));
+        var changedContent = Array.from(document.getElementById('changed-file-content').querySelectorAll('pre'))
+            .map(pre => ({ name: pre.previousSibling.textContent, content: pre.textContent }));
 
         try {
             let response = await fetch('/save_changes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: fileName + filenameSuffix, content: changedContent, differences: differencesContent }),
+                body: JSON.stringify({
+                    original_files: originalContent,
+                    changed_files: changedContent
+                }),
             });
             let data = await response.json();
             var resultMessageElement = document.getElementById('result-message');
             resultMessageElement.textContent = data.result;
 
-            if (data.result === "File saved successfully.") {
+            if (data.result === "Files saved successfully.") {
                 resultMessageElement.classList.add('success');
                 resultMessageElement.classList.remove('error');
             } else {
@@ -192,6 +285,48 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let openDirectories = {};
 
+    async function getFileContents(files) {
+        let fileContents = [];
+        for (let file of files) {
+            // MIME 타입을 검사하여 텍스트 파일만 읽음
+            if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
+                try {
+                    let content = await readFileContent(file);
+                    fileContents.push({ name: file.webkitRelativePath, content: content });
+                } catch (error) {
+                    console.error('Error reading file:', file.name, error);
+                    throw error; // Rethrow the error to handle it in the calling function
+                }
+            } else {
+                console.warn('Skipping non-text file:', file.name);
+            }
+        }
+        return fileContents;
+    }
+
+    function displayFileContents(fileContents, type) {
+        if (type === 'original') {
+            let contentHtml = '';
+            fileContents.forEach(file => {
+                contentHtml += `<h3>${file.name}</h3><pre>${escapeHtml(file.content)}</pre>`;
+            });
+            document.getElementById('original-file-content').innerHTML = contentHtml;
+        }
+    }
+
+    function readFileContent(file) {
+        return new Promise((resolve, reject) => {
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                resolve(event.target.result);
+            };
+            reader.onerror = function (error) {
+                reject(error);
+            };
+            reader.readAsText(file);
+        });
+    }
+
     function addDirectoryToggle() {
         var toggler = document.getElementsByClassName("directory");
         for (var i = 0; i < toggler.length; i++) {
@@ -199,37 +334,39 @@ document.addEventListener("DOMContentLoaded", function() {
 
             if (!toggler[i].classList.contains("bound")) {
                 toggler[i].classList.add("bound");
-                toggler[i].addEventListener("click", async function() {
-                    var nested = this.querySelector(".nested");
-                    if (nested) {
-                        nested.classList.toggle("active");
-                        this.classList.toggle("directory-open");
+                toggler[i].addEventListener("click", async function (event) {
+                    if (event.target.tagName === 'LI') {
+                        var nested = this.querySelector(".nested");
+                        if (nested) {
+                            nested.classList.toggle("active");
+                            this.classList.toggle("directory-open");
 
-                        if (nested.innerHTML === "") {
-                            var path = this.getAttribute("data-path");
-                            var type = this.getAttribute("data-type");
-                            try {
-                                let response = await fetch(`/subdirectories?path=${encodeURIComponent(path)}&type=${type}`);
-                                let data = await response.json();
-                                if (data.result === "Subdirectories loaded successfully") {
-                                    nested.innerHTML = data.subdirectories;
-                                    addDirectoryToggle();
-                                    addFileClickEvent();
-                                    openDirectories[path] = true;
-                                    updateOpenDirectories();
-                                } else {
-                                    alert(data.result);
+                            if (!nested.innerHTML) {
+                                var path = this.getAttribute("data-path");
+                                var type = this.getAttribute("data-type");
+                                try {
+                                    let response = await fetch(`/subdirectories?path=${encodeURIComponent(path)}&type=${type}`);
+                                    let data = await response.json();
+                                    if (data.result === "Subdirectories loaded successfully") {
+                                        nested.innerHTML = data.subdirectories;
+                                        addDirectoryToggle();
+                                        addFileClickEvent();
+                                        openDirectories[path] = true;
+                                        updateOpenDirectories();
+                                    } else {
+                                        alert(data.result);
+                                    }
+                                } catch (error) {
+                                    console.error('Error:', error);
                                 }
-                            } catch (error) {
-                                console.error('Error:', error);
-                            }
-                        } else {
-                            if (nested.classList.contains("active")) {
-                                openDirectories[directoryPath] = true;
                             } else {
-                                delete openDirectories[directoryPath];
+                                if (nested.classList.contains("active")) {
+                                    openDirectories[directoryPath] = true;
+                                } else {
+                                    delete openDirectories[directoryPath];
+                                }
+                                updateOpenDirectories();
                             }
-                            updateOpenDirectories();
                         }
                     }
                 });
@@ -243,6 +380,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             }
         }
+    }
+
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
     function updateOpenDirectories() {
@@ -270,7 +416,7 @@ document.addEventListener("DOMContentLoaded", function() {
         for (var i = 0; i < files.length; i++) {
             if (!files[i].classList.contains("bound")) {
                 files[i].classList.add("bound");
-                files[i].addEventListener("click", async function() {
+                files[i].addEventListener("click", async function () {
                     var filePath = this.getAttribute("data-path");
                     var fileType = this.getAttribute("data-type");
                     try {
@@ -291,27 +437,28 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 });
-document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.file-button').forEach(button => {
-            button.addEventListener('click', async function() {
-                const fileId = this.getAttribute('data-id');
-                try {
-                    let response = await fetch(`/get_file_content/${fileId}`);
-                    let data = await response.json();
-                    if (data.result === "success") {
-                        document.getElementById('file-content').innerHTML = `
-                            <h2>${data.file.name}</h2>
-                            <p><strong>${new Date(data.file.timestamp).toLocaleString()}</strong></p>
-                            <p>${data.file.content}</p>
-                            <p class="custom-differences">${data.file.differences}</p>
-                        `;
-                    } else {
-                        document.getElementById('file-content').innerHTML = `<p>Failed to load file content.</p>`;
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    document.getElementById('file-content').innerHTML = `<p>Error loading file content.</p>`;
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.file-button').forEach(button => {
+        button.addEventListener('click', async function () {
+            const fileId = this.getAttribute('data-id');
+            try {
+                let response = await fetch(`/get_file_content/${fileId}`);
+                let data = await response.json();
+                if (data.result === "success") {
+                    document.getElementById('file-content').innerHTML = `
+                        <h2>${data.file.name}</h2>
+                        <p><strong>${new Date(data.file.timestamp).toLocaleString()}</strong></p>
+                        <p>${data.file.content}</p>
+                        <p class="custom-differences">${data.file.differences}</p>
+                    `;
+                } else {
+                    document.getElementById('file-content').innerHTML = `<p>Failed to load file content.</p>`;
                 }
-            });
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('file-content').innerHTML = `<p>Error loading file content.</p>`;
+            }
         });
     });
+});

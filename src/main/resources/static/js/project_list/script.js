@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var projectsArray = [];
 
     if (accessToken) {
-        fetch('/api/personal/repo/read', {
+        fetch('/api/personal/repo/list', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
