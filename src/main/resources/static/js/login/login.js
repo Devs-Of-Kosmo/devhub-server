@@ -44,7 +44,6 @@ $(document).ready(function() {
 
                 Swal.fire({
                     title: '오류',
-                    text: errorMessage,
                     icon: 'error',
                     confirmButtonText: '확인'
                 });

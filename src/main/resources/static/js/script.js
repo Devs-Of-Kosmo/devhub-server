@@ -18,9 +18,17 @@ $(document).ready(function() {
                 $('#login-link').text(userName + '님').attr('href', '/mypage');
                 $('#login-side').text(userName + '님').attr('href', '/mypage');
 
+                // 회원가입 링크 제거
+                var registerLink = document.querySelector('a[href="register"]');
+                if (registerLink) {
+                    registerLink.style.display = 'none';
+                }
+
                 // 로그인된 경우 링크를 활성화
                 var myProjectsLink = document.getElementById('my-projects-link');
                 var projectLink = document.getElementById('project-link');
+                var soloSideLink = document.getElementById('solo_side');
+                var teamSideLink = document.querySelector('.offcanvas-body nav ul li:nth-child(6) a');
 
                 if (myProjectsLink) {
                     myProjectsLink.href = 'loading';
@@ -28,6 +36,14 @@ $(document).ready(function() {
 
                 if (projectLink) {
                     projectLink.href = 'http://127.0.0.1:5000/?token=' + accessToken;
+                }
+
+                if (soloSideLink) {
+                    soloSideLink.href = 'loading';
+                }
+
+                if (teamSideLink) {
+                    teamSideLink.href = 'teamloading';
                 }
 
                 // 로그아웃 요청 보내기 - JavaScript
@@ -95,15 +111,21 @@ $(document).ready(function() {
         });
 
     } else {
+        $('#login-link').attr('href', 'login');
+
         // 로그인되지 않은 경우 링크를 비활성화
         var myProjectsLink = document.getElementById('my-projects-link');
         var projectLink = document.getElementById('project-link');
+        var soloSideLink = document.getElementById('solo_side');
+        var teamSideLink = document.querySelector('.offcanvas-body nav ul li:nth-child(6) a');
 
         if (myProjectsLink) {
             myProjectsLink.href = '#';
             myProjectsLink.addEventListener('click', function(event) {
                 event.preventDefault();
-                Swal.fire('로그인이 필요합니다.', '', 'warning');
+                Swal.fire('로그인이 필요합니다.', '', 'warning').then(() => {
+                    window.location.href = 'login';
+                });
             });
         }
 
@@ -111,7 +133,29 @@ $(document).ready(function() {
             projectLink.href = '#';
             projectLink.addEventListener('click', function(event) {
                 event.preventDefault();
-                Swal.fire('로그인이 필요합니다.', '', 'warning');
+                Swal.fire('로그인이 필요합니다.', '', 'warning').then(() => {
+                    window.location.href = 'login';
+                });
+            });
+        }
+
+        if (soloSideLink) {
+            soloSideLink.href = '#';
+            soloSideLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                Swal.fire('로그인이 필요합니다.', '', 'warning').then(() => {
+                    window.location.href = 'login';
+                });
+            });
+        }
+
+        if (teamSideLink) {
+            teamSideLink.href = '#';
+            teamSideLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                Swal.fire('로그인이 필요합니다.', '', 'warning').then(() => {
+                    window.location.href = 'login';
+                });
             });
         }
     }
