@@ -42,7 +42,7 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 
         String unreadCountString = unreadCount.toString();
 
-        session.sendMessage(new TextMessage("읽지 않은 쪽지 " + unreadCountString + "건"));
+        session.sendMessage(new TextMessage(unreadCountString));
     }
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception{

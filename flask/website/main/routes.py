@@ -5,12 +5,16 @@ import difflib
 import re
 import openai
 import jwt
+import json
 from functools import wraps
 import requests
-from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from flask import render_template, request, redirect, url_for, flash, jsonify, Blueprint, Flask
-from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    jwt_required,
+    get_jwt_identity
+)
+from flask import Flask, render_template, request, jsonify, Blueprint, session
 from website.model import db, User, Comment, SaveFile
 from website.decorators import admin_required
 from markupsafe import Markup
@@ -19,24 +23,153 @@ from datetime import datetime
 main = Blueprint('main', __name__)
 UPLOAD_FOLDER = tempfile.mkdtemp()
 
-#openai.api_key = ''
-# 결제후키메모장
+SPRING_BOOT_API_URL = 'http://localhost:8080'
 
 @main.route('/')
 def index():
     comments = Comment.query.filter_by(page='home').all()
+    return render_template('index.html', comments=comments)
+
+
+@main.route('/save_token', methods=['GET'])
+def save_token():
+    # URL 매개변수에서 토큰과 프로젝트 데이터를 가져옵니다.
     token = request.args.get('token')
-    if token:
-        return render_template('index.html', token=token,comments=comments)
-    return render_template('index.html')
-@main.route('/savefiles')
-def savefiles():
-    saved_files = SaveFile.query.all()
-    return render_template('savefiles.html', saved_files=saved_files)
+    project_id = request.args.get('projectId')
+    project_name = request.args.get('projectName')
+    description = request.args.get('description')
+    created_date = request.args.get('createdDate')
+    master_id = request.args.get('masterId')
+
+    # 토큰이 있으면 토큰을 로컬 스토리지에 저장할 수 있는 JavaScript 코드를 반환합니다.
+    response_script = f"""
+        <script>
+            if ('{token}') {{
+                localStorage.setItem('accessToken', '{token}');
+                alert('토큰이 성공적으로 저장되었습니다.');
+            }} else {{
+                alert('Token not provided');
+                window.location.href = '/';  // 토큰이 없으면 홈 페이지로 리디렉션
+            }}
+    """
+
+    # 프로젝트 데이터가 모두 있는지 확인하고, 로컬 스토리지에 저장하는 코드를 추가합니다.
+    if project_id and project_name and description and master_id:
+        response_script += f"""
+            let projects = JSON.parse(localStorage.getItem('projects') || '[]');
+            projects.push({{
+                projectId: '{project_id}',
+                projectName: '{project_name}',
+                description: '{description}',
+                createdDate: '{created_date}',
+                masterId: '{master_id}'
+            }});
+            localStorage.setItem('projects', JSON.stringify(projects));
+            alert('프로젝트 데이터가 성공적으로 저장되었습니다.');
+            window.location.href = '/';  // 저장 후 홈 페이지로 리디렉션
+        </script>
+        """
+    else:
+        response_script += "<script>alert('Some project data is missing'); window.location.href = '/';</script>"
+
+    return response_script, 400 if not token else 200
+
+@main.route('/api/personal/repo', methods=['POST'])
+@jwt_required()  # JWT 토큰이 필요함을 나타냅니다.
+def create_personal_repo():
+    data = request.get_json()
+    access_token = request.headers.get('Authorization')
+
+    try:
+        # 스프링부트 API로 요청 보내기
+        response = requests.post(
+            f'{SPRING_BOOT_API_URL}/api/personal/repo',
+            json=data,
+            headers={'Authorization': access_token}
+        )
+
+        # 스프링부트에서 응답 처리
+        response.raise_for_status()
+        return jsonify(response.json()), response.status_code
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({'message': 'Failed to create personal repo', 'error': str(e)}), 500
+
+@main.route('/api/personal/project/init', methods=['POST'])
+@jwt_required()  # JWT 토큰이 필요함을 나타냅니다.
+def init_personal_project():
+    project_id = request.form.get('projectId')
+    files = request.files.getlist('files')
+    commit_message = request.form.get('commitMessage')
+    access_token = request.headers.get('Authorization')
+
+    files_data = [('files', (file.filename, file.stream, file.content_type)) for file in files]
+
+    try:
+        response = requests.post(
+            f'{SPRING_BOOT_API_URL}/api/personal/project/init',
+            data={'projectId': project_id, 'commitMessage': commit_message},
+            files=files_data,
+            headers={'Authorization': access_token}
+        )
+
+        response.raise_for_status()
+        return jsonify(response.json()), response.status_code
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({'message': 'Failed to initialize project', 'error': str(e)}), 500
+
+@main.route('/api/personal/project/save', methods=['POST'])
+@jwt_required()  # JWT 토큰이 필요함을 나타냅니다.
+def save_personal_project():
+    from_commit_id = request.form.get('fromCommitId')
+    files = request.files.getlist('files')
+    commit_message = request.form.get('commitMessage')
+    access_token = request.headers.get('Authorization')
+
+    # FormData에 포함될 파일 데이터를 준비합니다.
+    files_data = [('files', (file.filename, file.stream, file.content_type)) for file in files]
+
+    try:
+        # 스프링 부트 API로 요청을 보냅니다.
+        response = requests.post(
+            f'{SPRING_BOOT_API_URL}/api/personal/project/save',
+            data={'fromCommitId': from_commit_id, 'commitMessage': commit_message},
+            files=files_data,
+            headers={'Authorization': access_token}
+        )
+
+        # 응답이 성공적이지 않은 경우 예외를 발생시킵니다.
+        response.raise_for_status()
+        # 성공적인 응답을 JSON 형태로 반환합니다.
+        return jsonify(response.json()), response.status_code
+
+    except requests.exceptions.RequestException as e:
+        # 요청 중 발생한 예외를 처리합니다.
+        return jsonify({'message': 'Failed to save project version', 'error': str(e)}), 500
+
+
+@main.route('/api/personal/repo/list', methods=['GET'])
+@jwt_required()
+def get_personal_projects():
+    access_token = request.headers.get('Authorization')
+
+    try:
+        response = requests.get(
+            f'{SPRING_BOOT_API_URL}/api/personal/repo/list',
+            headers={'Authorization': access_token}
+        )
+
+        response.raise_for_status()
+        return jsonify(response.json()), response.status_code
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({'message': 'Failed to fetch personal projects', 'error': str(e)}), 500
 
 @main.route('/group')
 def grupt():
     return render_template('group.html')
+
 @main.route('/upload', methods=['POST'])
 def upload():
     file1 = request.files.get('file1')
@@ -90,81 +223,108 @@ def get_subdirectories_html(path, type):
     subdirs += "</ul>"
     return subdirs
 
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-        if 'Authorization' in request.headers:
-            token = request.headers['Authorization'].split(" ")[1]
+@main.route('/api/mail/public/send', methods=['POST'])
+def send_email_verification():
+    data = request.get_json()
+    email = data.get('email')
 
-        if not token:
-            return jsonify({'message': 'Token is missing!'}), 403
+    # Email verification logic here
+    to_email = f"verification_code_for_{email}@example.com"
+    print(f"Verification email sent to: {email}")
 
-        try:
-            data = jwt.decode(token, main.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = data['user']
-        except:
-            return jsonify({'message': 'Token is invalid!'}), 403
+    return jsonify({'toEmail': to_email}), 200
 
-        return f(current_user, *args, **kwargs)
-    return decorated
+@main.route('/api/mail/public/check', methods=['POST'])
+def check_email_verification():
+    data = request.get_json()
+    email = data.get('email')
+    authentication_code = data.get('authenticationCode')
 
+    # Logic to check the authentication code
+    verified = True
+    print(f"Checked email: {email} with code: {authentication_code}")
 
-@main.route('/user_info', methods=['GET'])
+    return jsonify({'verified': verified}), 200
+
+@main.route('/api/user/info', methods=['GET'])
 def user_info():
-    SPRING_BOOT_API_URL = 'http://localhost:8080/api/user/info'
-
+    # 요청 헤더에서 Authorization 토큰을 가져옵니다.
     auth_header = request.headers.get('Authorization')
     if auth_header:
+        # "Bearer " 이후의 실제 토큰을 추출합니다.
         token = auth_header.split(" ")[1]
     else:
         token = None
 
+    # 토큰이 존재하지 않으면 403 Forbidden 응답을 반환합니다.
     if not token:
         return jsonify({'message': 'Token is missing!'}), 403
 
-    headers = {'Authorization': f'Bearer {token}'}
     try:
-        response = requests.get(SPRING_BOOT_API_URL, headers=headers)
-        response.raise_for_status()  # 요청이 성공했는지 확인
+        # 스프링부트 API에 요청을 보냅니다.
+        response = requests.get(f'{SPRING_BOOT_API_URL}/api/user/info', headers={'Authorization': f'Bearer {token}'})
+        response.raise_for_status()
+
+        # 성공적으로 데이터를 가져왔다면, JSON 응답을 파싱합니다.
         user_info = response.json()
-        return jsonify({
-            'userId': user_info.get('userId'),
-            'email': user_info.get('email'),
-            'name': user_info.get('name'),
-            'identificationCode': user_info.get('identificationCode')
-        })
+
+        # JSON 응답을 클라이언트에 반환합니다.
+        return jsonify(user_info), 200
     except requests.exceptions.RequestException as e:
+        # 외부 API 요청 실패 시 에러 메시지를 반환합니다.
         return jsonify({'message': 'Failed to fetch user info', 'error': str(e)}), 500
 
-@main.route('/api/personal/create', methods=['POST'])
-def create_personal_project():
-    data = request.get_json()
-    projectName = data.get('projectName')
-    description = data.get('description')
-    projectsToken = data.get('projectsToken')  # 요청 본문에서 projectsToken 가져오기
 
-    if not projectName or not description or not projectsToken:
+
+@main.route('/api/personal/save', methods=['POST'])
+@jwt_required()
+def save_personal_version():
+    commit_id = request.form.get('commitId')
+    files = request.form.getlist('files')
+    commit_message = request.form.get('commitMessage')
+
+    if not commit_id or not files or not commit_message:
         return jsonify({'message': 'Missing required data'}), 400
 
-    # 프로젝트 생성 로직 추가
-    new_project = {
-        'personalProjectId': 123,  # 예시 ID
-        'projectName': projectName,
-        'description': description,
-        'masterId': 1  # 예시 마스터 ID
-    }
-    #db.session.add(new_project)
-    #db.session.commit()
+    current_user = get_jwt_identity()
+    parent_commit = SaveFile.query.get(commit_id)
 
-    #return jsonify({
-    #    'personalProjectId': new_project.id,  # 생성된 프로젝트의 ID
-    #    'projectName': new_project.project_name,
-    #    'description': new_project.description,
-    #    'masterId': new_project.master_id
-    #}), 200
-    return jsonify(new_project), 200
+    if not parent_commit:
+        return jsonify({'message': 'Parent commit not found'}), 404
 
+    new_commit = SaveFile(
+        personalProjectId=parent_commit.personalProjectId,
+        masterId=current_user['user_id'],
+        parentCommitCode=parent_commit.commitCode,
+        commitMessage=commit_message,
+        files=files
+    )
+    db.session.add(new_commit)
+    db.session.commit()
+
+    return jsonify({
+        'personalCommitId': new_commit.id,
+        'personalProjectId': new_commit.personalProjectId,
+        'masterId': new_commit.masterId,
+        'parentCommitCode': new_commit.parentCommitCode,
+        'commitMessage': new_commit.commitMessage
+    }), 200
+
+
+@main.route('/api/personal/read', methods=['GET'])
+@jwt_required()
+def read_personal_projects():
+    current_user = get_jwt_identity()
+    projects = SaveFile.query.filter_by(masterId=current_user['user_id']).all()
+
+    projects_list = [{
+        'personalProjectId': project.id,
+        'projectName': project.projectName,
+        'description': project.description,
+        'createdDate': project.createdDate.isoformat()
+    } for project in projects]
+
+    return jsonify(projects_list), 200
 
 @main.route('/subdirectories', methods=['GET'])
 def get_subdirectories():
@@ -206,7 +366,6 @@ def tools():
     comments = Comment.query.filter_by(page='tools').all()
     return render_template('tools.html', comments=comments)
 
-
 @main.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
@@ -219,6 +378,48 @@ def refresh():
 def protected():
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
+
+@main.route('/api/user/public/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    name = data.get('name')
+
+    if not email or not password or not name:
+        return jsonify({'message': 'Missing required data'}), 400
+
+    user = User(email=email, password=password, name=name)
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify({
+        'userId': user.id,
+        'email': user.email,
+        'name': user.name,
+        'identificationCode': user.identification_code
+    }), 200
+
+@main.route('/api/auth/public/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    user = User.query.filter_by(email=email).first()
+    if user and user.verify_password(password):
+        access_token = create_access_token(identity={'user_id': user.id, 'email': user.email})
+        refresh_token = create_refresh_token(identity={'user_id': user.id, 'email': user.email})
+        return jsonify({'accessToken': access_token, 'refreshToken': refresh_token}), 200
+
+    return jsonify({'message': 'Invalid email or password'}), 401
+
+@main.route('/api/auth/public/reissue', methods=['POST'])
+@jwt_required(refresh=True)
+def reissue_access_token():
+    current_user = get_jwt_identity()
+    new_access_token = create_access_token(identity=current_user)
+    return jsonify({'accessToken': new_access_token}), 200
 
 @main.route('/add_comment', methods=['POST'])
 def add_comment():
@@ -233,7 +434,7 @@ def add_comment():
 def add_response():
     data = request.get_json()
     comment_id = data['comment_id']
-    response = data['response']
+    response = data.get('response')
     comment = Comment.query.get(comment_id)
     if comment:
         comment.admin_response = response
@@ -328,27 +529,23 @@ def get_file_content(file_id):
 
 @main.route('/save_changes', methods=['POST'])
 def save_changes():
-    data = request.get_json()
-    name = data.get('name')
-    content = data.get('content')
-    differences = data.get('differences')
-
-    if not name or not content or not differences:
-        return jsonify(result="Missing data"), 400
-
-    timestamp = datetime.now()  # Save Changes 버튼을 누른 시간
-
-    new_savefile = SaveFile(name=name, content=content, differences=differences, timestamp=timestamp)
+    data = request.json
+    original_files = data.get('original_files')
+    changed_files = data.get('changed_files')
 
     try:
-        db.session.add(new_savefile)
-        db.session.commit()
-        print(f"Data saved: {new_savefile}")  # 디버그를 위한 출력
-        return jsonify(result="File saved successfully.")
+        save_files('saved_files/original', original_files)
+        save_files('saved_files/changed', changed_files)
+        return jsonify(result="Files saved successfully.")
     except Exception as e:
-        db.session.rollback()
-        print(f"Error: {e}")  # 디버그를 위한 출력
-        return jsonify(result=f"Failed to save changes: {e}"), 500
+        return jsonify(result=str(e))
+
+def save_files(base_path, files):
+    for file in files:
+        file_path = os.path.join(base_path, file['name'])
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, 'w') as f:
+            f.write(file['content'])
 
 @main.route('/review_files', methods=['POST'])
 def review_files():
@@ -359,11 +556,9 @@ def review_files():
     if not file1_content or not file2_content:
         return jsonify(result="Both files are required"), 400
 
-    # 파일 간의 차이점을 찾습니다
     diff = difflib.ndiff(file1_content.splitlines(), file2_content.splitlines())
     differences = '\n'.join(diff)
 
-    # OpenAI API를 사용하여 차이점에 대한 코드 리뷰 및 피드백을 요청합니다
     review_prompt = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": f"Review the differences between two code files and provide feedback:\n\nDifferences:\n{differences}\n\nFeedback(한글로):"}

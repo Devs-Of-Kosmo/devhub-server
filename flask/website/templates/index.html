@@ -3,9 +3,19 @@
 {% block title %}File Comparison{% endblock %}
 
 {% block content %}
+<div class="container2">
+    <div id="slide">
+        <!-- 여기에서 동적으로 프로젝트 아이템이 추가될 것입니다. -->
+    </div>
+    <div class="buttons">
+        <button id="prev"><i class="fas fa-chevron-left"></i></button>
+        <button id="next"><i class="fas fa-chevron-right"></i></button>
+    </div>a
+</div>
 <div class="container">
     <div class="sidebar">
         <h2>개인프로젝트</h2>
+        <button id="commit-button" class="action-btn">Commit</button>
         <span id="file1-name" class="file-name"></span>
         <div class="structure-container" id="original-structure-container">
             <!-- Original file structure will be displayed here -->
@@ -13,8 +23,7 @@
     </div>
     <div class="main-content">
         <h1>파일 비교</h1>
-        <button id="save-changes-btn" class="action-btn">변경사항 저장</button>
-        <input type="text" id="filename-suffix" placeholder="Input File name">
+        <input type="text" id="commitMessage" placeholder="Enter commit message">
         <div id="result-message" class="result-message"></div>
         <div class="results">
             <div class="column content-column">
@@ -22,8 +31,8 @@
                     <h3>원본 파일 내용</h3>
                 </div>
                 <div class="upload-section">
-                    <input type="file" name="file1" id="file1" class="file-input" style="display: none;" required>
-                    <button type="button" class="open-file-btn" onclick="document.getElementById('file1').click();">Open File.zip</button>
+                    <input type="file" webkitdirectory directory name="file1" id="file1" class="file-input" style="display: none;" required>
+                    <button type="button" class="open-file-btn" onclick="document.getElementById('file1').click();">디렉토리 선택</button>
                 </div>
                 <div class="file-content" id="original-file-content">
                     <!-- Original file content will be displayed here -->
@@ -58,7 +67,6 @@
         <div id="comment-section">
             <h2>댓글</h2>
             <form id="comment-form">
-                <input type="text" id="username" placeholder="Your Name" class="input-field" required>
                 <textarea id="user-comment" placeholder="Your Comment" class="textarea-field" required></textarea>
                 <input type="hidden" id="page" value="home">
                 <button id="submit-btn" type="submit" class="submit-btn">작성</button>

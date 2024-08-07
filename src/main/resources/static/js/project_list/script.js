@@ -17,7 +17,6 @@ $(document).ready(function() {
     } else {
         accessToken = localStorage.getItem('accessToken');
     }
-
     if (accessToken) {
         fetch('/api/user/info', {
             method: 'GET',
@@ -29,6 +28,7 @@ $(document).ready(function() {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+
                 return response.json();
             })
             .then(data => {
@@ -38,6 +38,7 @@ $(document).ready(function() {
                         loginNavItem.innerHTML = '<a href="/profile" class="nav-link">' + data.name + '님</a>';
                     }
                 }
+
                 var socketEmail = data.email;
                 connectWebSocket(socketEmail);
             })
@@ -64,6 +65,7 @@ $(document).ready(function() {
                 console.log('Personal projects:', data);
                 projectsArray = data;
                 displayProjects(projectsArray);
+
             })
             .catch(error => console.error('Error fetching personal projects:', error));
     } else {

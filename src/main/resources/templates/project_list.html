@@ -16,8 +16,8 @@
 <nav id="slide-menu">
     <ul>
         <li class="timeline"><a href="personal_project">프로젝트 만들기</a></li>
-        <li class="message-send"><a href="#" id="send-message">쪽지 보내기</a></li>
-        <li class="message"><a href="#" id="open-messages">쪽지함</a></li>
+        <li class="message-send"><a href="#" id="message-send">쪽지 보내기</a></li>
+        <li class="message"><a href="#" id="message-box">쪽지함</a></li>
         <li class="sep settings" id="settings">Settings</li>
         <li class="logout" id="logout">Logout</li>
     </ul>
@@ -63,7 +63,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">쪽지함</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-close="messageModal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -76,6 +76,8 @@
                     <li class="nav-item">
                         <a class="nav-link" id="sentTab" href="#">보낸 쪽지함</a>
                     </li>
+                    <li id="message-link" style="font-size: small; color: white; display: flex; align-items: flex-end; height: 35px;"></li>
+                    <input type="hidden" id="message-count"/>
                 </ul>
                 <ul id="messageList" class="list-group mt-3">
                     <!-- 메시지 항목이 여기에 추가됩니다 -->
@@ -91,7 +93,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
-<!-- Custom Scripts -->
+
 <script type="module" src="/js/project_list/script.js"></script>
 <script src="/js/project_list/nav.js"></script>
 <script src="/js/project_list/message.js"></script>

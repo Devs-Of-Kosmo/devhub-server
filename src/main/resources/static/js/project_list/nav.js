@@ -21,11 +21,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // 모달 열기 이벤트
-    document.getElementById('send-message').addEventListener('click', function() {
+    document.getElementById('message-send').addEventListener('click', function() {
         openModal('sendMessageModal');
     });
 
-    document.getElementById('open-messages').addEventListener('click', function() {
+    document.getElementById('message-box').addEventListener('click', function() {
         openModal('messageModal');
     });
 
@@ -46,16 +46,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
-    function updateMessageLinksVisibility() {
-        if (userEmail != null) {
-            $('#send-message').show();
-            $('#open-messages').show();
-        } else {
-            $('#send-message').hide();
-            $('#open-messages').hide();
-        }
-    }
-
     if (accessToken) {
         $.ajax({
             type: 'GET',
@@ -65,15 +55,11 @@ document.addEventListener("DOMContentLoaded", function() {
             },
             success: function(response) {
                 userEmail = response.email;
-                updateMessageLinksVisibility();
             },
             error: function(xhr, status, error) {
                 console.error('사용자 정보를 가져오는데 실패했습니다:', status, error);
-                updateMessageLinksVisibility();
             }
         });
-    } else {
-        updateMessageLinksVisibility();
     }
 
     $('#logout').on('click', function() {
