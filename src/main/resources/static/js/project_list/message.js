@@ -80,7 +80,7 @@ $(document).ready(function() {
                         confirmButtonText: '확인'
                     }).then(() => {
                         $('#sendMessageForm')[0].reset(); // 폼 초기화
-                        $('#sendMessageModal').css('display', 'none'); // 모달 닫기
+                        window.closeModal('sendMessageModal'); // 모달 닫기
                     });
                 } else {
                     Swal.fire({
@@ -272,12 +272,12 @@ $(document).ready(function() {
     });
 
     $('.close').on('click', function() {
-        closeModal($(this).data('close'));
+        window.closeModal($(this).data('close'));
     });
 
     window.onclick = function(event) {
         if (event.target.classList.contains('modal')) {
-            closeModal(event.target.id);
+            window.closeModal(event.target.id);
         }
     };
 });

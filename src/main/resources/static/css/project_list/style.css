@@ -11,6 +11,32 @@ body {
     font-family: 'Open Sans';
     background: #fafafa;
 }
+#slide-menu {
+    width: 250px;
+    height: 100%;
+    position: fixed;
+    left: -250px;
+    top: 0;
+    background: #343a40;
+    transition: 0.3s;
+    padding-top: 60px;
+}
+#slide-menu ul {
+    list-style-type: none;
+    padding: 0;
+}
+#slide-menu ul li {
+    padding: 8px 16px;
+    text-align: left;
+}
+#slide-menu ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+#slide-menu ul li.sep {
+    border-top: 1px solid #495057;
+    margin-top: 10px;
+}
 a {
     color: inherit;
 }
@@ -24,6 +50,7 @@ a {
     margin: 0 auto;
     width: max-content;
 }
+
 .card {
     font-family: 'Heebo';
     --bg-filter-opacity: 0.5;
@@ -35,7 +62,8 @@ a {
     border-radius: 1em;
     padding: 1em;
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    justify-content: space-between;
     background-size: cover;
     background-position: center;
     box-shadow: 0 0 5em -1em black;
@@ -48,6 +76,16 @@ a {
 .card:hover {
     transform: rotate(0);
 }
+.card .num {
+    font-size: 1em;
+    color: #fff;
+    margin-bottom: 0.5em;
+}
+.card .date {
+    font-size: 0.75em;
+    opacity: .8;
+    margin-bottom: 1em;
+}
 .card h1 {
     margin: 0;
     font-size: 1.5em;
@@ -57,10 +95,11 @@ a {
     font-size: 0.75em;
     font-family: 'Open Sans';
     margin-top: 0.5em;
-    line-height: 2em;
+    line-height: 1.5em;
 }
 .card .tags {
     display: flex;
+    margin-top: auto;
 }
 .card .tags .tag {
     font-size: 0.75em;
@@ -75,47 +114,13 @@ a {
     background: var(--color);
     color: white;
 }
-.card .date {
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 0.75em;
-    padding: 1em;
-    line-height: 1em;
-    opacity: .8;
+.card-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
 }
-.card:before, .card:after {
-    content: '';
-    transform: scale(0);
-    transform-origin: top left;
-    border-radius: 50%;
-    position: absolute;
-    left: -50%;
-    top: -50%;
-    z-index: -5;
-    transition: all var(--transition-time);
-    transition-timing-function: ease-in-out;
-}
-.card:before {
-    background: #ddd;
-    width: 250%;
-    height: 250%;
-}
-.card:after {
-    background: white;
-    width: 200%;
-    height: 200%;
-}
-.card:hover {
-    color: var(--color);
-}
-.card:hover:before, .card:hover:after {
-    transform: scale(1);
-}
-.card-grid-space .num {
-    font-size: 3em;
-    margin-bottom: 1.2rem;
-    margin-left: 1rem;
+.card-buttons .btn {
+    margin: 0 0.5rem;
 }
 @media screen and (max-width: 1285px) {
     .cards-wrapper {
@@ -134,4 +139,147 @@ a {
     .card {
         max-width: calc(100vw - 4rem);
     }
+}
+
+nav#slide-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    background: #555653;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.4);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    color: #fff;
+    z-index: 1000;
+}
+
+nav#slide-menu ul {
+    margin: 60px 20px 0;
+    padding: 0;
+    list-style: none;
+}
+
+nav#slide-menu ul li {
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+nav#slide-menu ul li:hover {
+    background: #2a2347;
+}
+
+nav#slide-menu ul li:before {
+    content: attr(data-icon);
+    font-family: "ico";
+    margin-right: 12px;
+    font-size: 1.2em;
+    color: #59e9df;
+}
+
+nav#slide-menu ul li.sep {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.3);
+}
+
+body.menu-active nav#slide-menu {
+    transform: translateX(0);
+}
+
+div#content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 60px;
+    overflow: scroll;
+    background: #fcfeff;
+    box-sizing: border-box;
+    box-shadow: -3px 0 6px #4b5762;
+    transition: all 0.3s ease;
+    transition: left 0.3s ease;
+}
+
+div.menu-trigger {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 36px;
+    height: 36px;
+    background: #dfe5eb;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+div.menu-trigger:before {
+    content: '\2630';
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    font-size: 1.5em;
+    line-height: 36px;
+    text-align: center;
+    color: black;
+}
+
+div.menu-trigger:hover {
+    background: #556270;
+}
+
+div.menu-trigger:hover:before {
+    color: #fcfeff;
+}
+
+body.menu-active div#content {
+    left: 240px;
+    border-radius: 0;
+}
+
+body.menu-active div#content .menu-trigger {
+    left: 250px;
+}
+
+/* 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1050; /* 높여서 모달이 앞에 나타나도록 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5); /* 배경을 어둡게 */
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px; /* 최대 너비를 설정 */
+    position: relative; /* close 버튼 위치 조정을 위해 relative */
+}
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
