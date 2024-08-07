@@ -14,6 +14,12 @@ class User(UserMixin, db.Model):
     role_type = db.Column(db.String(50), nullable=False, default='USER')
     delete_condition = db.Column(db.String(50), nullable=False, default='N')
 
+    def encode_password(self, password_encoder):
+        self.password = password_encoder.generate_password_hash(self.password).decode('utf-8')
+
+    def assign_identification_code(self, max_identification_code):
+        self.identification_code = max_identification_code + 1
+
     def to_entity(self):
         return {
             'email': self.email,

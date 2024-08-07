@@ -24,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/personal")
+@CrossOrigin(origins = "http://127.0.0.1:5000")
 @RequiredArgsConstructor
 @Tag(name = "개인 프로젝트 관련 API", description = "개인 프로젝트 관련 API 입니다")
 @Slf4j
@@ -61,7 +62,7 @@ public class PersonalProjectController {
 
     @DeleteMapping("/repo/{projectId}")
     @Operation(summary = "개인 레포지토리 삭제 API", description = "header에 accessToken과 경로 {projectId}에 삭제할 projectId를 담아 요청을 보낸다"
-                                                        + "(응답 데이터가 존재하지 않음 \"NO_CONTENT\")")
+            + "(응답 데이터가 존재하지 않음 \"NO_CONTENT\")")
     public ResponseEntity<Void> deletePersonalProjectRepo(
             @PathVariable(name = "projectId") Long projectId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
@@ -116,7 +117,7 @@ public class PersonalProjectController {
 
     @GetMapping("/project/text-file")
     @Operation(summary = "개인 프로젝트 텍스트 파일 조회 API", description = "header에 accessToken과 parameter에 commitId와 filePath(경로가 포함된 파일 이름)를 담아 요청을 보낸다"
-                                                                + "(응답 데이터가 json 형식이 아님)")
+            + "(응답 데이터가 json 형식이 아님)")
     public ResponseEntity<String> readTextFile(
             @RequestParam("commitId") Long commitId,
             @RequestParam("filePath") String filePath,
@@ -131,7 +132,7 @@ public class PersonalProjectController {
 
     @GetMapping("/project/image-file")
     @Operation(summary = "개인 프로젝트 이미지 파일 조회 API", description = "header에 accessToken과 parameter에 commitId와 filePath(경로가 포함된 파일 이름)를 담아 요청을 보낸다"
-                                                                + "(응답 데이터가 json 형식이 아님)")
+            + "(응답 데이터가 json 형식이 아님)")
     public ResponseEntity<InputStreamResource> readImageFile(
             @RequestParam("commitId") Long commitId,
             @RequestParam("filePath") String filePath,
@@ -146,7 +147,7 @@ public class PersonalProjectController {
 
     @DeleteMapping("/project/commit/{commitId}")
     @Operation(summary = "개인 프로젝트 커밋 이력 삭제 API", description = "header에 accessToken과 경로 {commitId}에 삭제할 commitId를 담아 요청을 보낸다"
-                                                                + "(응답 데이터가 존재하지 않음 \"NO_CONTENT\")")
+            + "(응답 데이터가 존재하지 않음 \"NO_CONTENT\")")
     public ResponseEntity<Void> deleteCommitHistory(
             @PathVariable(name = "commitId") Long commitId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
@@ -157,8 +158,8 @@ public class PersonalProjectController {
 
     @GetMapping("/project/download")
     @Operation(summary = "개인 프로젝트 다운로드 API", description = "header에 accessToken과 parmeter에 다운로드 받을 프로젝트 특정 시점의 commitId를 담아 요청을 보낸다 "
-                                                            + "(다운로드 시 파일 이름은 응답 헤더에 'Content-Disposition'의 filename 값으로 설정, "
-                                                            + "응답 데이터가 json 형식이 아님)")
+            + "(다운로드 시 파일 이름은 응답 헤더에 'Content-Disposition'의 filename 값으로 설정, "
+            + "응답 데이터가 json 형식이 아님)")
     public ResponseEntity<ByteArrayResource> downloadFile(
             @RequestParam("commitId") Long commitId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
