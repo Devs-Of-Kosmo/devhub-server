@@ -60,6 +60,12 @@ public class ViewController {
         return "personal_project";
     }
 
+    @GetMapping("/teamloading")  // 변경: URL과 HTML 파일 이름을 소문자로 일치시킴
+    public String teamLoading() {
+        return "teamloading";
+    }
+
+
     @GetMapping("/project_list")
     public String projectList() {
         return "project_list";

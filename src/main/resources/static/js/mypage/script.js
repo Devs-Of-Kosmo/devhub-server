@@ -11,21 +11,8 @@ $(document).ready(function() {
             return;
         }
 
-        ajaxWithToken('/api/user/info')
-            .done(function(data) {
-                console.log('User info:', data);
-                $('#user-name').text(data.name);
-                $('#user-email').text(data.email);
-            })
-            .fail(function(error) {
-                if (error.status === 401) {
-                    console.error('Access token expired or invalid, redirecting to login page.');
-                    window.location.href = '/login';
-                } else {
-                    console.error('Error fetching user info:', error);
-                    window.location.href = '/login';
-                }
-            });
+        loadUserInfo();
+        loadPersonalRepoCount();
     }
 
     function ajaxWithToken(url, options = {}) {
@@ -44,7 +31,30 @@ $(document).ready(function() {
             })
             .fail(function(error) {
                 console.error('Error fetching user info:', error);
-                window.location.href = '/login';
+                if (error.status === 401) {
+                    console.error('Access token expired or invalid, redirecting to login page.');
+                    window.location.href = '/login';
+                } else {
+                    console.error('Error fetching user info:', error);
+                    window.location.href = '/login';
+                }
+            });
+    }
+
+    function loadPersonalRepoCount() {
+        ajaxWithToken('/api/personal/repo/list')
+            .done(function(data) {
+                console.log('Personal Repos:', data);
+                $('#personal-projects-count').text(data.length);
+            })
+            .fail(function(error) {
+                console.error('Error fetching personal repos:', error);
+                if (error.status === 401) {
+                    console.error('Access token expired or invalid, redirecting to login page.');
+                    window.location.href = '/login';
+                } else {
+                    console.error('Error fetching personal repos:', error);
+                }
             });
     }
 
