@@ -1,4 +1,5 @@
 import connectWebSocket from '../websocket.js';
+
 $(document).ready(function() {
     $('#menu-toggle').click(function() {
         let menu = $('#slide-menu');
@@ -90,10 +91,8 @@ $(document).ready(function() {
                             <div class="card" data-index="${index}" style="cursor: pointer; background-color: rgb(${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)});">
                                 <div>
                                     <div class="num">${String(index + 1).padStart(2, '0')}</div>
+                                    <br>
                                     <div class="date">저장 시간: ${formattedDate}</div>
-                                    <br>
-                                    <br>
-                                    <br>
                                     <br>
                                     <br>
                                     <br>

@@ -35,9 +35,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">프로젝트 수정</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="editProjectForm">
@@ -49,6 +47,7 @@
                         <label for="editDescription">프로젝트 설명</label>
                         <textarea class="form-control" id="editDescription" rows="3" required></textarea>
                     </div>
+                    <br>
                     <input type="hidden" id="editProjectId">
                     <button type="submit" class="btn btn-primary">수정</button>
                 </form>
@@ -63,9 +62,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">쪽지함</h5>
-                <button type="button" class="close" data-close="messageModal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <ul class="nav nav-tabs" style="list-style: none; padding: 0; margin: 0; display: flex; padding : 2px;">
