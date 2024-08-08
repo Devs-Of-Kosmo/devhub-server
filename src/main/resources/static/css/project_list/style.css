@@ -3,7 +3,7 @@
     --transition-time: 0.5s;
 }
 * {
-    box-sizing: border-box;
+    right : 22px;
 }
 body {
     margin: 0;
@@ -67,6 +67,7 @@ body {
     overflow: hidden;
     border: 10px solid #ccc;
     text-decoration: none;
+    margin : 1em;
 }
 .card:hover {
     transform: rotate(0);
@@ -74,7 +75,7 @@ body {
 .card h1 {
     margin: 0;
     font-size: 1.5em;
-    line-height: 1.2em;
+    line-height: 0.2em;
 }
 .card p {
     font-size: 0.75em;
@@ -137,8 +138,8 @@ body {
 }
 .card-grid-space .num {
     font-size: 3em;
-    margin-bottom: 1.2rem;
-    margin-left: 1rem;
+    margin-bottom: 4.2rem;
+    margin-left: 14rem;
 }
 
 @media screen and (max-width: 1285px) {

@@ -4,6 +4,9 @@ $(document).ready(function() {
     var accessToken = localStorage.getItem('accessToken');
     var userEmail = null;
 
+    $('#login-link').attr('href', 'login');
+    $('#login-side').attr('href', 'login');
+
     if (accessToken) {
         $.ajax({
             type: 'GET',
