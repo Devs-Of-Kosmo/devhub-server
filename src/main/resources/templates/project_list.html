@@ -57,6 +57,28 @@
     </div>
 </div>
 
+<!-- 쪽지 보내기 모달 -->
+<div id="sendMessageModal" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">쪽지 보내기</h5>
+                <button type="button" class="close" data-close="sendMessageModal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="inviteForm" class="" role="form">
+                    <h2 class="modal-title" id="sendMessage">쪽지 보내기</h2>
+                    <input type="email" name="receiverEmail" id="receiverEmail" pattern="[^ @]*@[^ @]*" class="" placeholder="받는 사람의 이메일" required="">
+                    <textarea name="messageContent" id="messageContent" class="" placeholder="메시지 내용" required=""></textarea>
+                    <button type="submit" class="">보내기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- 메시지 모달 -->
 <div id="messageModal" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">

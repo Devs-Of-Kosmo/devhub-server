@@ -55,37 +55,38 @@ $(document).ready(function() {
 
         const receiverEmail = $('#receiverEmail').val();
         const messageContent = $('#messageContent').val();
-        const inviteUrl = $('#inviteUrl').val();
+        let messageStrCount = messageContent.length;
 
-        fetch('/api/messages/send', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + accessToken
-            },
-            body: JSON.stringify({
-                receiverEmail: receiverEmail,
-                content: messageContent,
-                inviteUrl: inviteUrl
+        if(messageStrCount <= 300){
+            fetch('/api/messages/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + accessToken
+                },
+                body: JSON.stringify({
+                    receiverEmail: receiverEmail,
+                    content: messageContent
+                })
             })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(errorData => {
-                    alert("받는 사람의 이메일이 존재하지 않습니다.");
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data) {
-                alert('메시지가 성공적으로 전송되었습니다!');
-                $('#inviteModal').modal('hide');
-            } else {
-                alert('메시지 전송에 실패했습니다.');
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        alert("받는 사람의 이메일이 존재하지 않습니다.");
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    alert('메시지가 성공적으로 전송되었습니다!');
+                    $('#inviteModal').modal('hide');
+                } else {
+                    alert('메시지 전송에 실패했습니다.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }else{alert("300자 이내로 작성해주세요." + messageStrCount +"/300");}
     });
 
     function loadMessages(url, messageType) {
@@ -114,9 +115,12 @@ $(document).ready(function() {
                     listItem = $('<li></li>').addClass('list-group-item').css('padding', '8px 20px');
                 }
 
+                let messageTitle = message.content.substring(0, 20);
+                let messageHtml = message.content.replace(/\n/g, "<br>");
+
                 listItem.append(
                     $('<div></div>').text(`보낸 사람: ${message.senderEmail}`).css('font-size', 'small'),
-                    $('<div></div>').text(`팀 소개: ${message.content}`).css('font-size', 'small'),
+                    $('<div></div>').text(`팀 소개: ${messageTitle}...`).css('font-size', 'small'),
                     $('<div></div>').css({'display': 'flex', 'justify-content': 'space-between', 'align-items': 'center'}).append(
                         $('<span></span>').text(`보낸 시간: ${new Date(message.createdDate).toLocaleString()}`).css('font-size', 'small'),
                         $('<button></button>').addClass('btn btn-danger btn-sm').text('삭제').css({'font-size': 'small', 'border': '2px solid #ff6161', 'background-color': '#ff6161','padding' : '0px 3px', 'margin-right' : '5px'}).on('click', function(event) {
@@ -171,12 +175,7 @@ $(document).ready(function() {
                                 $('<span></span>').text(`보낸 사람: ${message.senderEmail}`).css({'margin-left': '10px'})
                             ),
                             $('<hr>').css('margin-top','3px'),
-                            $('<span></span>').text(`${message.content}`).css({'display': 'block', 'text-align' : 'center'}),
-                            $('<div></div>').css({'text-align': 'center'}).append(
-                                $('<button></button>').addClass('btn btn-primary btn-sm').text('invite').css({'border': '2px solid #a3ff96', 'background-color': '#a3ff96', 'margin-top': '10px'}).on('click', function(event) {
-                                    window.location.href = `${message.inviteUrl}`;
-                                })
-                            ),
+                            $('<span></span>').html(`${messageHtml}`).css({'display': 'block', 'text-align' : 'center'}),
                             $('<hr>').css('margin-bottom','5px'),
                             $('<div></div>').css({'display': 'flex', 'justify-content': 'space-between', 'align-items': 'center'}).append(
                                 $('<span></span>').text(`보낸 날짜 : ${new Date(message.createdDate).toLocaleString()}`).css('margin-left','5px'),

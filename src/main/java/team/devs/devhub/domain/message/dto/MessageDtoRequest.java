@@ -16,15 +16,11 @@ public class MessageDtoRequest {
     @NotBlank
     private String receiverEmail;
 
-    @NotBlank
-    private String inviteUrl;
-
     public Message toEntity(User sender, User receiver) {
         return Message.builder()
                 .sender(sender)
                 .receiver(receiver)
                 .content(content)
-                .inviteUrl(inviteUrl)
                 .readCondition(false)
                 .senderDeleteCondition(false)
                 .receiverDeleteCondition(false)
