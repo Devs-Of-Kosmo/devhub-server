@@ -1,0 +1,389 @@
+/* 전역 스타일 */
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: 'Noto Sans KR', sans-serif;
+        background-image: url('../images/team_project/background.jpg');
+        overflow: hidden;
+        color: #ffffff;
+        font-size: 16px; /* 기본 폰트 크기 설정 */
+    }
+
+/* 헤더 (메뉴바) 스타일 */
+header {
+    background: rgba(50, 50, 50, 0.8);
+    backdrop-filter: blur(10px);
+    display: block;
+    font-size: 0.9em;
+    height: 1.5em;
+    -webkit-user-select: none;
+    user-select: none;
+    padding: 0.2em 0;
+}
+header ul {
+    margin: 0 5px;
+    padding: 0 3px;
+}
+header li {
+    display: inline-block;
+    line-height: 1.5em;
+    padding: 0 0.5em;
+    position: relative;
+    cursor: default;
+}
+header .left { float: left; }
+header .right { float: right; }
+
+/* 데스크톱 아이콘 스타일 */
+#Desktop {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    height: calc(100% - 2em);
+    padding: 10px;
+    justify-content: center;
+    align-items: flex-start;
+}
+#Desktop .icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+}
+#Desktop .icon img {
+    width: 64px;
+    height: 64px;
+    transition: all 0.2s;
+}
+#Desktop .icon:hover img {
+    transform: scale(1.1);
+}
+#Desktop .icon .title {
+    margin-top: 5px;
+    font-size: 0.9em;
+    word-break: break-word;
+    text-shadow: 0px 0px 4px #000;
+}
+#Desktop .icon.clicked img {
+    transform: scale(0.9);
+}
+
+/* 독(Dock) 스타일 */
+footer {
+    bottom: 10px;
+    display: inline-block;
+    height: 4.4em;
+    left: 50%;
+    width: 90%;
+    max-width: 600px;
+    padding: 0 10px;
+    perspective: 1000px;
+    position: absolute;
+    text-align: center;
+    transform: translatex(-50%);
+}
+footer:before {
+    background: rgba(50, 50, 50, 0.5);
+    backdrop-filter: blur(10px);
+    bottom: 0;
+    content: "";
+    height: 4em;
+    left: 0;
+    margin-top: 15px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: rotatex(45deg);
+    width: 100%;
+    z-index: -1;
+    border-radius: 10px;
+}
+footer ul {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin: 0 0.1em;
+    padding: 0;
+    transform-origin: bottom center !important;
+}
+footer li {
+    flex: 1;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    transform: scale(1);
+    transform-origin: bottom center;
+    transition: transform 2s;
+}
+footer img {
+    align-items: center;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    margin: 0 5px;
+    position: relative;
+    transform: scale(1);
+    transform-origin: bottom center !important;
+    transition: all 0.2s;
+    width: 4em;
+}
+footer img:hover {
+    margin: 0 10px;
+    transform: scale(1.2);
+}
+
+/* 프로젝트 창 스타일 */
+.window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    padding: 20px;
+    width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    display: none;
+    color: #ffffff;
+}
+.window h2 {
+    margin-top: 0;
+    color: #ffffff;
+}
+.window input, .window textarea {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    background: rgba(70, 70, 70, 0.8);
+    color: #ffffff;
+}
+.window button {
+    background: #0077ed;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.window button:hover {
+    background: #0066cc;
+}
+
+/* 기존의 전역 스타일 유지 */
+
+/* 아이폰 UI 스타일 */
+#inviteMembers.window {
+    width: 375px;
+    height: 667px;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.iphone {
+    width: 375px;
+    height: 667px;
+    background-image:   url('http://www.adobewordpress.com/tasarim/images/iphone6.png');
+    background-size: 100% 100%;
+    position: relative;
+    right: 130%;
+}
+
+.border {
+    position: absolute;
+    top: 12.3%;
+    right: 7%;
+    left: 7%;
+    bottom: 12%;
+    overflow: hidden;
+    background-color: #ffffff;
+    border-radius: 30px;
+}
+
+.responsive-html5-chat {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+form.chat {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0;
+    cursor: default;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    user-select: none;
+}
+
+form.chat .messages {
+    display: block;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    position: relative;
+    height: 90%;
+    width: 100%;
+    padding: 2% 3%;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+form.chat .message {
+    display: block;
+    width: 98%;
+    padding: 0.5%;
+}
+
+form.chat .myMessage,
+form.chat .fromThem {
+    max-width: 75%;
+    word-wrap: break-word;
+    margin-bottom: 20px;
+    font: 16px 'Helvetica Neue', Helvetica, sans-serif;
+    position: relative;
+    padding: 10px 20px;
+    border-radius: 25px;
+    clear: both;
+}
+
+form.chat .myMessage {
+    background: #007aff;
+    color: white;
+    float: right;
+    clear: both;
+}
+
+form.chat .fromThem {
+    background: #e5e5ea;
+    color: black;
+    float: left;
+    clear: both;
+}
+
+form.chat .myMessage:before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    bottom: -2px;
+    right: -8px;
+    height: 19px;
+    border-right: 20px solid #007aff;
+    border-bottom-left-radius: 16px 14px;
+    transform: translate(0, -2px);
+}
+
+form.chat .fromThem:before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    bottom: -2px;
+    left: -7px;
+    height: 19px;
+    border-left: 20px solid #e5e5ea;
+    border-bottom-right-radius: 16px 14px;
+    transform: translate(0, -2px);
+}
+
+form.chat date {
+    position: absolute;
+    top: -20px;
+    font-size: 12px;
+    white-space: nowrap;
+    color: #8b8b90;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+form.chat .myMessage date {
+    right: 0;
+}
+
+form.chat .fromThem date {
+    left: 0;
+}
+
+form.chat input {
+    font: 16px 'Helvetica Neue', Helvetica, sans-serif;
+    border: 0;
+    padding: 0 15px;
+    height: 10%;
+    outline: 0;
+}
+
+form.chat input[type='text'] {
+    width: 73%;
+    float: left;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: #fff;
+    color:black;
+}
+
+form.chat input[type='submit'] {
+    width: 23%;
+    background: transparent;
+    color: #007aff;
+    font-weight: bold;
+    text-align: center;
+    float: right;
+}
+
+/* 스크롤바 스타일 */
+form.chat ::-webkit-scrollbar {
+    width: 3px;
+    height: 1px;
+    transition: all .5s;
+    z-index: 10;
+}
+
+form.chat ::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+form.chat ::-webkit-scrollbar-thumb {
+    background-color: #bec4c8;
+    border-radius: 3px;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    #inviteMembers.window {
+        width: 90%;
+        height: 80vh;
+    }
+
+    .iphone {
+        width: 100%;
+        height: 100%;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+}
+
+@media (max-width: 480px) {
+    #inviteMembers.window {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    .border {
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        border-radius: 0;
+    }
+}
