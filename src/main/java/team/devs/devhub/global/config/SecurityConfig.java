@@ -35,7 +35,9 @@ public class SecurityConfig {
     private final String[] AUTH_WHITELIST = {
             "/favicon.ico", "/error",
             "/api/*/public/**", "/ws/message",
-            "/", "/register", "/login","/mypage","loading","/personal_project","/project_list","/teamloading",
+            "/", "/register", "/login","/mypage",
+            "loading","/personal_project","/project_list",
+            "/team_project","/team_project_list/**",
             "/footer.html", "/templates/**", "/css/**", "/js/**", "/images/**", "/videos/**", "/fonts/**",
             "/swagger-ui/**", "/v3/api-docs/**",
     };

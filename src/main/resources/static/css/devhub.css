@@ -161,7 +161,7 @@ b, strong {
     width: 35px;
     height: 35px;
     padding: 0;
-    background: url('../images/message.png') no-repeat center center;
+    background: url('images/message.png') no-repeat center center;
     background-size: 35px 35px;
     text-align: center;
     margin-left: 20px; /* 아이템 간격을 위해 추가 */
@@ -588,7 +588,7 @@ b, strong {
     position: relative;
     grid-area: showcase;
     min-height: 400px;
-    background: url('../images/logo_1.jpg');
+    background: url('images/logo_1.jpg');
     background-size: cover;
     background-position: center;
     padding: 3rem;
@@ -641,14 +641,14 @@ b, strong {
 
 .new-section .top-box-a {
     grid-area: top-box-a;
-    background-image: url("../images/pay.jpg");
+    background-image: url("images/pay.jpg");
     background-size: cover; /* 요소 크기에 맞게 이미지 크기 조정 */
     background-position: center; /* 이미지 중심으로 배치 */
 }
 
 .new-section .top-box-b {
     grid-area: top-box-b;
-    background-image: url("../images/pay2.jpg");
+    background-image: url("images/pay2.jpg");
     background-size: cover; /* 요소 크기에 맞게 이미지 크기 조정 */
     background-position: center; /* 이미지 중심으로 배치 */
 }
@@ -700,19 +700,19 @@ b, strong {
 }
 
 .new-section .box.chart-pie {
-    background-image: url('../images/code.png');
+    background-image: url('images/code.png');
 }
 
 .new-section .box.globe {
-    background-image: url('../images/markting.png');
+    background-image: url('images/markting.png');
 }
 
 .new-section .box.cog {
-    background-image: url('../images/tool.png');
+    background-image: url('images/tool.png');
 }
 
 .new-section .box.users {
-    background-image: url('../images/business-service.png');
+    background-image: url('images/business-service.png');
 }
 
 .new-section .info {
