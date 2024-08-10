@@ -10,6 +10,9 @@ import org.hibernate.annotations.DynamicInsert;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.common.BaseTimeEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @DynamicInsert
@@ -36,10 +39,10 @@ public class PersonalCommit extends BaseTimeEntity {
     @JoinColumn(name = "master_id", nullable = false)
     private User master;
 
-    @OneToOne(mappedBy = "parentCommit", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private PersonalCommit childCommit;
+    @OneToMany(mappedBy = "parentCommit", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<PersonalCommit> childCommits = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_commit_id")
     private PersonalCommit parentCommit;
 
@@ -51,10 +54,6 @@ public class PersonalCommit extends BaseTimeEntity {
         this.project = project;
         this.master = master;
         this.parentCommit = parentCommit;
-    }
-
-    public void deleteChildCommit() {
-        this.childCommit = null;
     }
 
 }
