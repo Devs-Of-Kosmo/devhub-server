@@ -144,7 +144,7 @@ public class PersonalProjectService {
 
     @Transactional(readOnly = true)
     public PersonalProjectMetaReadResponse readProjectMetadata(long projectId, long userId) {
-        PersonalProject project = personalProjectRepository.findById(projectId)
+        PersonalProject project = personalProjectRepository.findByIdFetchJoinCommits(projectId)
                 .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -201,7 +201,6 @@ public class PersonalProjectService {
 
         VersionControlUtil.resetCommitHistory(commit);
 
-        commit.getParentCommit().deleteChildCommit();
         personalCommitRepository.deleteById(commit.getId());
     }
 
