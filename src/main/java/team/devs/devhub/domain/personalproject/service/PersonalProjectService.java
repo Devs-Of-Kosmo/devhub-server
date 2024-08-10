@@ -196,6 +196,7 @@ public class PersonalProjectService {
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validIsExistParentCommit(commit);
         validMatchedProjectMaster(commit.getProject(), user);
 
         VersionControlUtil.resetCommitHistory(commit);
@@ -229,4 +230,11 @@ public class PersonalProjectService {
             throw new PersonalProjectMasterNotMatchException(ErrorCode.PERSONAL_PROJECT_MASTER_NOT_MATCH);
         }
     }
+
+    private void validIsExistParentCommit(PersonalCommit commit) {
+        if (commit.getParentCommit() == null) {
+            throw new ParentCommitNotFoundException(ErrorCode.PARENT_COMMIT_NOT_FOUND);
+        }
+    }
+
 }
