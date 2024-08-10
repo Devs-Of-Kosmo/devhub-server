@@ -43,7 +43,7 @@ $(document).ready(function() {
                 }
 
                 if (projectLink) {
-                    projectLink.href = 'http://127.0.0.1:5000/?token=' + accessToken;
+                    projectLink.href = '/team_project'; // 수정된 부분: /team_project로 변경
                 }
 
                 if (soloSideLink) {
@@ -51,7 +51,7 @@ $(document).ready(function() {
                 }
 
                 if (teamSideLink) {
-                    teamSideLink.href = 'teamloading';
+                    teamSideLink.href = '/team_project'; // 수정된 부분: /team_project로 변경
                 }
 
                 // 로그아웃 요청 보내기 - JavaScript
