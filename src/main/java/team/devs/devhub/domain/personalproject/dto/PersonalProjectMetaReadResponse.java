@@ -27,7 +27,6 @@ public class PersonalProjectMetaReadResponse {
                 .description(project.getDescription())
                 .commitInfo(
                         project.getPersonalCommits().stream()
-                                .filter(e -> !e.isDeleteCondition())
                                 .map(e -> CommitInfoResponse.of(e))
                                 .collect(Collectors.toList())
                 )

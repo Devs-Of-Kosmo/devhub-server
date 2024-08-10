@@ -11,11 +11,8 @@ import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalCommitRepository;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalProjectRepository;
 import team.devs.devhub.domain.personalproject.dto.*;
-import team.devs.devhub.domain.personalproject.exception.RepositoryDuplicateException;
+import team.devs.devhub.domain.personalproject.exception.*;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
-import team.devs.devhub.domain.personalproject.exception.PersonalProjectMasterNotMatchException;
-import team.devs.devhub.domain.personalproject.exception.PersonalCommitNotFoundException;
-import team.devs.devhub.domain.personalproject.exception.PersonalProjectNotFoundException;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
 import team.devs.devhub.domain.user.exception.UserNotFoundException;
@@ -94,7 +91,7 @@ public class PersonalProjectService {
 
         RepositoryUtil.deleteRepository(project);
 
-        personalProjectRepository.delete(project);
+        personalProjectRepository.deleteById(project.getId());
     }
 
     public PersonalProjectInitResponse saveInitialProject(PersonalProjectInitRequest request, long userId) {
@@ -199,11 +196,13 @@ public class PersonalProjectService {
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validIsExistParentCommit(commit);
         validMatchedProjectMaster(commit.getProject(), user);
 
         VersionControlUtil.resetCommitHistory(commit);
 
-        softDeleteChildCommit(commit);
+        commit.getParentCommit().deleteChildCommit();
+        personalCommitRepository.deleteById(commit.getId());
     }
 
     @Transactional(readOnly = true)
@@ -219,16 +218,6 @@ public class PersonalProjectService {
         return PersonalProjectDownloadDto.of(resource, commit);
     }
 
-    /**
-     * 성능에 매우 비효율적, 성능 개선 필요
-     */
-    private void softDeleteChildCommit(PersonalCommit commit) {
-        commit.softDelete();
-        commit.getChildCommitList().stream()
-                .filter(e -> !e.isDeleteCondition())
-                .forEach(this::softDeleteChildCommit);
-    }
-
     // exception
     private void validRepositoryName(PersonalProject project) {
         if (personalProjectRepository.existsByMasterAndName(project.getMaster(), project.getName())) {
@@ -241,4 +230,11 @@ public class PersonalProjectService {
             throw new PersonalProjectMasterNotMatchException(ErrorCode.PERSONAL_PROJECT_MASTER_NOT_MATCH);
         }
     }
+
+    private void validIsExistParentCommit(PersonalCommit commit) {
+        if (commit.getParentCommit() == null) {
+            throw new ParentCommitNotFoundException(ErrorCode.PARENT_COMMIT_NOT_FOUND);
+        }
+    }
+
 }

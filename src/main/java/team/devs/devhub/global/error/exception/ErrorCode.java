@@ -37,6 +37,7 @@ public enum ErrorCode {
     ZIP_FILE_GENERATE_ERROR(500, "PP012", "zip파일 생성 중 오류가 발생했습니다"),
     REPOSITORY_UPDATE_ERROR(500, "PP013", "레포지토리 업데이트 중 오류가 발생했습니다"),
     REPOSITORY_DELETE_ERROR(500, "PP014", "레포지토리를 삭제하는 중 오류가 발생했습니다"),
+    PARENT_COMMIT_NOT_FOUND(500, "PP015", "부모 커밋이 존재하지 않습니다"),
 
     // Message
     MESSAGE_NOT_FOUND(500, "M001", "메시지를 찾을 수 없습니다"),
