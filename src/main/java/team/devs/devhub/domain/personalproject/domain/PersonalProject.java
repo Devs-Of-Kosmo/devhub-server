@@ -53,6 +53,5 @@ public class PersonalProject extends BaseTimeEntity {
     public void update(PersonalProject project) {
         this.name = project.getName();
         this.description = project.getDescription();
-
     }
 }

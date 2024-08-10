@@ -11,11 +11,8 @@ import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalCommitRepository;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalProjectRepository;
 import team.devs.devhub.domain.personalproject.dto.*;
-import team.devs.devhub.domain.personalproject.exception.RepositoryDuplicateException;
+import team.devs.devhub.domain.personalproject.exception.*;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
-import team.devs.devhub.domain.personalproject.exception.PersonalProjectMasterNotMatchException;
-import team.devs.devhub.domain.personalproject.exception.PersonalCommitNotFoundException;
-import team.devs.devhub.domain.personalproject.exception.PersonalProjectNotFoundException;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
 import team.devs.devhub.domain.user.exception.UserNotFoundException;
@@ -94,7 +91,7 @@ public class PersonalProjectService {
 
         RepositoryUtil.deleteRepository(project);
 
-        personalProjectRepository.delete(project);
+        personalProjectRepository.deleteById(project.getId());
     }
 
     public PersonalProjectInitResponse saveInitialProject(PersonalProjectInitRequest request, long userId) {
@@ -203,7 +200,8 @@ public class PersonalProjectService {
 
         VersionControlUtil.resetCommitHistory(commit);
 
-        softDeleteChildCommit(commit);
+        commit.getParentCommit().deleteChildCommit();
+        personalCommitRepository.deleteById(commit.getId());
     }
 
     @Transactional(readOnly = true)
@@ -217,16 +215,6 @@ public class PersonalProjectService {
         ByteArrayResource resource = new ByteArrayResource(VersionControlUtil.generateProjectFilesAsZip(commit));
 
         return PersonalProjectDownloadDto.of(resource, commit);
-    }
-
-    /**
-     * 성능에 매우 비효율적, 성능 개선 필요
-     */
-    private void softDeleteChildCommit(PersonalCommit commit) {
-        commit.softDelete();
-        commit.getChildCommitList().stream()
-                .filter(e -> !e.isDeleteCondition())
-                .forEach(this::softDeleteChildCommit);
     }
 
     // exception
