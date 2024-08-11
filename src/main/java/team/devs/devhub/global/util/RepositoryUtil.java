@@ -1,8 +1,8 @@
 package team.devs.devhub.global.util;
 
 import org.springframework.web.multipart.MultipartFile;
-import team.devs.devhub.domain.personalproject.domain.PersonalProject;
-import team.devs.devhub.domain.personalproject.exception.*;
+import team.devs.devhub.domain.personal.domain.PersonalProject;
+import team.devs.devhub.domain.personal.exception.*;
 import team.devs.devhub.global.error.exception.ErrorCode;
 
 import java.io.File;

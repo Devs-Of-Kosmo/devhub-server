@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import team.devs.devhub.domain.message.domain.Message;
-import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
-import team.devs.devhub.domain.personalproject.domain.PersonalProject;
+import team.devs.devhub.domain.personal.domain.PersonalCommit;
+import team.devs.devhub.domain.personal.domain.PersonalProject;
 import team.devs.devhub.global.common.BaseTimeEntity;
 
 import java.util.ArrayList;
