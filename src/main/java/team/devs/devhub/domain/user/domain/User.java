@@ -4,12 +4,17 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import team.devs.devhub.domain.message.domain.Message;
-import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
-import team.devs.devhub.domain.personalproject.domain.PersonalProject;
+import team.devs.devhub.domain.personal.domain.PersonalCommit;
+import team.devs.devhub.domain.personal.domain.PersonalProject;
+import team.devs.devhub.domain.team.domain.project.TeamBranch;
+import team.devs.devhub.domain.team.domain.project.TeamProject;
+import team.devs.devhub.domain.team.domain.team.Team;
+import team.devs.devhub.domain.team.domain.team.UserTeam;
 import team.devs.devhub.global.common.BaseTimeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -45,6 +50,18 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PersonalCommit> personalCommits = new ArrayList<>();
 
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.PERSIST)
+    private List<Team> teamsICreated = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserTeam> affiliatedTeams = new ArrayList<>();
+
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.PERSIST)
+    private List<TeamProject> teamProjects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.PERSIST)
+    private List<TeamBranch> teamBranches = new ArrayList<>();
+
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> senderMessages = new ArrayList<>();
 
@@ -67,6 +84,19 @@ public class User extends BaseTimeEntity {
 
     public void assignIdentificationCode(int maxIdentificationCode) {
         this.identificationCode = maxIdentificationCode + 1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
 }

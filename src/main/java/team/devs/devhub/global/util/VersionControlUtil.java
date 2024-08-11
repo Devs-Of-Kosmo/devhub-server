@@ -10,10 +10,10 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
-import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
-import team.devs.devhub.domain.personalproject.domain.PersonalProject;
-import team.devs.devhub.domain.personalproject.exception.*;
-import team.devs.devhub.domain.personalproject.exception.FileNotFoundException;
+import team.devs.devhub.domain.personal.domain.PersonalCommit;
+import team.devs.devhub.domain.personal.domain.PersonalProject;
+import team.devs.devhub.domain.personal.exception.*;
+import team.devs.devhub.domain.personal.exception.FileNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 
 import java.io.*;
