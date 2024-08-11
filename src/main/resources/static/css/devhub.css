@@ -161,7 +161,7 @@ b, strong {
     width: 35px;
     height: 35px;
     padding: 0;
-    background: url('images/message.png') no-repeat center center;
+    background: url('../css/images/message.png') no-repeat center center;
     background-size: 35px 35px;
     text-align: center;
     margin-left: 20px; /* 아이템 간격을 위해 추가 */

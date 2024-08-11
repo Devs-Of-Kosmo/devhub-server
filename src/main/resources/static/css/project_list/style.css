@@ -1,68 +1,126 @@
-:root {
-    --color: #3c3163;
-    --transition-time: 0.5s;
-}
-* {
-    box-sizing: border-box;
-}
-body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: 'Open Sans', sans-serif;
-    background: #fafafa;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 50px;
-}
-#slide-menu {
-    width: 250px;
+body, html {
     height: 100%;
-    position: fixed;
-    left: -250px;
-    top: 0;
-    background: #343a40;
-    transition: 0.3s;
-    padding-top: 60px;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    background-image: url('../images/project_list/background.jpg');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    color: #333;
+    font-size: 14px;
 }
-#slide-menu ul {
+
+.menu-bar {
+    background: rgba(236, 236, 236, 0.8);
+    backdrop-filter: blur(10px);
+    height: 25px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 13px;
+    z-index: 1050; /* 메뉴바가 다른 요소 위에 표시되도록 */
+}
+
+.menu-bar .apple-logo {
+    font-size: 18px;
+    margin-right: 20px;
+}
+
+.menu-bar .menu-item {
+    margin-right: 15px;
+    cursor: default;
+}
+
+.main-content {
+    display: flex;
+    height: calc(100vh - 25px);
+    padding-top: 50px;  /* 상단에 공간을 만들어 사이드바 버튼을 위한 공간 확보 */
+    padding-left: 20px; /* 왼쪽에 약간의 여백 추가 */
+}
+
+#slide-menu {
+    width: 250px;  /* 사이드바의 너비를 조금 더 넓게 */
+    background: rgba(245, 245, 245, 0.8);
+    backdrop-filter: blur(10px);
+    height: 100%;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    position: fixed;
+    top: 0;  /* 화면 맨 위에 위치 */
+    left: -250px;  /* 초기에는 화면 밖에 위치 */
+    transition: left 0.3s ease;
+    z-index: 1045; /* 다른 요소들보다 위에 표시 */
+}
+
+#slide-menu.show {
+    left: 0;  /* 활성화되면 화면에 나타남 */
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sidebar-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-body ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: left; /* ul 내 모든 텍스트를 왼쪽 정렬 */
 }
-#slide-menu ul li {
-    padding: 8px 16px;
-    text-align: left;
+
+.sidebar-body ul li {
+    padding: 8px 10px;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-align: left; /* li 내 텍스트를 왼쪽 정렬 */
 }
-#slide-menu ul li a {
-    color: #fff;
+
+.sidebar-body ul li a {
     text-decoration: none;
+    color: inherit;
+    display: block;
+    text-align: left; /* 링크 내 텍스트를 왼쪽 정렬 */
+    width: 100%;
 }
-#slide-menu ul li.sep {
-    border-top: 1px solid #495057;
-    margin-top: 10px;
+
+.sidebar-body ul li:hover {
+    background-color: rgba(255, 255, 255, 0.7);
+    color: #007aff;
 }
+
+.content-area {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    margin-top: 20px;  /* 컨텐츠 영역을 아래로 조금 이동 */
+    margin-left: 20px; /* 컨텐츠 영역을 오른쪽으로 조금 이동 */
+}
+
 .cards-wrapper {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
     gap: 20px;
-    padding: 20px;
-    width: 100%;
-    max-width: 1200px;
 }
 
 .project-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    color: white;
-    width: 300px;
-    background-color: #333;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
     border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .project-container:hover {
@@ -70,279 +128,153 @@ body {
 }
 
 .folder {
-    transition: all 0.2s ease-in;
-    position: relative;
-    width: 100%;
-    height: 170px; /* 높이를 20px 더 높였습니다 */
-    background: #47c5ff;
-    border-radius: 0px 5px 5px 5px;
-}
-
-.folder::after {
-    content: "";
-    position: absolute;
-    bottom: 98%;
-    left: 0;
-    width: 30px;
-    height: 10px;
-    background: #47c5ff;
-    border-radius: 5px 5px 0 0;
-}
-
-.folder .paper {
-    position: absolute;
-    bottom: 10%;
-    left: 50%;
-    transform: translate(-50%, 10%);
-    width: 70%;
-    height: 80%;
-    background: #e6e6e6;
-    border-radius: 5px;
-    transition: all 0.3s ease-in-out;
-}
-
-.folder .paper:nth-child(2) {
-    background: #f2f2f2;
-    width: 80%;
-    height: 70%;
-}
-
-.folder .paper:nth-child(3) {
-    background: white;
-    width: 90%;
-    height: 60%;
-}
-
-.folder .folder_front {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: rgb(116, 213, 252);
-    border-radius: 5px;
-    transform-origin: bottom;
-    transition: all 0.3s ease-in-out;
-}
-
-.folder:hover .paper {
-    transform: translate(-50%, 0%);
-}
-
-.folder:hover .folder_front {
-    transform: skew(15deg) scaleY(0.6);
-}
-
-.details {
-    padding: 5px;
+    width: 64px;
+    height: 64px;
+    background-image: url('https://cdn-icons-png.flaticon.com/512/716/716784.png');
+    background-size: cover;
+    margin: 0 auto 10px;
 }
 
 .details h1 {
-    font-size: 1.5em;
-    margin: 0;
+    font-size: 18px;
+    margin: 0 0 10px;
+    color: #333;
 }
 
 .details p {
-    font-size: 1em;
-    margin: 10px 0;
+    font-size: 14px;
+    margin: 5px 0;
+    color: #666;
 }
 
 .details .date {
-    font-size: 0.9em;
-    color: #bbb;
-}
-
-.project-btn, .edit-btn, .delete-btn {
-    background-color: #b0c4de;
-    color: #262626;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    margin-top: 10px;
-    transition: background-color 0.3s;
-    font-family: 'Jua', sans-serif;
-}
-
-.edit-btn {
-    background-color:#fbd35c;
-    color: #262626;
-}
-
-.delete-btn {
-    background-color: #FF6060;
-    color: #fff;
-}
-
-.project-btn:hover, .edit-btn:hover, .delete-btn:hover {
-    background-color: #333;
-    color: #fff;
+    font-size: 12px;
+    color: #999;
 }
 
 .actions {
+    margin-top: 15px;
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin-top: 10px;
 }
 
-@media screen and (max-width: 1285px) {
-    .cards-wrapper {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-@media screen and (max-width: 900px) {
-    .cards-wrapper {
-        grid-template-columns: 1fr;
-    }
-}
-@media screen and (max-width: 500px) {
-    .cards-wrapper {
-        padding: 4rem 2rem;
-    }
-    .card {
-        max-width: calc(100vw - 4rem);
-    }
+.edit-btn, .delete-btn {
+    font-size: 12px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-nav#slide-menu {
+.edit-btn {
+    background-color: #007aff;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #ff3b30;
+    color: white;
+}
+
+.edit-btn:hover, .delete-btn:hover {
+    opacity: 0.8;
+}
+
+footer {
     position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 240px;
-    background: #555653;
-    box-shadow: 2px 0 12px rgba(0,0,0,0.4);
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    color: #fff;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 5px;
     z-index: 1000;
 }
 
-nav#slide-menu ul {
-    margin: 60px 20px 0;
+footer ul {
+    display: flex;
+    list-style-type: none;
     padding: 0;
-    list-style: none;
+    margin: 0;
 }
 
-nav#slide-menu ul li {
-    margin-bottom: 20px;
-    padding: 10px;
-    font-size: 1.2em;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background 0.3s ease;
+footer li {
+    margin: 0 5px;
+    transition: all 0.2s ease;
 }
 
-nav#slide-menu ul li:hover {
-    background: #2a2347;
+footer li:hover {
+    transform: scale(1.1);
 }
 
-nav#slide-menu ul li:before {
-    content: attr(data-icon);
-    font-family: "ico";
-    margin-right: 12px;
-    font-size: 1.2em;
-    color: #59e9df;
+footer img {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
 }
 
-nav#slide-menu ul li.sep {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255,255,255,0.3);
-}
-
-body.menu-active nav#slide-menu {
-    transform: translateX(0);
-}
-
-div#content {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding: 60px;
-    overflow: scroll;
-    background: #fcfeff;
-    box-sizing: border-box;
-    box-shadow: -3px 0 6px #4b5762;
-    transition: all 0.3s ease;
-    transition: left 0.3s ease;
-}
-
-div.menu-trigger {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    width: 36px;
-    height: 36px;
-    background: #dfe5eb;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-}
-
-div.menu-trigger:before {
-    content: '\2630';
-    display: inline-block;
-    width: 36px;
-    height: 36px;
-    font-size: 1.5em;
-    line-height: 36px;
-    text-align: center;
-    color: black;
-}
-
-div.menu-trigger:hover {
-    background: #556270;
-}
-
-div.menu-trigger:hover:before {
-    color: #fcfeff;
-}
-
-body.menu-active div#content {
-    left: 240px;
-    border-radius: 0;
-}
-
-body.menu-active div#content .menu-trigger {
-    left: 250px;
-}
-
-/* 모달 스타일 */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1050; /* 높여서 모달이 앞에 나타나도록 */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.5); /* 배경을 어둡게 */
-    justify-content: center;
-    align-items: center;
-}
-.modal-content {
-    background-color: #fefefe;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px; /* 최대 너비를 설정 */
-    position: relative; /* close 버튼 위치 조정을 위해 relative */
-}
-.close {
-    color: #aaa;
+footer li::after {
+    content: attr(data-title);
     position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 28px;
-    font-weight: bold;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
 }
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
+
+footer li:hover::after {
+    opacity: 1;
+}
+
+#sidebar-toggle {
+    position: fixed;
+    top: 35px;  /* 메뉴 바 아래에 위치 */
+    left: 20px;
+    z-index: 1050;  /* 메뉴바 위에 위치 */
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#sidebar-toggle:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+#sidebar-toggle svg {
+    width: 24px;
+    height: 24px;
+}
+
+@media screen and (max-width: 1200px) {
+    .project-container {
+        width: calc(50% - 20px);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .project-container {
+        width: 100%;
+    }
+}
+
+.modal {
+    z-index: 1060;  /* 모달을 최상위에 표시 */
+}
+
+.modal-backdrop {
+    z-index: 1055;  /* 모달 배경을 모달 아래에 표시 */
 }

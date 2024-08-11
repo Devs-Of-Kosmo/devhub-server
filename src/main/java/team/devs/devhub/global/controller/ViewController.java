@@ -51,7 +51,7 @@ public class ViewController {
 
     @GetMapping("/loading")
     public String loadingPage() {
-        return "loading";
+        return "personal_project/loading";
     }
 
 
@@ -72,7 +72,7 @@ public class ViewController {
 
     @GetMapping("/team_project_list/{folderName}")
     public String getTeamProjectList(@PathVariable String folderName, Model model) {
-        // 폴더 이름에 따라 필요한 데이터를 모델에 추가
+
         model.addAttribute("folderName", folderName);
         return "team_project/team_project_list";
     }
