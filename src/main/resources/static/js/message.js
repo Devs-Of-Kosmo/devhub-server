@@ -9,20 +9,22 @@ $(document).ready(function() {
         if (userEmail != null) {
             messageSendLink.style.display = 'block';
             messageBoxLink.style.display = 'block';
+            console.log("Message links are now visible."); // 확인용 로그
         } else {
             messageSendLink.style.display = 'none';
             messageBoxLink.style.display = 'none';
+            console.log("Message links are now hidden."); // 확인용 로그
         }
     }
 
     window.updateMessageCount = function(data) {
         var messageBox = document.getElementById('message-box');
         if (data != "0") {
-            messageBox.style.backgroundImage = 'url("../images/message-alert.png")';
+            messageBox.style.backgroundImage = 'url("css/images/message-alert.png")';
             messageBox.style.backgroundRepeat = 'no-repeat';
             messageBox.style.backgroundPosition = 'center center';
         } else {
-            messageBox.style.backgroundImage = 'url("../images/message.png")';
+            messageBox.style.backgroundImage = 'url("css/images/message.png")';
             messageBox.style.backgroundRepeat = 'no-repeat';
             messageBox.style.backgroundPosition = 'center center';
         }
