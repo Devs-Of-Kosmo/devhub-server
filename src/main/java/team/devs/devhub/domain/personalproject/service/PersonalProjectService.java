@@ -7,6 +7,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalCommitRepository;
 import team.devs.devhub.domain.personalproject.domain.repository.PersonalProjectRepository;
@@ -32,8 +33,10 @@ public class PersonalProjectService {
     private final UserRepository userRepository;
     private final PersonalProjectRepository personalProjectRepository;
     private final PersonalCommitRepository personalCommitRepository;
-    @Value("${repository.path.personal}")
+    @Value("${business.personal.repository.path}")
     private String repositoryPathHead;
+    @Value("${business.personal.multipart.max-size}")
+    private long uploadFileMaxSize;
 
     public PersonalProjectRepoCreateResponse saveProjectRepo(PersonalProjectRepoCreateRequest request, long userId) {
         User user = userRepository.findById(userId)
@@ -95,6 +98,8 @@ public class PersonalProjectService {
     }
 
     public PersonalProjectInitResponse saveInitialProject(PersonalProjectInitRequest request, long userId) {
+        validUploadFileSize(request.getFiles());
+
         PersonalProject project = personalProjectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
         User user = userRepository.findById(userId)
@@ -118,6 +123,8 @@ public class PersonalProjectService {
     }
 
     public PersonalProjectSaveResponse saveWorkedProject(PersonalProjectSaveRequest request, long userId) {
+        validUploadFileSize(request.getFiles());
+
         PersonalCommit parentCommit = personalCommitRepository.findById(request.getFromCommitId())
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
         User user = userRepository.findById(userId)
@@ -217,10 +224,22 @@ public class PersonalProjectService {
         return PersonalProjectDownloadDto.of(resource, commit);
     }
 
+    private long getFilesSize(List<MultipartFile> files) {
+        return files.stream()
+                .mapToLong(MultipartFile::getSize)
+                .sum();
+    }
+
     // exception
     private void validRepositoryName(PersonalProject project) {
         if (personalProjectRepository.existsByMasterAndName(project.getMaster(), project.getName())) {
             throw new RepositoryDuplicateException(ErrorCode.REPOSITORY_NAME_DUPLICATED);
+        }
+    }
+
+    private void validUploadFileSize(List<MultipartFile> files) {
+        if (getFilesSize(files) > uploadFileMaxSize) {
+            throw new FileSizeOverException(ErrorCode.UPLOAD_FILE_SIZE_OVER);
         }
     }
 

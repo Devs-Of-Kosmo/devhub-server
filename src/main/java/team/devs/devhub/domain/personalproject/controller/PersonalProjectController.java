@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +26,6 @@ import java.util.List;
 @CrossOrigin(origins = "http://127.0.0.1:5000")
 @RequiredArgsConstructor
 @Tag(name = "개인 프로젝트 관련 API", description = "개인 프로젝트 관련 API 입니다")
-@Slf4j
 public class PersonalProjectController {
     private final PersonalProjectService personalProjectService;
 

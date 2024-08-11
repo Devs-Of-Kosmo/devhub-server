@@ -38,6 +38,7 @@ public enum ErrorCode {
     REPOSITORY_UPDATE_ERROR(500, "PP013", "레포지토리 업데이트 중 오류가 발생했습니다"),
     REPOSITORY_DELETE_ERROR(500, "PP014", "레포지토리를 삭제하는 중 오류가 발생했습니다"),
     PARENT_COMMIT_NOT_FOUND(500, "PP015", "부모 커밋이 존재하지 않습니다"),
+    UPLOAD_FILE_SIZE_OVER(500, "PP016", "업로드한 파일의 용량이 100MB를 초과했습니다"),
 
     // Message
     MESSAGE_NOT_FOUND(500, "M001", "메시지를 찾을 수 없습니다"),
