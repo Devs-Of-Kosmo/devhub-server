@@ -1,4 +1,4 @@
-package team.devs.devhub.domain.board.domain.dto;
+package team.devs.devhub.domain.board.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
-import team.devs.devhub.domain.board.domain.domain.Board;
+import team.devs.devhub.domain.board.domain.Board;
 import team.devs.devhub.domain.user.domain.User;
 
 @NoArgsConstructor

@@ -1,4 +1,4 @@
-package team.devs.devhub.domain.board.domain.service;
+package team.devs.devhub.domain.board.service;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import team.devs.devhub.domain.board.domain.domain.Board;
-import team.devs.devhub.domain.board.domain.dto.BoardRequest;
-import team.devs.devhub.domain.board.domain.dto.BoardResponse;
-import team.devs.devhub.domain.board.domain.exception.BoardDeletionException;
-import team.devs.devhub.domain.board.domain.exception.BoardNotFoundException;
-import team.devs.devhub.domain.board.domain.exception.BoardUpdateException;
-import team.devs.devhub.domain.board.domain.exception.ImageSaveFailedException;
+import team.devs.devhub.domain.board.domain.Board;
+import team.devs.devhub.domain.board.dto.BoardRequest;
+import team.devs.devhub.domain.board.dto.BoardResponse;
+import team.devs.devhub.domain.board.exception.BoardDeletionException;
+import team.devs.devhub.domain.board.exception.BoardNotFoundException;
+import team.devs.devhub.domain.board.exception.BoardUpdateException;
+import team.devs.devhub.domain.board.exception.ImageSaveFailedException;
 import team.devs.devhub.domain.board.domain.repository.BoardRepository;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;

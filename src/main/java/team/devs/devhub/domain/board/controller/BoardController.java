@@ -1,12 +1,12 @@
-package team.devs.devhub.domain.board.domain.controller;
+package team.devs.devhub.domain.board.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import team.devs.devhub.domain.board.domain.dto.BoardRequest;
-import team.devs.devhub.domain.board.domain.dto.BoardResponse;
-import team.devs.devhub.domain.board.domain.service.BoardService;
+import team.devs.devhub.domain.board.dto.BoardRequest;
+import team.devs.devhub.domain.board.dto.BoardResponse;
+import team.devs.devhub.domain.board.service.BoardService;
 import team.devs.devhub.global.security.CustomUserDetails;
 
 import java.util.List;

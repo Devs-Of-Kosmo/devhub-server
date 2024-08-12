@@ -1,4 +1,4 @@
-package team.devs.devhub.domain.board.domain.domain;
+package team.devs.devhub.domain.board.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;

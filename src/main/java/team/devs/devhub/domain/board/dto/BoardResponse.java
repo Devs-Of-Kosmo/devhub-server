@@ -1,9 +1,9 @@
-package team.devs.devhub.domain.board.domain.dto;
+package team.devs.devhub.domain.board.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import team.devs.devhub.domain.board.domain.domain.Board;
+import team.devs.devhub.domain.board.domain.Board;
 
 @Getter
 @Builder

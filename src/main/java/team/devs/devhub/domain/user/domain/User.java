@@ -3,7 +3,7 @@ package team.devs.devhub.domain.user.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import team.devs.devhub.domain.board.domain.domain.Board;
+import team.devs.devhub.domain.board.domain.Board;
 import team.devs.devhub.domain.message.domain.Message;
 import team.devs.devhub.domain.personalproject.domain.PersonalCommit;
 import team.devs.devhub.domain.personalproject.domain.PersonalProject;
