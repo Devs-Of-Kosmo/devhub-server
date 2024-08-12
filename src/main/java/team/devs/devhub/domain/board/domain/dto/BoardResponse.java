@@ -16,6 +16,10 @@ public class BoardResponse {
     private String writer;
     private String imagePath;
 
+    public BoardResponse() {
+
+    }
+
     public static BoardResponse of(Board board) {
         return BoardResponse.builder()
                 .id(board.getId())

@@ -6,13 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import team.devs.devhub.domain.user.domain.User;
+import team.devs.devhub.global.common.BaseTimeEntity;
 
 @Entity
 @Table(name = "boards")
 @NoArgsConstructor
 @Getter
 @Setter
-public class Board {
+public class Board extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,7 +21,7 @@ public class Board {
     @Column(length = 50, nullable = false)
     private String title;
 
-    @Column(length = 200, nullable = false)
+    @Column(length = 400, nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

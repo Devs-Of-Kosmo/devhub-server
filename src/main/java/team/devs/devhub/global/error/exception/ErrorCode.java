@@ -31,6 +31,12 @@ public enum ErrorCode {
     PERSONAL_COMMIT_NOT_FOUND(500, "PP006", "해당 커밋을 찾을 수 없습니다"),
     DIRECTORY_DELETE_ERROR(500, "PP007", "프로젝트 삭제 중 오류가 발생했습니다"),
 
+    // Board
+    BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
+    BOARD_UPDATE(500,"B002", "게시글 수정 권한이 없습니다"),
+    BOARD_DELETE(500,"B003", "게시글을 삭제 권한이 없습니다"),
+    IMAGE_SAVE(500,"B004", "이미지 저장에 실패했습니다"),
+
     // Message
     MESSAGE_NOT_FOUND(500, "M001", "메시지를 찾을 수 없습니다"),
     MESSAGE_COUNTING_NULL(500, "M002", "메시지 카운팅 중 널 값이 발생했습니다"),

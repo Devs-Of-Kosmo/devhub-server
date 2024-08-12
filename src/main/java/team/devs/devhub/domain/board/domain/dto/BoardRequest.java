@@ -19,7 +19,7 @@ public class BoardRequest {
     private String title;
     @NotBlank
     private String content;
-    private MultipartFile image;
+    private MultipartFile file;
 
     public Board toEntity(User writer, String imagePath) {
         return Board.builder()

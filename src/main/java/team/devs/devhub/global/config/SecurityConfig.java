@@ -34,9 +34,14 @@ import team.devs.devhub.global.security.oauth2.CustomAuthenticationSuccessHandle
 public class SecurityConfig {
     private final String[] AUTH_WHITELIST = {
             "/favicon.ico", "/error",
-            "/api/*/public/**","/ws/message",
-            "/", "/register", "/login","/loading","/personal_project","/project_list","/boards/**","/api/boards/**",
-            "/footer.html", "/templates/**", "/css/**", "/js/**", "/images/**", "/videos/**", "/fonts/**",
+
+            "/api/*/public/**", "/ws/message",
+
+            "/", "/register", "/login", "/loading", "/personal_project", "/project_list",
+            "/password-reset", "/contact", "/send-data",
+            "/boards", "/boards/new", "/boards/{id}", "/boards/edit/{id}",
+
+            "/footer.html", "/templates/**", "/css/**", "/js/**", "/images/**", "/static/images/**", "/videos/**", "/fonts/**",
             "/swagger-ui/**", "/v3/api-docs/**",
     };
     private final TokenProvider tokenProvider;
@@ -64,6 +69,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .requestMatchers("/api/auth/logout").authenticated()
                         .anyRequest().authenticated()
                 )
 
@@ -74,9 +80,11 @@ public class SecurityConfig {
                 )
                 .logout(logout ->
                         logout
-                                .logoutSuccessUrl("/").permitAll()
+                                .logoutUrl("/api/auth/logout")
+                                .logoutSuccessUrl("/")
                                 .invalidateHttpSession(true) // 세션 무효화
-                                .deleteCookies("JSESSIONID") // 쿠키 삭제
+                                .deleteCookies("refreshToken", "JSESSIONID") // refreshToken 쿠키 삭제
+                                .clearAuthentication(true)
                 );
 
         return http.build();
