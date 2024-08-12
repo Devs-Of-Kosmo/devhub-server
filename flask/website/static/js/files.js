@@ -5,10 +5,227 @@ document.addEventListener("DOMContentLoaded", function () {
     const commitBtn = document.getElementById('commit-button');
     const commitMessageInput = document.getElementById('commitMessage');
     const reviewBtn = document.getElementById('review-btn');
-
-    // 로컬 스토리지에서 accessToken 가져오기
     const accessToken = localStorage.getItem('accessToken');
+    const metadataWrapper = document.querySelector('.metadata-cards-wrapper');
+    const leftBtn = document.querySelector('.slide-btn.left-btn');
+    const rightBtn = document.querySelector('.slide-btn.right-btn');
+    let currentProjectId = null; // 현재 프로젝트 ID 저장
 
+    // 레포지토리 목록 가져오기
+    fetchRepositories();
+
+    function fetchRepositories() {
+        fetch('http://localhost:8080/api/personal/repo/list', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Accept': '*/*'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Fetched data:', data);
+            const cardsContainer = document.querySelector('.cards-container');
+            cardsContainer.innerHTML = '';
+
+            const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+
+            data.forEach(repo => {
+                if (projects.some(p => p.projectId === repo.projectId)) {
+                    const card = document.createElement('div');
+                    card.className = 'repo-card';
+                    card.innerHTML = `
+                        <div class="content">
+                            <h3>${repo.projectName}</h3>
+                            <p>${repo.description}</p>
+                            <button class="see-more-btn" data-project-id="${repo.projectId}">더 보기</button>
+                        </div>
+                    `;
+                    cardsContainer.appendChild(card);
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching repositories:', error));
+    }
+
+    // "더 보기" 버튼 클릭 이벤트 리스너 추가
+    document.querySelector('.cards-container').addEventListener('click', function (event) {
+        if (event.target.classList.contains('see-more-btn')) {
+            const projectId = event.target.getAttribute('data-project-id');
+            if (projectId) {
+                currentProjectId = projectId; // 현재 프로젝트 ID 저장
+                metadataWrapper.style.display = 'flex';
+                fetchProjectMetadata(projectId);
+            }
+        }
+    });
+
+    async function fetchProjectMetadata(projectId) {
+        try {
+            const response = await fetch(`http://localhost:8080/api/personal/project/metadata?projectId=${projectId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': '*/*'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch project metadata');
+            }
+
+            const data = await response.json();
+            displayProjectMetadata(data);
+        } catch (error) {
+            console.error('Error fetching project metadata:', error);
+        }
+    }
+
+    function displayProjectMetadata(metadata) {
+        const { projectName, description, commitInfo } = metadata;
+        const metadataContainer = document.querySelector('.metadata-cards-container');
+        metadataContainer.innerHTML = '';
+
+        commitInfo.forEach(commit => {
+            const commitCard = document.createElement('div');
+            commitCard.className = 'commit-card';
+            commitCard.innerHTML = `
+                <h3>${projectName}</h3>
+                <p>${description}</p>
+                <ul>
+                    <li>
+                        <strong>커밋 코드:</strong> ${commit.commitCode} <br>
+                        <strong>커밋 메시지:</strong> ${commit.commitMessage} <br>
+                        <strong>생성 날짜:</strong> ${new Date(commit.createdDate).toLocaleString()}
+                    </li>
+                </ul>
+                <button class="view-commit-btn" data-commit-id="${commit.commitId}">커밋 조회</button>
+                <div class="commit-details" style="display: none;"></div>
+            `;
+            metadataContainer.appendChild(commitCard);
+        });
+
+        initializeMetadataCarousel();
+    }
+
+    function initializeMetadataCarousel() {
+        const metadataContainer = document.querySelector('.metadata-cards-container');
+        const leftBtn = document.querySelector('.metadata-cards-wrapper .left-btn');
+        const rightBtn = document.querySelector('.metadata-cards-wrapper .right-btn');
+
+        let cardWidth = metadataContainer.querySelector('.commit-card').offsetWidth;
+        let containerWidth = metadataContainer.offsetWidth;
+
+        // 카드 너비 계산
+        window.addEventListener('resize', () => {
+            cardWidth = metadataContainer.querySelector('.commit-card').offsetWidth;
+            containerWidth = metadataContainer.offsetWidth;
+        });
+
+        let scrollPosition = 0;
+
+        leftBtn.addEventListener('click', () => {
+            scrollPosition -= containerWidth;
+            if (scrollPosition < 0) {
+                scrollPosition = metadataContainer.scrollWidth - containerWidth;
+            }
+            metadataContainer.scrollTo({
+                left: scrollPosition,
+                behavior: 'smooth'
+            });
+        });
+
+        rightBtn.addEventListener('click', () => {
+            scrollPosition += containerWidth;
+            if (scrollPosition >= metadataContainer.scrollWidth) {
+                scrollPosition = 0;
+            }
+            metadataContainer.scrollTo({
+                left: scrollPosition,
+                behavior: 'smooth'
+            });
+        });
+    }
+
+    // "커밋 조회" 버튼 클릭 이벤트 리스너 추가
+    document.querySelector('.metadata-cards-container').addEventListener('click', function (event) {
+        if (event.target.classList.contains('view-commit-btn')) {
+            const commitId = event.target.getAttribute('data-commit-id');
+            const commitCard = event.target.parentElement; // 해당 커밋 카드
+            const commitDetails = event.target.nextElementSibling; // 커밋 세부사항 영역
+            if (commitId) {
+                fetchCommitDetails(commitId, commitDetails);
+
+                // 카드 확장
+                commitCard.classList.add('expanded');
+                const otherCards = document.querySelectorAll('.commit-card');
+                otherCards.forEach(card => {
+                    if (card !== commitCard) {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // 돌아가기 버튼 생성
+                const backButton = document.createElement('button');
+                backButton.textContent = '돌아가기';
+                backButton.className = 'back-btn';
+                backButton.addEventListener('click', function () {
+                    // 돌아가기 버튼 클릭 시 메타데이터 슬라이드를 다시 불러옴
+                    fetchProjectMetadata(currentProjectId);
+                    metadataWrapper.style.display = 'flex';
+                    leftBtn.style.display = 'flex';
+                    rightBtn.style.display = 'flex';
+                });
+                commitCard.insertBefore(backButton, commitCard.firstChild);
+
+                // 기존 "커밋 조회" 버튼 숨기기
+                event.target.style.display = 'none';
+                leftBtn.style.display = 'none';
+                rightBtn.style.display = 'none';
+            }
+        }
+    });
+
+    async function fetchCommitDetails(commitId, commitDetails) {
+        try {
+            const response = await fetch(`http://localhost:8080/api/personal/project/commit?commitId=${commitId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': '*/*'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch commit details');
+            }
+
+            const data = await response.json();
+            displayCommitDetails(data, commitDetails);
+        } catch (error) {
+            console.error('Error fetching commit details:', error);
+        }
+    }
+
+    function displayCommitDetails(data, commitDetails) {
+        const { fileNameWithPathList } = data;
+
+        let detailsHtml = '<h3>커밋에 포함된 파일 목록:</h3><ul>';
+        fileNameWithPathList.forEach(filePath => {
+            detailsHtml += `<li>${filePath}</li>`;
+        });
+        detailsHtml += '</ul>';
+
+        commitDetails.innerHTML = detailsHtml;
+        commitDetails.style.display = 'block'; // 커밋 세부사항 표시
+    }
+
+    // 커밋 버튼 이벤트 리스너
     if (commitBtn) {
         commitBtn.addEventListener('click', async function () {
             const files = file1.files;
@@ -16,12 +233,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const personalProjects = JSON.parse(localStorage.getItem('personal_project') || '[]');
 
             if (!files.length) {
-                alert('Please select files to commit.');
+                alert('커밋할 파일을 선택하세요.');
                 return;
             }
 
             if (!commitMessage) {
-                alert('Please enter a commit message.');
+                alert('커밋 메시지를 입력하세요.');
                 return;
             }
 
@@ -30,7 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const currentProject = projects[0]; // 첫 번째 프로젝트 선택 (필요 시 로직 수정)
 
             if (!currentProject || !currentProject.projectId) {
-                alert('No project selected.');
+                alert('선택된 프로젝트가 없습니다.');
                 return;
             }
 
@@ -78,11 +295,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (!response.ok) {
                     if (contentType && contentType.includes('application/json')) {
                         const errorData = await response.json();
-                        alert('Commit failed: ' + errorData.message);
+                        alert('커밋 실패: ' + errorData.message);
                     } else {
                         const errorText = await response.text();
-                        console.error('Commit failed:', errorText);
-                        alert('An unexpected error occurred.');
+                        console.error('커밋 실패:', errorText);
+                        alert('예기치 않은 오류가 발생했습니다.');
                     }
                     return;
                 }
@@ -93,26 +310,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 personalProjects.push(newCommitData);
                 localStorage.setItem('personal_project', JSON.stringify(personalProjects));
 
-                alert('Commit successful!');
+                alert('커밋 성공!');
                 console.log(newCommitData); // 응답 데이터 로그 출력
             } catch (error) {
                 console.error('Error committing files:', error);
-                alert('An error occurred while committing files.');
+                alert('파일을 커밋하는 도중 오류가 발생했습니다.');
             }
         });
-    } // commitBtn 이벤트 리스너 블록 닫기
+    }
 
+    // file1 변경 이벤트 리스너
     if (file1) {
         file1.addEventListener('change', async function () {
-            var files = this.files;
+            const files = this.files;
             try {
-                var fileContents = await getFileContents(files);
+                const fileContents = await getFileContents(files);
                 displayFileContents(fileContents, 'original');
 
                 // 파일 내용 콘솔에 출력
                 console.log('Files:', files);
                 for (let file of files) {
-                    let content = await readFileContent(file);
+                    const content = await readFileContent(file);
                     console.log(`File: ${file.name}, Size: ${file.size}, Content:`, content.slice(0, 100)); // 첫 100자만 출력
                 }
             } catch (error) {
@@ -122,20 +340,23 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // file2 변경 이벤트 리스너
     if (file2) {
         file2.addEventListener('change', async function () {
-            var fileName = this.files[0].name;
+            const fileName = this.files[0].name;
             document.getElementById('file2-name').textContent = fileName;
             await readFile(this, 'changed');
         });
     }
 
+    // compare 버튼 이벤트 리스너
     if (compareBtn) {
         compareBtn.addEventListener('click', async function () {
             await compareFiles();
         });
     }
 
+    // review 버튼 이벤트 리스너
     if (reviewBtn) {
         reviewBtn.addEventListener('click', async function () {
             await reviewFiles();
@@ -143,19 +364,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function uploadFile(input, type) {
-        var formData = new FormData();
+        const formData = new FormData();
         formData.append(input.name, input.files[0]);
 
         try {
-            let response = await fetch('/upload', { method: 'POST', body: formData });
-            let data = await response.json();
+            const response = await fetch('/upload', { method: 'POST', body: formData });
+            const data = await response.json();
 
             if (type === 'original') {
                 document.getElementById('original-structure-container').innerHTML = data.combined_structure.original_structure;
                 addDirectoryToggle();
                 addFileClickEvent();
                 // Read the original file content and display it
-                var originalFileContent = '';
+                let originalFileContent = '';
                 for (let file of data.files) {
                     originalFileContent += `<h3>${file.name}</h3><pre>${file.content}</pre>`;
                 }
@@ -169,11 +390,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function readFile(input, type) {
-        var file = input.files[0];
-        var reader = new FileReader();
+        const file = input.files[0];
+        const reader = new FileReader();
 
         reader.onload = function (event) {
-            var content = event.target.result;
+            const content = event.target.result;
             if (type === 'changed') {
                 document.getElementById('changed-file-content').innerText = content;
             }
@@ -183,9 +404,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function displayFileContent(file, type) {
-        var reader = new FileReader();
+        const reader = new FileReader();
         reader.onload = function (event) {
-            var content = event.target.result;
+            const content = event.target.result;
             if (type === 'original') {
                 document.getElementById('original-file-content').innerText = content;
             }
@@ -194,17 +415,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function compareFiles() {
-        var originalContent = document.getElementById('original-file-content').innerText;
-        var changedContent = document.getElementById('changed-file-content').innerText;
+        const originalContent = document.getElementById('original-file-content').innerText;
+        const changedContent = document.getElementById('changed-file-content').innerText;
 
         try {
-            let response = await fetch('/compare', {
+            const response = await fetch('/compare', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ original: originalContent, changed: changedContent }),
             });
-            let data = await response.json();
-            var resultElement = document.getElementById('comparison-result');
+            const data = await response.json();
+            const resultElement = document.getElementById('comparison-result');
             resultElement.innerHTML = data.differences;
             resultElement.classList.add('show');
         } catch (error) {
@@ -213,19 +434,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function reviewFiles() {
-        var originalContent = document.getElementById('original-file-content').innerText;
-        var changedContent = document.getElementById('changed-file-content').innerText;
+        const originalContent = document.getElementById('original-file-content').innerText;
+        const changedContent = document.getElementById('changed-file-content').innerText;
 
         try {
-            let response = await fetch('/review_files', {
+            const response = await fetch('/review_files', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ file1: originalContent, file2: changedContent }),
             });
-            let data = await response.json();
-            var resultElement = document.getElementById('review-result');
+            const data = await response.json();
+            const resultElement = document.getElementById('review-result');
             if (data.result === "success") {
-                resultElement.innerHTML = `<h3>Review Feedback:</h3><p>${data.review}</p>`;
+                resultElement.innerHTML = `<h3>리뷰 피드백:</h3><p>${data.review}</p>`;
             } else {
                 resultElement.innerHTML = `<p>Error: ${data.result}</p>`;
             }
@@ -235,13 +456,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function saveChanges() {
-        var originalContent = Array.from(document.getElementById('original-file-content').querySelectorAll('pre'))
+        const originalContent = Array.from(document.getElementById('original-file-content').querySelectorAll('pre'))
             .map(pre => ({ name: pre.previousSibling.textContent, content: pre.textContent }));
-        var changedContent = Array.from(document.getElementById('changed-file-content').querySelectorAll('pre'))
+        const changedContent = Array.from(document.getElementById('changed-file-content').querySelectorAll('pre'))
             .map(pre => ({ name: pre.previousSibling.textContent, content: pre.textContent }));
 
         try {
-            let response = await fetch('/save_changes', {
+            const response = await fetch('/save_changes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -249,8 +470,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     changed_files: changedContent
                 }),
             });
-            let data = await response.json();
-            var resultMessageElement = document.getElementById('result-message');
+            const data = await response.json();
+            const resultMessageElement = document.getElementById('result-message');
             resultMessageElement.textContent = data.result;
 
             if (data.result === "Files saved successfully.") {
@@ -261,8 +482,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 resultMessageElement.classList.remove('success');
             }
         } catch (error) {
-            var resultMessageElement = document.getElementById('result-message');
-            resultMessageElement.textContent = 'Failed to save changes.';
+            const resultMessageElement = document.getElementById('result-message');
+            resultMessageElement.textContent = '변경 사항을 저장하지 못했습니다.';
             resultMessageElement.classList.add('error');
             resultMessageElement.classList.remove('success');
             console.error('Error:', error);
@@ -271,8 +492,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function reloadOriginalFile(filePath) {
         try {
-            let response = await fetch('/file?path=' + encodeURIComponent(filePath));
-            let data = await response.json();
+            const response = await fetch('/file?path=' + encodeURIComponent(filePath));
+            const data = await response.json();
             if (data.result === "File loaded successfully") {
                 document.getElementById('original-file-content').innerText = data.content;
             } else {
@@ -286,12 +507,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let openDirectories = {};
 
     async function getFileContents(files) {
-        let fileContents = [];
+        const fileContents = [];
         for (let file of files) {
             // MIME 타입을 검사하여 텍스트 파일만 읽음
             if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
                 try {
-                    let content = await readFileContent(file);
+                    const content = await readFileContent(file);
                     fileContents.push({ name: file.webkitRelativePath, content: content });
                 } catch (error) {
                     console.error('Error reading file:', file.name, error);
@@ -316,7 +537,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function readFileContent(file) {
         return new Promise((resolve, reject) => {
-            var reader = new FileReader();
+            const reader = new FileReader();
             reader.onload = function (event) {
                 resolve(event.target.result);
             };
@@ -328,25 +549,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function addDirectoryToggle() {
-        var toggler = document.getElementsByClassName("directory");
-        for (var i = 0; i < toggler.length; i++) {
-            var directoryPath = toggler[i].getAttribute("data-path");
+        const toggler = document.getElementsByClassName("directory");
+        for (let i = 0; i < toggler.length; i++) {
+            const directoryPath = toggler[i].getAttribute("data-path");
 
             if (!toggler[i].classList.contains("bound")) {
                 toggler[i].classList.add("bound");
                 toggler[i].addEventListener("click", async function (event) {
                     if (event.target.tagName === 'LI') {
-                        var nested = this.querySelector(".nested");
+                        const nested = this.querySelector(".nested");
                         if (nested) {
                             nested.classList.toggle("active");
                             this.classList.toggle("directory-open");
 
                             if (!nested.innerHTML) {
-                                var path = this.getAttribute("data-path");
-                                var type = this.getAttribute("data-type");
+                                const path = this.getAttribute("data-path");
+                                const type = this.getAttribute("data-type");
                                 try {
-                                    let response = await fetch(`/subdirectories?path=${encodeURIComponent(path)}&type=${type}`);
-                                    let data = await response.json();
+                                    const response = await fetch(`/subdirectories?path=${encodeURIComponent(path)}&type=${type}`);
+                                    const data = await response.json();
                                     if (data.result === "Subdirectories loaded successfully") {
                                         nested.innerHTML = data.subdirectories;
                                         addDirectoryToggle();
@@ -374,7 +595,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (openDirectories[directoryPath]) {
                 toggler[i].classList.add("directory-open");
-                var nested = toggler[i].querySelector(".nested");
+                const nested = toggler[i].querySelector(".nested");
                 if (nested) {
                     nested.classList.add("active");
                 }
@@ -392,18 +613,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateOpenDirectories() {
-        var toggler = document.getElementsByClassName("directory");
-        for (var i = 0; i < toggler.length; i++) {
-            var directoryPath = toggler[i].getAttribute("data-path");
+        const toggler = document.getElementsByClassName("directory");
+        for (let i = 0; i < toggler.length; i++) {
+            const directoryPath = toggler[i].getAttribute("data-path");
             if (openDirectories[directoryPath]) {
                 toggler[i].classList.add("directory-open");
-                var nested = toggler[i].querySelector(".nested");
+                const nested = toggler[i].querySelector(".nested");
                 if (nested) {
                     nested.classList.add("active");
                 }
             } else {
                 toggler[i].classList.remove("directory-open");
-                var nested = toggler[i].querySelector(".nested");
+                const nested = toggler[i].querySelector(".nested");
                 if (nested) {
                     nested.classList.remove("active");
                 }
@@ -412,16 +633,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function addFileClickEvent() {
-        var files = document.getElementsByClassName("file");
-        for (var i = 0; i < files.length; i++) {
+        const files = document.getElementsByClassName("file");
+        for (let i = 0; i < files.length; i++) {
             if (!files[i].classList.contains("bound")) {
                 files[i].classList.add("bound");
                 files[i].addEventListener("click", async function () {
-                    var filePath = this.getAttribute("data-path");
-                    var fileType = this.getAttribute("data-type");
+                    const filePath = this.getAttribute("data-path");
+                    const fileType = this.getAttribute("data-type");
                     try {
-                        let response = await fetch('/file?path=' + encodeURIComponent(filePath));
-                        let data = await response.json();
+                        const response = await fetch('/file?path=' + encodeURIComponent(filePath));
+                        const data = await response.json();
                         if (data.result === "File loaded successfully") {
                             if (fileType === 'original') {
                                 document.getElementById('original-file-content').innerText = data.content;
@@ -436,29 +657,4 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.file-button').forEach(button => {
-        button.addEventListener('click', async function () {
-            const fileId = this.getAttribute('data-id');
-            try {
-                let response = await fetch(`/get_file_content/${fileId}`);
-                let data = await response.json();
-                if (data.result === "success") {
-                    document.getElementById('file-content').innerHTML = `
-                        <h2>${data.file.name}</h2>
-                        <p><strong>${new Date(data.file.timestamp).toLocaleString()}</strong></p>
-                        <p>${data.file.content}</p>
-                        <p class="custom-differences">${data.file.differences}</p>
-                    `;
-                } else {
-                    document.getElementById('file-content').innerHTML = `<p>Failed to load file content.</p>`;
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('file-content').innerHTML = `<p>Error loading file content.</p>`;
-            }
-        });
-    });
 });

@@ -3,7 +3,6 @@ from flask_cors import CORS
 from flask_login import LoginManager
 from website.model import db, User, SaveFile, Comment
 from flask_jwt_extended import JWTManager
-from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
 
@@ -18,7 +17,6 @@ def create_app():
     app.config['JWT_TOKEN_LOCATION'] = ['headers']  # You can also add 'cookies' if needed
 
     db.init_app(app)
-    migrate = Migrate(app, db)
     login_manager = LoginManager()
     login_manager.login_view = 'main.login'
     login_manager.init_app(app)
