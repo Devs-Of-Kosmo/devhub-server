@@ -31,7 +31,7 @@ public class TeamBranch extends BaseTimeEntity {
     private TeamProject project;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "create_by", nullable = false)
+    @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

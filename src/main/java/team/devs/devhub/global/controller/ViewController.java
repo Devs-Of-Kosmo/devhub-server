@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import team.devs.devhub.global.util.CookieUtil;
 
-import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 public class ViewController {
@@ -43,7 +42,6 @@ public class ViewController {
     public String loadingPage() {
         return "personal_project/loading";
     }
-
 
     @GetMapping("/project_list")
     public String projectList() {
