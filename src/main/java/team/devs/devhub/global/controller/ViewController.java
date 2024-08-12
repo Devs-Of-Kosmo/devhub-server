@@ -3,14 +3,11 @@ package team.devs.devhub.global.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import team.devs.devhub.global.util.CookieUtil;
 
-import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 public class ViewController {
@@ -49,7 +46,6 @@ public class ViewController {
         return "personal_project/loading";
     }
 
-
     @GetMapping("/project_list")
     public String projectList() {
         return "personal_project/project_list";
@@ -58,12 +54,6 @@ public class ViewController {
     @GetMapping("/personal_project")
     public String personalProject() {
         return "personal_project/personal_project";
-    }
-
-    // 프로젝트 목록 페이지
-    @GetMapping("/project_list")
-    public String projectList() {
-        return "project_list";
     }
 
     // 게시글 목록 페이지로 이동

@@ -10,8 +10,6 @@ public class PersonalProjectRepoCreateRequest {
 
     @NotBlank
     private String projectName;
-
-    @NotBlank
     private String description;
 
     public PersonalProject toEntity(User user) {

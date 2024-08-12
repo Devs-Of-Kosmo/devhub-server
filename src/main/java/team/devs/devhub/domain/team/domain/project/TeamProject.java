@@ -40,7 +40,7 @@ public class TeamProject extends BaseTimeEntity {
     private Team team;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "create_by", nullable = false)
+    @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
     @ColumnDefault("false")
