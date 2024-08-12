@@ -1,6 +1,8 @@
 $(document).ready(function() {
     console.log("Script loaded");
 
+    let currentUserEmail; // 현재 사용자의 이메일을 저장할 전역 변수
+
     function checkAccessToken() {
         var accessToken = localStorage.getItem('accessToken');
         console.log('Access Token from Local Storage:', accessToken);
@@ -11,82 +13,65 @@ $(document).ready(function() {
             return;
         }
 
-        loadUserInfo();
-        loadPersonalRepoList();
-        loadTeamProjects();
-        setupProjectLinks();
-        loadFriendList();
-
-    }
-
-    function loadFriendList() {
-        // 친구 목록은 로컬 스토리지에서 관리합니다.
-        var friends = JSON.parse(localStorage.getItem('friends')) || [];
-        displayFriendList(friends);
-    }
-
-    function displayFriendList(friends) {
-        var friendList = $('#friend-list');
-        friendList.empty();
-
-        friends.forEach(function(friend) {
-            var friendItem = $('<div class="friend-item"></div>');
-            friendItem.append('<p>' + friend.name + ' (' + friend.email + ')</p>');
-            friendList.append(friendItem);
+        loadUserInfo().then(() => {
+            loadPersonalRepoList();
+            loadTeamProjects();
+            setupProjectLinks();
         });
     }
 
-    $('#add-friend-btn').on('click', function() {
-        $('#addFriendModal').modal('show');
-    });
-
-    $('#confirm-add-friend').on('click', function() {
-        var friendEmail = $('#friend-email').val();
-        addFriend(friendEmail);
-    });
-
-    function addFriend(email) {
-        ajaxWithToken('/api/user/info', {
-            method: 'GET',
-            data: { email: email }
-        })
-            .done(function(response) {
-                var friends = JSON.parse(localStorage.getItem('friends')) || [];
-                var newFriend = {
-                    userId: response.userId,
-                    email: response.email,
-                    name: response.name
-                };
-
-                // 중복 체크
-                if (!friends.some(friend => friend.email === newFriend.email)) {
-                    friends.push(newFriend);
-                    localStorage.setItem('friends', JSON.stringify(friends));
-                    Swal.fire('Success', '친구가 추가되었습니다.', 'success');
-                    loadFriendList();
-                } else {
-                    Swal.fire('Info', '이미 추가된 친구입니다.', 'info');
-                }
-                $('#addFriendModal').modal('hide');
-            })
-            .fail(function(error) {
-                console.error('Error adding friend:', error);
-                Swal.fire('Error', '친구 추가에 실패했습니다. 유효한 이메일인지 확인해주세요.', 'error');
-            });
+    function loadUserInfo() {
+        return new Promise((resolve, reject) => {
+            ajaxWithToken('/api/user/info')
+                .done(function(data) {
+                    console.log('User info loaded:', data);
+                    $('#user-name').text(data.name);
+                    $('#user-email').text(data.email);
+                    currentUserEmail = data.email;
+                    console.log('Current user email set to:', currentUserEmail);
+                    resolve();
+                })
+                .fail(function(error) {
+                    console.error('Error fetching user info:', error);
+                    handleAjaxError(error);
+                    reject(error);
+                });
+        });
     }
 
-    // 비밀번호 변경 버튼 클릭 이벤트 (ID 선택자로 변경)
     $('#change-password-btn').on('click', function() {
-        // ... 기존 비밀번호 변경 코드 ...
+        Swal.fire({
+            title: '비밀번호 변경',
+            html:
+                '<input id="current-password" class="swal2-input" type="password" placeholder="현재 비밀번호">' +
+                '<input id="new-password" class="swal2-input" type="password" placeholder="새 비밀번호">' +
+                '<input id="confirm-password" class="swal2-input" type="password" placeholder="새 비밀번호 확인">',
+            focusConfirm: false,
+            preConfirm: () => {
+                return [
+                    document.getElementById('current-password').value,
+                    document.getElementById('new-password').value,
+                    document.getElementById('confirm-password').value
+                ]
+            }
+        }).then((result) => {
+            if (result.value) {
+                const [currentPassword, newPassword, confirmPassword] = result.value;
+                if (newPassword !== confirmPassword) {
+                    Swal.fire('Error', '새 비밀번호가 일치하지 않습니다.', 'error');
+                    return;
+                }
+                // TODO: 비밀번호 변경 API 호출 추가
+                console.log('Password change requested');
+            }
+        });
     });
 
     function loadTeamProjects() {
-        // 임시로 더미 데이터 사용
         var dummyData = [{ id: 1, name: "Project 1" }, { id: 2, name: "Project 2" }];
         $('#team-projects-count').text(dummyData.length);
         console.log('Team Projects (Dummy):', dummyData);
     }
-
 
     function setupProjectLinks() {
         $('#personal-project-link').on('click', function() {
@@ -101,21 +86,7 @@ $(document).ready(function() {
     function ajaxWithToken(url, options = {}) {
         options.headers = options.headers || {};
         options.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken');
-
         return $.ajax(url, options);
-    }
-
-    function loadUserInfo() {
-        ajaxWithToken('/api/user/info')
-            .done(function(data) {
-                console.log('User info:', data);
-                $('#user-name').text(data.name);
-                $('#user-email').text(data.email);
-            })
-            .fail(function(error) {
-                console.error('Error fetching user info:', error);
-                handleAjaxError(error);
-            });
     }
 
     function loadPersonalRepoList() {
@@ -224,6 +195,43 @@ $(document).ready(function() {
         });
     }
 
+    $(document).ready(function() {
+        // 기존 코드 유지
+
+        // 결제 탭 클릭 시 결제 내역 표시
+        $('a[href="#payment"]').on('click', function() {
+            displayPaymentHistory();
+        });
+
+        function displayPaymentHistory() {
+            let paymentHistory = JSON.parse(localStorage.getItem('paymentHistory')) || [];
+            let paymentContent = $('#payment');
+
+            if (paymentHistory.length === 0) {
+                paymentContent.html('<p>결제 내역이 없습니다.</p>');
+                return;
+            }
+
+            let historyHTML = '<h3>결제 내역</h3><ul class="list-group">';
+            paymentHistory.forEach(function(payment) {
+                historyHTML += `
+                <li class="list-group-item">
+                    <strong>주문번호:</strong> ${payment.merchant_uid}<br>
+                    <strong>상품명:</strong> ${payment.name}<br>
+                    <strong>금액:</strong> ${payment.amount}원<br>
+                    <strong>결제일:</strong> ${payment.date}
+                </li>
+            `;
+            });
+            historyHTML += '</ul>';
+
+            paymentContent.html(historyHTML);
+        }
+
+        // 페이지 로드 시 결제 내역 표시
+        displayPaymentHistory();
+    });
+
     function handleAjaxError(error) {
         if (error.status === 401) {
             console.error('Access token expired or invalid, redirecting to login page.');
@@ -233,7 +241,6 @@ $(document).ready(function() {
         }
     }
 
-    // 프로필 이미지 업로드 기능
     $('#profile-image').on('click', function() {
         $('#profile-image-upload').click();
     });
@@ -250,36 +257,6 @@ $(document).ready(function() {
         reader.readAsDataURL(file);
     });
 
-    // 비밀번호 변경 버튼 클릭 이벤트
-    $('.btn-primary').on('click', function() {
-        Swal.fire({
-            title: '비밀번호 변경',
-            html:
-                '<input id="current-password" class="swal2-input" type="password" placeholder="현재 비밀번호">' +
-                '<input id="new-password" class="swal2-input" type="password" placeholder="새 비밀번호">' +
-                '<input id="confirm-password" class="swal2-input" type="password" placeholder="새 비밀번호 확인">',
-            focusConfirm: false,
-            preConfirm: () => {
-                return [
-                    document.getElementById('current-password').value,
-                    document.getElementById('new-password').value,
-                    document.getElementById('confirm-password').value
-                ]
-            }
-        }).then((result) => {
-            if (result.value) {
-                const [currentPassword, newPassword, confirmPassword] = result.value;
-                if (newPassword !== confirmPassword) {
-                    Swal.fire('Error', '새 비밀번호가 일치하지 않습니다.', 'error');
-                    return;
-                }
-                // TODO: 비밀번호 변경 API 호출 추가
-                console.log('Password change requested');
-            }
-        });
-    });
-
-    // 진행률 슬라이더 기능
     $('#progress-slider').on('input', function() {
         var value = $(this).val();
         $('#progress-bar').css('width', value + '%').attr('aria-valuenow', value);
@@ -291,5 +268,10 @@ $(document).ready(function() {
 
     $('#login-link').on('click', function() {
         window.location.href = '/login';
+    });
+
+    // 모달이 표시될 때마다 실행
+    $('.modal').on('shown.bs.modal', function () {
+        $(this).find('.btn-close').removeAttr('aria-hidden');
     });
 });

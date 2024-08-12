@@ -6,6 +6,8 @@
     <title>{% block title %} DEVHUV {% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
 <header>
@@ -16,7 +18,6 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="/group">Projects</a></li>
                 <li><a href="/tools">Tools</a></li>
-                <li><a href="/savefiles">Save Files</a></li>
                 <li id="login-nav-item"><a id="login-link" class="nav-link"></a></li>
             </ul>
         </nav>

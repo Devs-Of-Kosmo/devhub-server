@@ -3,21 +3,17 @@ package team.devs.devhub.global.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import team.devs.devhub.global.util.CookieUtil;
 
-import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 public class ViewController {
 
     private final CookieUtil cookieUtil;
 
-    // 로그인 페이지
     @GetMapping("/login")
     public String login(HttpServletResponse response, Model model) {
         if (model.containsAttribute("accessToken") && model.containsAttribute("refreshToken")) {
@@ -27,13 +23,11 @@ public class ViewController {
         return "login/login";
     }
 
-    // 회원가입 페이지
     @GetMapping("/register")
     public String register() {
-        return "register/register";
+        return "register";
     }
 
-    // 비밀번호 재설정 페이지
     @GetMapping("/password-reset")
     public String passwordReset() {
         return "password-reset";
@@ -49,7 +43,6 @@ public class ViewController {
         return "personal_project/loading";
     }
 
-
     @GetMapping("/project_list")
     public String projectList() {
         return "personal_project/project_list";
@@ -59,7 +52,6 @@ public class ViewController {
     public String personalProject() {
         return "personal_project/personal_project";
     }
-
 
     // 게시글 목록 페이지로 이동
     @GetMapping("/boards")

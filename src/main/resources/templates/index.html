@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,10 +23,10 @@
 
 <body>
 <main>
-    <header class="site-header not-logged-in">
+    <header class="site-header">
         <div class="container">
-            <div class="row justify-content-center align-items-center">
-                <div class="col-lg-12 col-12 d-flex justify-content-center align-items-center">
+            <div class="row justify-content-between">
+                <div class="col-lg-12 col-12 d-flex align-items-center">
                     <a class="site-header-text d-flex justify-content-center align-items-center me-auto" href="/">
                         <i class="bi-box"></i>
                         <span class="nav-link">DEVHUV</span>
@@ -40,7 +40,7 @@
                             <button id="lang-switch" class="btn btn-primary nav-link" style="color: white;">영어로 변경</button>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link" id="my-projects-link">나의 프로젝트</a>
+                            <a href="loading" class="nav-link">나의 프로젝트</a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link" id="project-link">팀의 프로젝트</a>
@@ -61,6 +61,7 @@
                         </a>
                     </div>
 
+
                     <a class="bi-list offcanvas-icon" data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasMenu"></a>
                 </div>
             </div>
@@ -79,8 +80,8 @@
                     <li class="nav-item"><a href="#" id="log-out" class="nav-link">로그아웃</a></li>
                     <li><a href="register">회원가입</a></li>
                     <li><a href="boards">팀원구하기</a></li>
-                    <li><a href="#" id="solo_side">나의 프로젝트</a></li>
-                    <li><a href="#">팀의 프로젝트</a></li>
+                    <li><a href="loading">나의 프로젝트</a></li>
+                    <li><a href="http://127.0.0.1:5000/group">팀의 프로젝트</a></li>
                     <li><a href="#" id="message-box-side" class="nav-link" data-bs-toggle="modal" data-bs-target="#messageModal">쪽지함</a></li>
                     <li><a href="#" id="message-send-side" class="nav-link" data-bs-toggle="modal" data-bs-target="#inviteModal">쪽지 보내기</a></li>
                 </ul>
@@ -100,12 +101,18 @@
                     <form id="inviteForm" class="custom-form mt-lg-4 mt-2" role="form">
                         <h2 class="modal-title" id="inviteModalLabel">초대하기</h2>
                         <input type="email" name="receiverEmail" id="receiverEmail" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="받는 사람의 이메일" required="">
+                        <textarea name="inviteUrl" id="inviteUrl" class="form-control mt-3" placeholder="팀 레포지토리 URL" required=""></textarea>
                         <textarea name="messageContent" id="messageContent" class="form-control mt-3" placeholder="메시지 내용" required=""></textarea>
                         <button type="submit" class="form-control mt-3">보내기</button>
                     </form>
                 </div>
+
+                <div class="modal-footer justify-content-center">
+                    <p>쪽지를 보내시면 수신자가 팀 레포지토리에 접근할 수 있습니다.</p>
+                </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- 메시지 확인 모달 -->
@@ -225,7 +232,9 @@
                 <div class="top-box top-box-a">
                     <h4>Plus+</h4>
                     <p class="price">$2/월</p>
-                    <a href="" class="btn">구독하기</a>
+                    <a href="#" class="btn" id="subscribe-plus">구독하기</a>
+                    <script src ="https://cdn.iamport.kr/v1/iamport.js"></script>
+                    <script src ="/js/pay.js"></script>
                 </div>
                 <div class="top-box top-box-b">
                     <h4>Unlimited</h4>
@@ -233,37 +242,20 @@
                     <a href="https://buy.stripe.com/test_28ocO16tOgwv8nKeUU" class="btn">구독하기</a>
                 </div>
             </section>
-
-            <section class="boxes">
-                <div class="box chart-pie">
-                    <h3>코드 분석</h3>
-                    <p>코드 변경 사항을 분석하고 효율성을 높이세요.</p>
-                </div>
-                <div class="box globe">
-                    <h3>마케팅</h3>
-                    <p>전 세계에 걸쳐 코드를 공유하고 협업하세요.</p>
-                </div>
-                <div class="box cog">
-                    <h3>개발 지원</h3>
-                    <p>효율적인 개발을 위한 도구와 리소스를 제공합니다.</p>
-                </div>
-                <div class="box users">
-                    <h3>지원</h3>
-                    <p>필요한 모든 지원을 제공합니다. 언제든지 문의하세요.</p>
-                </div>
-            </section>
-
-            <!-- Info Section -->
-            <section class="info">
-                <video src="/videos/info.mp4" autoplay loop muted playsinline class="background-video"></video>
-                <div class="content">
-                    <h2>웹에서 당신의 비즈니스를</h2>
-                    <p>형상관리를 통해 코드 비교, 디렉토리 구조 파악, 코드 리뷰 등 다양한 기능을 제공합니다. 우리의 서비스를 통해 비즈니스의 효율성을 높이고 시간을 절약하세요.</p>
-                    <a href="#" class="btn">자세히 알아보기</a>
-                </div>
-            </section>
         </div>
     </div>
+
+    <section class="info">
+        <video src="/videos/info.mp4" autoplay loop muted playsinline></video>
+        <div class="content jua-text">
+            <h2>웹에서 당신의 비즈니스를</h2>
+            <p>형상관리를 통해 코드 비교, 디렉토리 구조 파악, 코드 리뷰 등 다양한 기능을 제공합니다. 우리의 서비스를 통해 비즈니스의 효율성을 높이고 시간을 절약하세요.</p>
+            <a href="#" class="btn">자세히 알아보기</a>
+        </div>
+    </section>
+
+
+
 
     <!-- Footer will be loaded here -->
     <div id="footer-placeholder"></div>
@@ -276,6 +268,7 @@
     <script src="/js/tawkto.js"></script>
     <script type="module" src="/js/script.js"></script>
     <script src="/js/message.js"></script>
+    <script src="/js/pay.js"></script>
 
 </main>
 </body>
