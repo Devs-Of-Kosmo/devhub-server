@@ -152,7 +152,14 @@ def save_personal_project():
 @main.route('/api/personal/repo/list', methods=['GET'])
 @jwt_required()
 def get_personal_projects():
+    # JWT에서 사용자 정보 가져오기
+    current_user = get_jwt_identity()
+
+    # Authorization 헤더에서 'Bearer '를 포함하여 액세스 토큰을 가져옵니다.
     access_token = request.headers.get('Authorization')
+
+    if not access_token:
+        return jsonify({'message': 'Access token not provided'}), 401
 
     try:
         response = requests.get(
@@ -160,11 +167,14 @@ def get_personal_projects():
             headers={'Authorization': access_token}
         )
 
+        # API 응답 상태 코드에 따라 JSON 데이터 반환
         response.raise_for_status()
-        return jsonify(response.json()), response.status_code
+        return jsonify(response.json())
 
-    except requests.exceptions.RequestException as e:
-        return jsonify({'message': 'Failed to fetch personal projects', 'error': str(e)}), 500
+    except requests.exceptions.HTTPError as http_err:
+        return jsonify({'message': 'HTTP error occurred', 'error': str(http_err)}), response.status_code
+    except requests.exceptions.RequestException as req_err:
+        return jsonify({'message': 'Failed to fetch personal projects', 'error': str(req_err)}), 500
 
 @main.route('/group')
 def grupt():
