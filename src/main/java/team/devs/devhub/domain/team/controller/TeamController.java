@@ -10,8 +10,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import team.devs.devhub.domain.team.dto.TeamGroupCreateRequest;
 import team.devs.devhub.domain.team.dto.TeamGroupCreateResponse;
+import team.devs.devhub.domain.team.dto.TeamGroupReadResponse;
 import team.devs.devhub.domain.team.service.TeamService;
 import team.devs.devhub.global.security.CustomUserDetails;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/team")
@@ -31,4 +34,14 @@ public class TeamController {
         TeamGroupCreateResponse response = teamService.saveTeamGroup(request, customUserDetails.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @GetMapping("/group/list")
+    @Operation(summary = "팀 목록 조회 API")
+    public ResponseEntity<List<TeamGroupReadResponse>> readTeamGroups(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        List<TeamGroupReadResponse> response = teamService.readTeamGroups(customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -18,6 +18,7 @@ import team.devs.devhub.domain.user.exception.UserNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -46,6 +47,18 @@ public class TeamService {
         );
 
         return TeamGroupCreateResponse.of(team);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TeamGroupReadResponse> readTeamGroups(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        List<TeamGroupReadResponse> results = userTeamRepository.findAllByUser(user).stream()
+                .map(e -> TeamGroupReadResponse.of(e.getTeam()))
+                .collect(Collectors.toList());
+
+        return results;
     }
 
     // exception
