@@ -40,6 +40,12 @@ public enum ErrorCode {
     PARENT_COMMIT_NOT_FOUND(500, "PP015", "부모 커밋이 존재하지 않습니다"),
     UPLOAD_FILE_SIZE_OVER(500, "PP016", "업로드한 파일의 용량이 100MB를 초과했습니다"),
 
+    // Board
+    BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
+    BOARD_UPDATE(500,"B002", "게시글 수정 권한이 없습니다"),
+    BOARD_DELETE(500,"B003", "게시글을 삭제 권한이 없습니다"),
+    IMAGE_SAVE(500,"B004", "이미지 저장에 실패했습니다"),
+
     // Message
     MESSAGE_NOT_FOUND(500, "M001", "메시지를 찾을 수 없습니다"),
     MESSAGE_COUNTING_NULL(500, "M002", "메시지 카운팅 중 널 값이 발생했습니다"),

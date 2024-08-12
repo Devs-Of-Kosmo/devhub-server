@@ -3,6 +3,7 @@ package team.devs.devhub.domain.user.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import team.devs.devhub.domain.board.domain.Board;
 import team.devs.devhub.domain.message.domain.Message;
 import team.devs.devhub.domain.personal.domain.PersonalCommit;
 import team.devs.devhub.domain.personal.domain.PersonalProject;
@@ -67,6 +68,9 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> receiverMessages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Board> writerBoards = new ArrayList<>();
 
     @Builder
     public User(Long id, String email, String password, String name, Integer identificationCode, RoleType roleType) {
