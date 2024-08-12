@@ -33,7 +33,36 @@ const updateWidth = function (nextWidths) {
         });
     }
 };
+document.querySelectorAll(".dock .item").forEach(item => {
+    item.addEventListener("click", function (event) {
+        event.preventDefault(); // 기본 동작 방지
+        const folderName = item.getAttribute("data-folder");
+        let url;
 
+        switch (folderName) {
+            case 'google':
+                url = 'https://www.google.com';
+                break;
+            case 'git':
+                url = 'https://github.com';
+                break;
+            case 'settings':
+                url = '/settings'; // 설정 페이지 URL을 적절히 변경하세요
+                break;
+            case 'codepen':
+                url = 'https://codepen.io';
+                break;
+            case 'postman':
+                url = 'https://www.postman.com';
+                break;
+            default:
+                console.error("Folder name not found.");
+                return;
+        }
+
+        window.open(url, '_blank');
+    });
+});
 dock.addEventListener("mousemove", function (e) {
     const dockTop = e.target.getBoundingClientRect().top;
     const y = e.clientY - dockTop;
