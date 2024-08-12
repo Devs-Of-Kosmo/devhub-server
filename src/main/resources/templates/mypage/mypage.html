@@ -43,13 +43,6 @@
         </div>
     </div>
 
-    <!-- 프로필 카드 아래에 친구 섹션 추가 -->
-    <div class="friend-section">
-        <h3>친구 목록</h3>
-        <div id="friend-list"></div>
-        <button class="btn btn-primary" id="add-friend-btn">친구 추가</button>
-    </div>
-
     <hr>
     <div class="progress">
         <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
@@ -129,27 +122,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="new-message-btn">새 쪽지 보내기</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- 친구 추가 모달 -->
-<div class="modal fade" id="addFriendModal" tabindex="-1" aria-labelledby="addFriendModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addFriendModalLabel">친구 추가</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="text" id="friend-email" class="form-control" placeholder="친구의 이메일 주소">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                <button type="button" class="btn btn-primary" id="confirm-add-friend">추가</button>
             </div>
         </div>
     </div>

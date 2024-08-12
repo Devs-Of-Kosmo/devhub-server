@@ -209,7 +209,6 @@ b, strong {
     padding: 30px;
 }
 
-
 .offcanvas nav ul li a:hover {
     color: var(--link-hover-color);
     background-color: rgba(255, 255, 255, 0.1);
@@ -653,106 +652,45 @@ b, strong {
     background-position: center; /* 이미지 중심으로 배치 */
 }
 
-.new-section .boxes {
-    display: grid;
-    grid-gap: 20px;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-}
-
-.new-section .box {
-    position: relative;
-    background-size: cover;
-    background-position: center;
-    text-align: center;
-    padding: 1.5rem 2rem;
-    box-shadow: var(--shadow);
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--dark);
-}
-
-.new-section .box::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1;
-}
-
-.new-section .box h3, .new-section .box p {
-    position: relative;
-    z-index: 2;
-}
-
-/* 폰트 크기 변경 */
-.new-section .box h3 {
-    font-size: 2rem;
-}
-
-.new-section .box p {
-    font-size: 1.2rem;
-}
-
-.new-section .box.chart-pie {
-    background-image: url('images/code.png');
-}
-
-.new-section .box.globe {
-    background-image: url('images/markting.png');
-}
-
-.new-section .box.cog {
-    background-image: url('images/tool.png');
-}
-
-.new-section .box.users {
-    background-image: url('images/business-service.png');
-}
-
 .new-section .info {
     background: var(--primary);
     box-shadow: var(--shadow);
     display: grid;
+    grid-template-columns: 1fr 1fr; /* 비디오와 텍스트를 나란히 배치 */
     grid-gap: 30px;
-    grid-template-columns: repeat(2, 1fr);
     padding: 3rem;
+    align-items: center; /* 텍스트와 비디오가 세로로 중앙 정렬되도록 설정 */
 }
 
 .new-section .info video {
-    width: max-content;
-    height: max-content;
+    width: 100%; /* 비디오의 너비를 100%로 설정 */
+    height: auto; /* 비디오의 높이를 자동으로 조정 */
+    display: block; /* 비디오가 그리드 내에서 올바르게 표시되도록 설정 */
+}
+
+.new-section .info .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 @media (max-width: 700px) {
-    .new-section .top-container {
-        grid-template-areas:
-      'showcase showcase'
-      'top-box-a top-box-b';
-    }
-
-    .new-section .showcase h1 {
-        font-size: 2.5rem;
-    }
-
-    .new-section .main-nav ul {
-        grid-template-columns: 1fr;
-    }
-
     .new-section .info {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* 작은 화면에서는 비디오와 텍스트를 위아래로 배치 */
     }
 
-    .new-section .info .btn {
-        display: block;
-        text-align: center;
-        margin: auto;
+    .new-section .info video {
+        width: 100%; /* 비디오의 너비를 100%로 설정 */
     }
+
+    .new-section .info .content {
+        text-align: center; /* 작은 화면에서 텍스트 가운데 정렬 */
+    }
+}
+.new-section .info .btn {
+    display: block;
+    text-align: center;
+    margin: auto;
 }
 
 @media (max-width: 500px) {
