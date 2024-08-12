@@ -10,10 +10,14 @@ import team.devs.devhub.domain.team.domain.team.repository.TeamRepository;
 import team.devs.devhub.domain.team.domain.team.repository.UserTeamRepository;
 import team.devs.devhub.domain.team.dto.TeamGroupCreateRequest;
 import team.devs.devhub.domain.team.dto.TeamGroupCreateResponse;
+import team.devs.devhub.domain.team.dto.TeamGroupReadResponse;
+import team.devs.devhub.domain.team.exception.TeamNameDuplicatedException;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
 import team.devs.devhub.domain.user.exception.UserNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -28,16 +32,27 @@ public class TeamService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        Team team = teamRepository.save(request.toEntity(user));
+        Team team = request.toEntity(user);
+        validDuplicatedTeamName(team);
+
+        Team savedTeam = teamRepository.save(team);
 
         userTeamRepository.save(
                 UserTeam.builder()
                 .user(user)
-                .team(team)
+                .team(savedTeam)
                 .role(TeamRole.MANAGER)
                 .build()
         );
 
         return TeamGroupCreateResponse.of(team);
     }
+
+    // exception
+    private void validDuplicatedTeamName(Team team) {
+        if (teamRepository.existsByName(team.getName())) {
+            throw new TeamNameDuplicatedException(ErrorCode.TEAM_NAME_DUPLICATED);
+        }
+    }
+
 }

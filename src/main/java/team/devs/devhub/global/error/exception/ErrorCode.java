@@ -22,23 +22,26 @@ public enum ErrorCode {
     AUTHENTICATION_CODE_NOT_EXIST(500, "Ma002", "메일 인증 코드가 존재하지 않습니다"),
     AUTHENTICATION_CODE_NOT_MATCHED(500, "Ma003", "인증 코드가 일치하지 않습니다"),
 
-    // PersonalProject
-    REPOSITORY_CREATION_ERROR(500, "PP001", "레포지토리 생성 중 오류가 발생했습니다"),
-    REPOSITORY_NAME_DUPLICATED(500, "PP002", "레포지토리 이름이 존재합니다"),
-    PERSONAL_PROJECT_NOT_FOUND(500, "PP003", "개인 프로젝트를 찾을 수 없습니다"),
-    PROJECT_SAVE_ERROR(500, "PP004", "프로젝트 저장 중 오류가 발생했습니다"),
-    PERSONAL_PROJECT_MASTER_NOT_MATCH(500, "PP005", "프로젝트 소유자가 일치하지 않습니다"),
-    PERSONAL_COMMIT_NOT_FOUND(500, "PP006", "해당 커밋을 찾을 수 없습니다"),
-    DIRECTORY_DELETE_ERROR(500, "PP007", "프로젝트 파일을 삭제하는 중 오류가 발생했습니다"),
-    COMMIT_SEARCH_ERROR(500, "PP008", "커밋 이름 탐색 중 오류가 발생했습니다"),
-    FILE_NOT_FOUND(500, "PP009", "파일을 찾지 못했습니다"),
-    FILE_SEARCH_ERROR(500, "PP010", "파일을 찾는 중 오류가 발생했습니다"),
-    COMMIT_RESET_ERROR(500, "PP011", "커밋 삭제 중 오류가 발생했습니다"),
-    ZIP_FILE_GENERATE_ERROR(500, "PP012", "zip파일 생성 중 오류가 발생했습니다"),
-    REPOSITORY_UPDATE_ERROR(500, "PP013", "레포지토리 업데이트 중 오류가 발생했습니다"),
-    REPOSITORY_DELETE_ERROR(500, "PP014", "레포지토리를 삭제하는 중 오류가 발생했습니다"),
-    PARENT_COMMIT_NOT_FOUND(500, "PP015", "부모 커밋이 존재하지 않습니다"),
-    UPLOAD_FILE_SIZE_OVER(500, "PP016", "업로드한 파일의 용량이 100MB를 초과했습니다"),
+    // Personal
+    REPOSITORY_CREATION_ERROR(500, "P001", "레포지토리 생성 중 오류가 발생했습니다"),
+    REPOSITORY_NAME_DUPLICATED(500, "P002", "레포지토리 이름이 존재합니다"),
+    PERSONAL_PROJECT_NOT_FOUND(500, "P003", "개인 프로젝트를 찾을 수 없습니다"),
+    PROJECT_SAVE_ERROR(500, "P004", "프로젝트 저장 중 오류가 발생했습니다"),
+    PERSONAL_PROJECT_MASTER_NOT_MATCH(500, "P005", "프로젝트 소유자가 일치하지 않습니다"),
+    PERSONAL_COMMIT_NOT_FOUND(500, "P006", "해당 커밋을 찾을 수 없습니다"),
+    DIRECTORY_DELETE_ERROR(500, "P007", "프로젝트 파일을 삭제하는 중 오류가 발생했습니다"),
+    COMMIT_SEARCH_ERROR(500, "P008", "커밋 이름 탐색 중 오류가 발생했습니다"),
+    FILE_NOT_FOUND(500, "P009", "파일을 찾지 못했습니다"),
+    FILE_SEARCH_ERROR(500, "P010", "파일을 찾는 중 오류가 발생했습니다"),
+    COMMIT_RESET_ERROR(500, "P011", "커밋 삭제 중 오류가 발생했습니다"),
+    ZIP_FILE_GENERATE_ERROR(500, "P012", "zip파일 생성 중 오류가 발생했습니다"),
+    REPOSITORY_UPDATE_ERROR(500, "P013", "레포지토리 업데이트 중 오류가 발생했습니다"),
+    REPOSITORY_DELETE_ERROR(500, "P014", "레포지토리를 삭제하는 중 오류가 발생했습니다"),
+    PARENT_COMMIT_NOT_FOUND(500, "P015", "부모 커밋이 존재하지 않습니다"),
+    UPLOAD_FILE_SIZE_OVER(500, "P016", "업로드한 파일의 용량이 100MB를 초과했습니다"),
+
+    // Team
+    TEAM_NAME_DUPLICATED(500, "T001", "팀 이름이 존재합니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
