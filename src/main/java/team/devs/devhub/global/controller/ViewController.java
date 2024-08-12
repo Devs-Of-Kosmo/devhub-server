@@ -60,11 +60,6 @@ public class ViewController {
         return "personal_project/personal_project";
     }
 
-    // 프로젝트 목록 페이지
-    @GetMapping("/project_list")
-    public String projectList() {
-        return "project_list";
-    }
 
     // 게시글 목록 페이지로 이동
     @GetMapping("/boards")
