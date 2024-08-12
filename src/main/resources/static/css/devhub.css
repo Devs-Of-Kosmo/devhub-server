@@ -133,71 +133,86 @@ b, strong {
     border-radius: var(--border-radius-large);
     padding: 15px 25px;
     max-height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .site-header-text {
     color: var(--white-color);
     font-size: var(--p-font-size);
     font-weight: var(--font-weight-bold);
+    margin-right: 20px; /* 요소 간격을 위해 추가 */
 }
 
-.site-header-text span {
-    margin-left: 10px;
+.nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* 메뉴 아이템 간격 추가 */
 }
 
-.site-header .social-icon {
-    max-height: 35px;
-    color: var(--white-color);
-    font-size: var(--p-font-size);
-    font-weight: var(--font-weight-bold);
+.nav-link {
+    margin: 0 10px; /* 각 링크 주변에 여백 추가 */
 }
 
-.offcanvas {
-    background-color: rgba(0, 0, 0, 0.85);
-    padding: 30px;
+.nav-link-message {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    background: url('../css/images/message.png') no-repeat center center;
+    background-size: 35px 35px;
+    text-align: center;
+    margin-left: 20px; /* 아이템 간격을 위해 추가 */
 }
 
-.offcanvas.offcanvas-end {
-    border-left: 0;
-}
-
-.offcanvas-header .btn-close {
-    filter: brightness(0) invert(1);
-    transition: all 0.3s;
-}
-
-.offcanvas-header .btn-close:hover {
-    transform: rotate(180deg);
+.custom-btn {
+    margin-left: 20px; /* 아이템 간격을 위해 추가 */
 }
 
 .offcanvas-icon {
     font-size: var(--h3-font-size);
-    color: var(--white-color);
-    margin-left: 15px;
+    margin-left: 20px; /* 아이템 간격을 위해 추가 */
 }
 
 .offcanvas nav ul {
     margin: 0;
     padding: 0;
+    width: 100%;
+    list-style: none;
+    text-align: left;
 }
 
 .offcanvas nav ul li {
-    list-style: none;
-    display: block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: center;
 }
 
 .offcanvas nav ul li a {
-    color: var(--white-color);
-    font-family: var(--heading-font-family);
-    font-size: var(--p-font-size);
-    font-weight: var(--font-weight-medium);
-    display: inline-block;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    display: block;
+    padding: 10px 15px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
 }
 
-.offcanvas nav ul li a.active, .offcanvas nav ul li a:hover {
+.offcanvas-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px;
+}
+
+
+.offcanvas nav ul li a:hover {
     color: var(--link-hover-color);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .hero-section {
@@ -573,7 +588,7 @@ b, strong {
     position: relative;
     grid-area: showcase;
     min-height: 400px;
-    background: url('../images/logo_1.jpg');
+    background: url('images/logo_1.jpg');
     background-size: cover;
     background-position: center;
     padding: 3rem;
@@ -626,14 +641,14 @@ b, strong {
 
 .new-section .top-box-a {
     grid-area: top-box-a;
-    background-image: url("../images/pay.jpg");
+    background-image: url("images/pay.jpg");
     background-size: cover; /* 요소 크기에 맞게 이미지 크기 조정 */
     background-position: center; /* 이미지 중심으로 배치 */
 }
 
 .new-section .top-box-b {
     grid-area: top-box-b;
-    background-image: url("../images/pay2.jpg");
+    background-image: url("images/pay2.jpg");
     background-size: cover; /* 요소 크기에 맞게 이미지 크기 조정 */
     background-position: center; /* 이미지 중심으로 배치 */
 }
@@ -685,19 +700,19 @@ b, strong {
 }
 
 .new-section .box.chart-pie {
-    background-image: url('../images/code.png');
+    background-image: url('images/code.png');
 }
 
 .new-section .box.globe {
-    background-image: url('../images/markting.png');
+    background-image: url('images/markting.png');
 }
 
 .new-section .box.cog {
-    background-image: url('../images/tool.png');
+    background-image: url('images/tool.png');
 }
 
 .new-section .box.users {
-    background-image: url('../images/business-service.png');
+    background-image: url('images/business-service.png');
 }
 
 .new-section .info {

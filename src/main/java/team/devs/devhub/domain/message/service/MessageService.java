@@ -48,7 +48,7 @@ public class MessageService {
                 .orElseThrow(() -> new MessageCountingNullException(ErrorCode.MESSAGE_COUNTING_NULL));
 
         String unreadCountString = unreadCount.toString();
-        sendNotification(receiver.getEmail(), "읽지 않은 쪽지 " + unreadCountString + "건");
+        sendNotification(receiver.getEmail(),unreadCountString);
 
         return messageSaveResponse;
 
@@ -61,7 +61,7 @@ public class MessageService {
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        List<Message> sentMessages = messageRepository.findBySenderAndSenderDeleteCondition(sender, false);
+        List<Message> sentMessages = messageRepository.findBySenderAndSenderDeleteConditionOrderByCreatedDateDesc(sender, false);
         return sentMessages.stream()
                 .map(MessageDtoResponse::of)
                 .collect(Collectors.toList());
@@ -74,7 +74,7 @@ public class MessageService {
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        List<Message> receiveMessages = messageRepository.findByReceiverAndReceiverDeleteCondition(receiver, false);
+        List<Message> receiveMessages = messageRepository.findByReceiverAndReceiverDeleteConditionOrderByCreatedDateDesc(receiver, false);
         return receiveMessages.stream()
                 .map(MessageDtoResponse::of)
                 .collect(Collectors.toList());
@@ -101,7 +101,7 @@ public class MessageService {
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        if(box.equals("receiver")){
+        if(box.equals("received")){
 
             deleteMessage.updateReceiverDeleteCondition(true);
             MessageSaveResponse.of(messageRepository.save(deleteMessage));
@@ -110,11 +110,11 @@ public class MessageService {
                     .orElseThrow(() -> new MessageCountingNullException(ErrorCode.MESSAGE_COUNTING_NULL));
 
             String unreadCountString = unreadCount.toString();
-            sendNotification(receiver.getEmail(), "읽지 않은 쪽지 " + unreadCountString + "건");
+            sendNotification(receiver.getEmail(), unreadCountString);
 
             deleteCompleteMessage = getReceivedMessages(customUserDetails);
 
-        }else if (box.equals("sender")){
+        }else if (box.equals("sent")){
             deleteMessage.updateSenderDeleteCondition(true);
             MessageSaveResponse.of(messageRepository.save(deleteMessage));
 
@@ -141,7 +141,7 @@ public class MessageService {
                     .orElseThrow(() -> new MessageCountingNullException(ErrorCode.MESSAGE_COUNTING_NULL));
 
             String unreadCountString = unreadCount.toString();
-            sendNotification(receiver.getEmail(), "읽지 않은 쪽지 " + unreadCountString + "건");
+            sendNotification(receiver.getEmail(), unreadCountString);
 
         }
 

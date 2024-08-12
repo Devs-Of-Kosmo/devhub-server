@@ -1,6 +1,6 @@
 var questions = [
-    {question: "저장소 이름을 입력해주세요"},
-    {question: "간단하게 저장소 설명을 적어주세요"}
+    { question: "저장소 이름을 입력해주세요" },
+    { question: "간단하게 저장소 설명을 적어주세요" }
 ];
 
 (function() {
@@ -47,7 +47,6 @@ var questions = [
             showCurrent();
         }
 
-        // when all the questions have been answered
         function done() {
             // 입력된 값을 가져옴
             var projectName = questions[0].value;
@@ -56,7 +55,7 @@ var questions = [
             console.log("Creating project with name:", projectName, "and description:", description);
 
             // API 호출
-            fetch('/api/personal/create', {
+            fetch('/api/personal/repo', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -76,28 +75,12 @@ var questions = [
                 .then(data => {
                     console.log("Project created successfully:", data);
 
-                    // 기존 projects 데이터 가져오기
-                    var existingProjects = JSON.parse(localStorage.getItem('projects')) || [];
-
-                    // existingProjects가 배열이 아니면 빈 배열로 초기화
-                    if (!Array.isArray(existingProjects)) {
-                        console.warn('Projects data is not an array. Initializing to empty array.');
-                        existingProjects = [];
-                    }
-
-                    // 새로운 프로젝트 추가
-                    existingProjects.push(data);
-
-                    // 업데이트된 projects를 localStorage에 저장
-                    localStorage.setItem('projects', JSON.stringify(existingProjects));
-
                     // 성공적으로 생성되면 리디렉션
                     window.location.href = 'project_list'; // 리디렉션 URL
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
-
         }
 
         // when submitting the current question
@@ -126,20 +109,18 @@ var questions = [
             }
         }
 
-        // helper functions
+        function showCurrent() {
+            console.log("Showing current question");
+            inputContainer.style.opacity = 1;
+            inputProgress.style.transition = '';
+            inputProgress.style.width = '100%';
+        }
+
         function hideCurrent(callback) {
             console.log("Hiding current question"); // 디버깅용 로그 추가
             inputContainer.style.opacity = 0;
             inputProgress.style.transition = 'none';
             inputProgress.style.width = 0;
-            setTimeout(callback, wTime);
-        }
-
-        function showCurrent(callback) {
-            console.log("Showing current question"); // 디버깅용 로그 추가
-            inputContainer.style.opacity = 1;
-            inputProgress.style.transition = '';
-            inputProgress.style.width = '100%';
             setTimeout(callback, wTime);
         }
 

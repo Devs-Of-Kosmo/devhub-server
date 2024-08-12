@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
+body {
+    background: #000; /* 배경을 검은색으로 변경 */
+    color: #fff; /* 글씨를 흰색으로 변경 */
+    font-weight: 400;
+    font-family: 'Jua', sans-serif; /* 폰트를 Jua로 변경 */
+    font-size: 20px;
+}
+
+.container {
+    margin-top: 30px;
+    width: 80%;
+    max-width: 1200px;
+}
+
+.profile-card {
+    background: #333; /* 카드 배경을 어두운 회색으로 변경 */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); /* 그림자 색을 흰색으로 변경 */
+    padding: 20px;
+    margin-bottom: 20px;
+    color: #fff; /* 카드 내부 글씨를 흰색으로 변경 */
+    display: flex; /* Flexbox 사용 */
+    align-items: center; /* 가운데 정렬 */
+    justify-content: space-between; /* 공간을 고르게 배치 */
+    width: 100%;
+}
+
+.profile-card img {
+    width: 100px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-right: 20px; /* 이미지와 텍스트 사이의 간격 */
+}
+
+.profile-card .profile-info {
+    flex-grow: 1;
+    margin-right: 20px; /* 정보와 프로젝트 사이의 간격 */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 왼쪽 정렬 */
+}
+
+.profile-card .projects-info {
+    display: flex;
+    justify-content: space-around; /* 균등하게 분배 */
+    width: 60%; /* 전체 넓이 사용 */
+    margin-left: 20px; /* 왼쪽 간격 */
+}
+
+.profile-card .projects-info img {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px; /* 모서리를 약간 둥글게 */
+}
+
+.profile-card .btn {
+    margin-top: 10px;
+    color: #fff; /* 버튼 글씨를 검은색으로 변경 */
+    background: #000; /* 버튼 배경을 흰색으로 변경 */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.nav-tabs .nav-link {
+    color: #ccc; /* 탭 링크 색을 회색으로 변경 */
+}
+
+.nav-tabs .nav-link.active {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.tab-content {
+    background: #333; /* 탭 콘텐츠 배경을 어두운 회색으로 변경 */
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    color: #fff; /* 탭 콘텐츠 글씨를 흰색으로 변경 */
+}
+
+.activity-card {
+    background: #333; /* 활동 카드 배경을 어두운 회색으로 변경 */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); /* 그림자 색을 흰색으로 변경 */
+    padding: 20px;
+    margin-bottom: 20px;
+    color: #fff; /* 활동 카드 글씨를 흰색으로 변경 */
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.slider-container input[type=range] {
+    width: 80%;
+}
+
+.slider-value {
+    font-size: 1.2em;
+    color: #fff; /* 슬라이더 값 글씨를 흰색으로 변경 */
+}

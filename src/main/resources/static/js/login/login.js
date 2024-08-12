@@ -7,20 +7,12 @@ $(document).ready(function() {
 
         // 입력 값 유효성 검사
         if (email === '' || password === '') {
-            alert('이메일과 비밀번호를 모두 입력해주세요.');
-            return;
-        }
-
-        // 이메일 형식 검사
-        var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        if (!emailPattern.test(email)) {
-            alert('올바른 이메일 형식을 입력해주세요.');
-            return;
-        }
-
-        // 비밀번호 길이 검사 (예: 최소 6자 이상)
-        if (password.length < 6) {
-            alert('비밀번호는 최소 6자 이상이어야 합니다.');
+            Swal.fire({
+                title: '입력 오류',
+                text: '이메일과 비밀번호를 모두 입력해주세요.',
+                icon: 'warning',
+                confirmButtonText: '확인'
+            });
             return;
         }
 
@@ -38,14 +30,24 @@ $(document).ready(function() {
             success: function(response) {
                 var accessToken = response.accessToken;
                 localStorage.setItem('accessToken', accessToken);
-                location.href = '/';
+
+                // 메인 페이지로 리다이렉트
+                window.location.href = '/';
             },
             error: function(error) {
-                if (error.responseJSON) {
-                    alert('로그인 실패: ' + error.responseJSON.message);
-                } else {
-                    alert('로그인 실패: ' + error.statusText);
+                var errorMessage = '로그인 실패';
+                if (error.responseJSON && error.responseJSON.message) {
+                    errorMessage = '로그인 실패: ' + error.responseJSON.message;
+                } else if (error.statusText) {
+                    errorMessage = '로그인 실패: ' + error.statusText;
                 }
+
+                Swal.fire({
+                    title: '오류',
+                    icon: 'error',
+                    confirmButtonText: '확인'
+                });
+
                 console.error(error);
             }
         });

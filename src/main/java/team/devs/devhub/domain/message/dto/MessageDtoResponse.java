@@ -17,6 +17,7 @@ public class MessageDtoResponse {
     private String receiverEmail;
     private String content;
     private LocalDateTime createdDate;
+    private boolean readCondition;
 
     public static MessageDtoResponse of(Message message) {
         return MessageDtoResponse.builder()
@@ -25,6 +26,7 @@ public class MessageDtoResponse {
                 .receiverEmail(message.getReceiver().getEmail())
                 .content(message.getContent())
                 .createdDate(message.getCreatedDate())
+                .readCondition(message.isReadCondition())
                 .build();
     }
 }

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" type="image/png">
+    <title>팀 프로젝트 관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../team_project/style.css">
+    <script src="./project-management.js"></script>
+</head>
+<body>
+<header>
+    <ul class="left">
+        <li class="apple"><i class="fab fa-apple"></i></li>
+        <li><strong>Finder</strong></li>
+        <li>File</li>
+        <li>Edit</li>
+        <li>View</li>
+        <li>Go</li>
+        <li>Window</li>
+        <li>Help</li>
+    </ul>
+    <ul class="right">
+        <li><i class="fas fa-battery-full"></i></li>
+        <li><i class="fas fa-wifi"></i></li>
+        <li><span id="clock"></span></li>
+    </ul>
+</header>
+
+<div id="Desktop">
+    <div class="icon" onclick="handleIconClick(this, 'listProjects')">
+        <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="프로젝트 목록">
+        <span class="title">프로젝트 목록</span>
+    </div>
+    <div class="icon" onclick="handleIconClick(this, 'createProject')">
+        <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="프로젝트 만들기">
+        <span class="title">프로젝트 만들기</span>
+    </div>
+    <div class="icon" onclick="handleIconClick(this, 'joinProject')">
+        <img src="https://cdn-icons-png.flaticon.com/512/1967/1967199.png" alt="프로젝트 참가">
+        <span class="title">프로젝트 참가</span>
+    </div>
+    <div class="icon" onclick="handleIconClick(this, 'inviteMembers')">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IMessage_logo.svg/234px-IMessage_logo.svg.png?20180402204645" alt="팀원 초대">
+        <span class="title">팀원 초대</span>
+    </div>
+</div>
+
+<div id="createProject" class="window">
+    <h2>새 프로젝트 만들기</h2>
+    <input type="text" id="projectName" placeholder="프로젝트 이름">
+    <textarea id="projectDescription" placeholder="프로젝트 설명"></textarea>
+    <button onclick="createNewProject()">만들기</button>
+</div>
+
+<div id="joinProject" class="window">
+    <h2>프로젝트 참가</h2>
+    <input type="text" placeholder="프로젝트 코드">
+    <button onclick="closeWindow('joinProject')">참가하기</button>
+</div>
+
+<div id="listProjects" class="window">
+    <h2>프로젝트 목록</h2>
+    <ul id="projectList">
+        <!-- 프로젝트 목록이 여기에 동적으로 추가됩니다 -->
+    </ul>
+    <button onclick="closeWindow('listProjects')">닫기</button>
+</div>
+
+<div id="inviteMembers" class="window">
+    <div class="iphone">
+        <div class="border">
+            <div class="responsive-html5-chat">
+                <form class="chat">
+                    <div class="messages">
+                        <!-- 메시지들이 여기에 동적으로 추가됩니다 -->
+                    </div>
+                    <div class="input-area">
+                        <input type="text" id="userInput" placeholder="메시지를 입력하세요...">
+                        <button type="submit" class="send-button">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <ul>
+        <li data-title="ChatGPT">
+            <a href="https://chat.openai.com" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" alt="ChatGPT">
+            </a>
+        </li>
+        <li data-title="Chrome">
+            <a href="https://www.google.com/chrome" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/888/888846.png" alt="Chrome">
+            </a>
+        </li>
+        <li data-title="Gmail">
+            <a href="https://mail.google.com" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" alt="Gmail">
+            </a>
+        </li>
+        <li data-title="Claude">
+            <a href="https://claude.ai/chat" target="_blank">
+                <img src="https://avatars.slack-edge.com/2023-01-25/4682316783575_bbab0cdcdb3685eb5c87_512.png" alt="Claude">
+            </a>
+        </li>
+        <li data-title="Notion">
+            <a href="https://www.notion.so" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Notion">
+            </a>
+        </li>
+    </ul>
+</footer>
+<script src="./message.js"></script>
+</body>
+</html>

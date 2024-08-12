@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", function() {
         emailElement.style.backgroundColor = "#919191";
         emailElement.readOnly = true;
 
-        emailVerifyBtnElement.style.display = 'none';
+        // 이미 인증된 이메일이라면 인증 필드를 숨기고 인증 완료 메시지를 표시
+        verificationCodeSection.style.display = 'none';
+        emailVerifiedMessage.style.display = 'block';
     }
 });

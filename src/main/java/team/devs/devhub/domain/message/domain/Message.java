@@ -17,11 +17,8 @@ public class Message extends BaseTimeEntity {
     @Column(name = "message_id")
     private Long id;
 
-    @Column(length = 100)
+    @Column(length = 300)
     private String content;
-
-    @Column(length = 200 ,name = "invite_url", nullable = false)
-    private String inviteUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
@@ -43,10 +40,9 @@ public class Message extends BaseTimeEntity {
     private boolean receiverDeleteCondition;
 
     @Builder
-    public Message(String content, Long id, String inviteUrl, boolean readCondition, User receiver, boolean receiverDeleteCondition, User sender, boolean senderDeleteCondition) {
+    public Message(String content, Long id, boolean readCondition, User receiver, boolean receiverDeleteCondition, User sender, boolean senderDeleteCondition) {
         this.content = content;
         this.id = id;
-        this.inviteUrl = inviteUrl;
         this.readCondition = readCondition;
         this.receiver = receiver;
         this.receiverDeleteCondition = receiverDeleteCondition;

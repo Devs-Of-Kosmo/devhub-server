@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,37 +15,51 @@
     <link href="/css/devhub.css" rel="stylesheet">
     <link href="/css/custom.css" rel="stylesheet">
     <script src="/js/jquery.min.js"></script>
+
+    <!-- SweetAlert2 CSS 및 JS 포함 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
 </head>
 
 <body>
 <main>
-    <header class="site-header">
+    <header class="site-header not-logged-in">
         <div class="container">
-            <div class="row justify-content-between">
-                <div class="col-lg-12 col-12 d-flex align-items-center">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-lg-12 col-12 d-flex justify-content-center align-items-center">
                     <a class="site-header-text d-flex justify-content-center align-items-center me-auto" href="/">
                         <i class="bi-box"></i>
                         <span class="nav-link">DEVHUV</span>
                     </a>
 
                     <ul class="nav d-flex justify-content-center align-items-center mx-auto">
-                        <li class="nav-item"><a href="login" id="login-link" class="nav-link">로그인</a></li>
-                        <li class="nav-item"><button id="lang-switch" class="btn btn-primary nav-link" style="color : white;">영어로 변경</button></li>
-                        <li class="nav-item"><a href="loading" class="nav-link">나의 프로젝트</a></li>
-                        <li class="nav-item"><a href="http://127.0.0.1:5000/group" class="nav-link" id="project-link">팀의 프로젝트</a></li>
-                        <li class="nav-item"><a href="boards" class="nav-link">팀원 구하기</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#inviteModal">쪽지 보내기</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#messageModal">쪽지함</a></li>
+                        <li class="nav-item">
+                            <a href="#" id="login-link" class="nav-link">로그인</a>
+                        </li>
+                        <li class="nav-item">
+                            <button id="lang-switch" class="btn btn-primary nav-link" style="color: white;">영어로 변경</button>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="my-projects-link">나의 프로젝트</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="project-link">팀의 프로젝트</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="boards" class="nav-link">팀원 구하기</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" id="message-box" class="nav-link-message" data-bs-toggle="modal" data-bs-target="#messageModal" style="display: none;"></a>
+                        </li>
                     </ul>
 
                     <div>
-                        <a href="#" class="custom-btn custom-border-btn btn" data-bs-toggle="modal" data-bs-target="#inviteModal"
+                        <a href="#" id="message-send" class="custom-btn custom-border-btn btn" data-bs-toggle="modal" data-bs-target="#inviteModal"
                            style="color: white; background-color: transparent; border: 1px solid beige; padding: 0.5rem 1rem;text-decoration: none;">
                             초대 하기
                             <i class="bi-arrow-right ms-2"></i>
                         </a>
                     </div>
-
 
                     <a class="bi-list offcanvas-icon" data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasMenu"></a>
                 </div>
@@ -65,8 +79,10 @@
                     <li class="nav-item"><a href="#" id="log-out" class="nav-link">로그아웃</a></li>
                     <li><a href="register">회원가입</a></li>
                     <li><a href="boards">팀원구하기</a></li>
-                    <li><a href="http://192.168.0.4:5000/">나의 프로젝트</a></li>
-                    <li><a href="contact">팀의 프로젝트</a></li>
+                    <li><a href="#" id="solo_side">나의 프로젝트</a></li>
+                    <li><a href="#">팀의 프로젝트</a></li>
+                    <li><a href="#" id="message-box-side" class="nav-link" data-bs-toggle="modal" data-bs-target="#messageModal">쪽지함</a></li>
+                    <li><a href="#" id="message-send-side" class="nav-link" data-bs-toggle="modal" data-bs-target="#inviteModal">쪽지 보내기</a></li>
                 </ul>
             </nav>
         </div>
@@ -84,18 +100,13 @@
                     <form id="inviteForm" class="custom-form mt-lg-4 mt-2" role="form">
                         <h2 class="modal-title" id="inviteModalLabel">초대하기</h2>
                         <input type="email" name="receiverEmail" id="receiverEmail" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="받는 사람의 이메일" required="">
-                        <textarea name="inviteUrl" id="inviteUrl" class="form-control mt-3" placeholder="팀 레포지토리 URL" required=""></textarea>
                         <textarea name="messageContent" id="messageContent" class="form-control mt-3" placeholder="메시지 내용" required=""></textarea>
                         <button type="submit" class="form-control mt-3">보내기</button>
                     </form>
                 </div>
-
-                <div class="modal-footer justify-content-center">
-                    <p>쪽지를 보내시면 수신자가 팀 레포지토리에 접근할 수 있습니다.</p>
-                </div>
-            </div>
             </div>
         </div>
+    </div>
 
     <!-- 메시지 확인 모달 -->
     <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
@@ -106,12 +117,16 @@
                 </div>
 
                 <div class="modal-body">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="receivedTab" href="#">받은 쪽지함</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="sentTab" href="#">보낸 쪽지함</a>
-                    </li>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; padding : 2px;">
+                        <li style="margin-right: 10px; border: 2px solid #ffffff; padding : 5px; border-radius: 7px;">
+                            <a class="nav-link active" id="receivedTab" href="#">받은 쪽지함</a>
+                        </li>
+                        <li style="margin-right: 10px; border: 2px solid #ffffff; padding : 5px; border-radius: 7px;">
+                            <a class="nav-link" id="sentTab" href="#">보낸 쪽지함</a>
+                        </li>
+                        <li id="message-link" style="font-size: small; color: white; display: flex; align-items: flex-end; height: 35px;"></li>
+                        <input type="hidden" id="message-count"/>
+                    </ul>
                     <ul id="messageList" class="list-group mt-3">
                         <!-- 메시지 항목이 여기에 추가됩니다 -->
                     </ul>
@@ -259,7 +274,9 @@
     <script src="/js/countdown.js"></script>
     <script src="/js/lang-switch.js"></script>
     <script src="/js/tawkto.js"></script>
-    <script src="/js/script.js"></script>
+    <script type="module" src="/js/script.js"></script>
+    <script src="/js/message.js"></script>
+
 </main>
 </body>
 </html>

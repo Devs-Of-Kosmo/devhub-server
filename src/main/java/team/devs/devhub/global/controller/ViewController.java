@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 import team.devs.devhub.global.util.CookieUtil;
 
 import java.util.Map;
-
 @Controller
 @RequiredArgsConstructor
 public class ViewController {
@@ -25,13 +24,13 @@ public class ViewController {
             String refreshToken = (String) model.getAttribute("refreshToken");
             response.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.getCookie(refreshToken).toString());
         }
-        return "login";
+        return "login/login";
     }
 
     // 회원가입 페이지
     @GetMapping("/register")
     public String register() {
-        return "register";
+        return "register/register";
     }
 
     // 비밀번호 재설정 페이지
@@ -40,37 +39,25 @@ public class ViewController {
         return "password-reset";
     }
 
-    // 연락처 페이지
-    @GetMapping("/contact")
-    public String contact() {
-        return "contact";
+    @GetMapping("/mypage")
+    public String mypage() {
+        return "mypage/mypage";
     }
 
-    // 테스트 페이지
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
-
-    // 데이터 전송 (Flask 서버로)
-    @PostMapping("/send-data")
-    public ResponseEntity<String> sendDataToFlask(@RequestBody Map<String, String> data) {
-        String flaskUrl = "http://127.0.0.1:5000/";
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.postForEntity(flaskUrl, data, String.class);
-        return response;
-    }
-
-    // 로딩 페이지
     @GetMapping("/loading")
     public String loadingPage() {
-        return "loading";
+        return "personal_project/loading";
     }
 
-    // 개인 프로젝트 페이지
+
+    @GetMapping("/project_list")
+    public String projectList() {
+        return "personal_project/project_list";
+    }
+
     @GetMapping("/personal_project")
     public String personalProject() {
-        return "personal_project";
+        return "personal_project/personal_project";
     }
 
     // 프로젝트 목록 페이지
@@ -101,4 +88,17 @@ public class ViewController {
     public String showEditBoardPage(@PathVariable Long id) {
         return "board/edit"; // edit.html 파일을 반환
     }
+
+    @GetMapping("/team_project")
+    public String teamProject() {
+        return "team_project/team_project";
+    }
+
+    @GetMapping("/team_project_list/{folderName}")
+    public String getTeamProjectList(@PathVariable String folderName, Model model) {
+
+        model.addAttribute("folderName", folderName);
+        return "team_project/team_project_list";
+    }
+
 }

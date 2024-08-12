@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/loading/loading.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:700">
+</head>
+<body>
+<div class="macbook">
+    <div class="inner">
+        <div class="screen">
+            <div class="face-one">
+                <div class="camera"></div>
+                <div class="display">
+                    <div class="shade"></div>
+                </div>
+                <span>MacBook Air</span>
+            </div>
+            <img src="http://www.clker.com/cliparts/i/s/H/f/4/T/apple-logo-white.svg" class="logo" />
+        </div>
+        <div class="body">
+            <div class="face-one">
+                <div class="touchpad"></div>
+                <div class="keyboard">
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key space"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                    <div class="key f"></div>
+                </div>
+            </div>
+            <div class="pad one"></div>
+            <div class="pad two"></div>
+            <div class="pad three"></div>
+            <div class="pad four"></div>
+        </div>
+    </div>
+    <div id="holder">
+        <div class="button">
+            <p class="btnText">프로젝트</p>
+            <div class="btnTwo">
+                <p class="btnText2"><a href="personal_project">생성</a></p>
+            </div>
+        </div>
+        <div class="button" id="list">
+            <p class="btnText">목록</p>
+            <div class="btnTwo">
+                <p class="btnText2">가기</p>
+            </div>
+        </div>
+    </div>
+    <div class="shadow"></div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+            document.getElementById("holder").style.opacity = 1;
+        }, 2000);
+    })
+    document.getElementById("list").addEventListener("click", function() {
+        window.location.href = "http://localhost:8080/project_list"; // 레포지토리 목록 페이지로 리다이렉트
+    });
+</script>
+
+</body>
+</html>
