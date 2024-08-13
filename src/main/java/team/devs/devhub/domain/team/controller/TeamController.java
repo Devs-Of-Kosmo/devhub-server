@@ -1,6 +1,7 @@
 package team.devs.devhub.domain.team.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import team.devs.devhub.domain.team.dto.TeamDetailsReadResponse;
 import team.devs.devhub.domain.team.dto.TeamGroupCreateRequest;
 import team.devs.devhub.domain.team.dto.TeamGroupCreateResponse;
 import team.devs.devhub.domain.team.dto.TeamGroupReadResponse;
@@ -41,6 +43,17 @@ public class TeamController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         List<TeamGroupReadResponse> response = teamService.readTeamGroups(customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/group/{teamId}")
+    @Operation(summary = "팀 상세 조회 API")
+    public ResponseEntity<TeamDetailsReadResponse> readTeamDetails(
+            @Parameter(description = "조회할 팀 id", example = "1")
+            @PathVariable(name = "teamId") Long teamId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamDetailsReadResponse response = teamService.readTeamDetails(teamId, customUserDetails.getId());
         return ResponseEntity.ok(response);
     }
 
