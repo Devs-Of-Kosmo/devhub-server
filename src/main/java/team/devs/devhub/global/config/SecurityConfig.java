@@ -39,7 +39,7 @@ public class SecurityConfig {
       
             "/", "/register", "/login","/mypage",
             "loading","/personal_project","/project_list",
-            "/team_project","/team_project_list/**",
+            "/team_loading","/team_project","/team_project_list/**",
             "/boards", "/boards/new", "/boards/{id}", "/boards/edit/{id}",
       
             "/footer.html", "/templates/**", "/css/**", "/js/**", "/images/**", "/videos/**", "/fonts/**",

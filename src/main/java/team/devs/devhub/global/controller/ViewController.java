@@ -44,7 +44,6 @@ public class ViewController {
         return "personal_project/loading";
     }
 
-
     @GetMapping("/project_list")
     public String projectList() {
         return "personal_project/project_list";
@@ -55,24 +54,21 @@ public class ViewController {
         return "personal_project/personal_project";
     }
 
-    // 게시글 목록 페이지로 이동
     @GetMapping("/boards")
     public String showBoardsPage() {
         return "board/boards"; // boards.html 파일을 반환
     }
 
-    // 게시글 작성 페이지로 이동
     @GetMapping("/boards/new")
     public String showNewBoardPage() {
         return "board/form"; // form.html 파일을 반환
     }
 
-    // 게시글 상세 페이지로 이동
     @GetMapping("/boards/{id}")
     public String showBoardDetailPage(@PathVariable Long id) {
         return "board/view"; // view.html 파일을 반환
     }
-    // 게시글 수정 페이지로 이동
+
     @GetMapping("/boards/edit/{id}")
     public String showEditBoardPage(@PathVariable Long id) {
         return "board/edit"; // edit.html 파일을 반환
@@ -88,6 +84,11 @@ public class ViewController {
 
         model.addAttribute("folderName", folderName);
         return "team_project/team_project_list";
+    }
+
+    @GetMapping("/team_loading")
+    public String teamLoading() {
+        return "team_project/team_loading";
     }
 
 }
