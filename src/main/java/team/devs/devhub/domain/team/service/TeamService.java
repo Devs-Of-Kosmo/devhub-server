@@ -8,7 +8,7 @@ import team.devs.devhub.domain.team.domain.team.TeamRole;
 import team.devs.devhub.domain.team.domain.team.UserTeam;
 import team.devs.devhub.domain.team.domain.team.repository.TeamRepository;
 import team.devs.devhub.domain.team.domain.team.repository.UserTeamRepository;
-import team.devs.devhub.domain.team.dto.*;
+import team.devs.devhub.domain.team.dto.team.*;
 import team.devs.devhub.domain.team.exception.TeamNameDuplicatedException;
 import team.devs.devhub.domain.team.exception.TeamNotFoundException;
 import team.devs.devhub.domain.team.exception.TeamRoleUnauthorizedException;
@@ -37,12 +37,12 @@ public class TeamService {
         Team team = request.toEntity(user);
         validDuplicatedTeamName(team);
 
-        Team savedTeam = teamRepository.save(team);
+        teamRepository.save(team);
 
         userTeamRepository.save(
                 UserTeam.builder()
                 .user(user)
-                .team(savedTeam)
+                .team(team)
                 .role(TeamRole.MANAGER)
                 .build()
         );

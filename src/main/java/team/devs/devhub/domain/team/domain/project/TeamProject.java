@@ -10,7 +10,9 @@ import org.hibernate.annotations.DynamicInsert;
 import team.devs.devhub.domain.team.domain.team.Team;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.common.BaseTimeEntity;
+import team.devs.devhub.global.common.ProjectUtilProvider;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,7 @@ import java.util.List;
 @Getter
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TeamProject extends BaseTimeEntity {
+public class TeamProject extends BaseTimeEntity implements ProjectUtilProvider {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,6 +61,12 @@ public class TeamProject extends BaseTimeEntity {
         this.team = team;
         this.createdBy = createdBy;
         this.deleteCondition = deleteCondition;
+    }
+
+    public void saveRepositoryPath(String repositoryPathHead) {
+        this.repositoryPath = repositoryPathHead
+                + team.getId() + "_" + team.getName() + "/"
+                + name + "_" + getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
     }
 
 }
