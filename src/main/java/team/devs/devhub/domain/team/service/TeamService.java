@@ -108,6 +108,20 @@ public class TeamService {
         team.softDelete();
     }
 
+    public void updateDeleteCancelTeam(long teamId, long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
+        validExistsUserAndTeam(user, team);
+
+        UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+        validManagerOrHigher(userTeam);
+
+        team.cancelSoftDelete();
+    }
+
     // exception
     private void validDuplicatedTeamName(Team team) {
         if (teamRepository.existsByName(team.getName())) {
