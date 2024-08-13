@@ -1,52 +1,108 @@
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>팀원 구하기 - 게시판</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-        <style>
-            .navbar-brand {
-                font-weight: bold;
-            }
-            .hero-section {
-                background-color: #343a40;
-                color: #f8f9fa;
-                padding: 60px 0;
-                animation: fadeIn 1s ease-in-out;
-            }
-            .hero-section .display-4 {
-                font-size: 3rem;
-            }
-            .hero-section .lead {
-                font-size: 1.25rem;
-            }
-            .card-img-top {
-                width: 100%;
-                height: 200px; /* 동일한 높이 설정 */
-                object-fit: cover; /* 이미지 비율 유지 */
-            }
-            .boardRequest-image {
-                max-width: 100%;
-                height: auto;
-            }
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
-            }
-            .card {
-                transition: transform 0.3s ease;
-                cursor: pointer; /* 커서를 포인터로 변경하여 클릭 가능함을 나타냄 */
-            }
-            .card:hover {
-                transform: scale(1.05);
-            }
-        </style>
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀원 구하기 - 게시판</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Jua', sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content-wrapper {
+            flex: 1; /* 나머지 공간을 차지하도록 설정 */
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+
+        .hero-section {
+            background-image: url('css/images/board.webp'); /* 이미지 경로를 여기에 적용하세요 */
+            background-size: cover;
+            background-position: center;
+            color: #ffffff; /* 글씨를 흰색으로 설정 */
+            padding: 60px 0;
+            animation: fadeIn 1s ease-in-out;
+            position: relative;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정 오버레이 추가로 텍스트 가독성 향상 */
+            z-index: 1;
+        }
+
+        .hero-section .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-section .display-4 {
+            font-size: 3rem;
+            font-weight: bold; /* 글씨 굵기 추가로 강조 */
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7); /* 더 강한 텍스트 그림자 추가 */
+        }
+
+        .hero-section .lead {
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* 텍스트 그림자 추가 */
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 200px; /* 동일한 높이 설정 */
+            object-fit: cover; /* 이미지 비율 유지 */
+        }
+
+        .boardRequest-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            transition: transform 0.3s ease;
+            cursor: pointer; /* 커서를 포인터로 변경하여 클릭 가능함을 나타냄 */
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .footer {
+            background-color: #343a40; /* bg-dark에 해당 */
+            color: #ffffff; /* text-white에 해당 */
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="content-wrapper">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="#">팀원 구하기</a>
@@ -87,206 +143,203 @@
             <!-- 프로젝트 카드가 여기에 동적으로 추가됩니다. -->
         </div>
     </section>
+</div> <!-- content-wrapper 종료 -->
 
-    <footer class="bg-dark text-white text-center py-3">
-        <p class="mb-0">&copy; 2024 팀원 구하기. 모든 권리 보유.</p>
-    </footer>
+<footer class="footer">
+    <p class="mb-0">&copy; 2024 팀원 구하기. All rights reserved.</p>
+</footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            AOS.init(); // AOS 초기화
-            loadProjects();
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+        AOS.init(); // AOS 초기화
+        loadProjects();
 
-            $("#searchInput").on("input", function() {
-                var keyword = $(this).val();
-                if (keyword) {
-                    searchProjects(keyword);
-                } else {
-                    loadProjects();
-                }
-            });
-
-            $("#myBoardsLink").on("click", function() {
-                loadMyBoards();
-            });
+        $("#searchInput").on("input", function() {
+            var keyword = $(this).val();
+            if (keyword) {
+                searchProjects(keyword);
+            } else {
+                loadProjects();
+            }
         });
 
-        function loadProjects() {
-            $.ajax({
-                url: "/api/boards/public",
-                type: "GET",
-                dataType: "json",
-                success: function(projects) {
-                    console.log('Projects:', projects); // 응답 데이터 콘솔 출력
-                    renderProjects(projects);
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching projects:", status, error, xhr.responseText);
-                }
-            });
-        }
+        $("#myBoardsLink").on("click", function() {
+            loadMyBoards();
+        });
+    });
 
-        function searchProjects(keyword) {
-            $.ajax({
-                url: "/api/boards/public/search",
-                type: "GET",
-                data: { keyword: keyword },
-                dataType: "json",
-                success: function(projects) {
-                    renderProjects(projects);
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error searching projects:", status, error, xhr.responseText);
-                }
-            });
-        }
+    function loadProjects() {
+        $.ajax({
+            url: "/api/boards/public",
+            type: "GET",
+            dataType: "json",
+            success: function(projects) {
+                console.log('Projects:', projects); // 응답 데이터 콘솔 출력
+                renderProjects(projects);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching projects:", status, error, xhr.responseText);
+            }
+        });
+    }
+
+    function searchProjects(keyword) {
+        $.ajax({
+            url: "/api/boards/public/search",
+            type: "GET",
+            data: { keyword: keyword },
+            dataType: "json",
+            success: function(projects) {
+                renderProjects(projects);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error searching projects:", status, error, xhr.responseText);
+            }
+        });
+    }
+
     function loadMyBoards() {
-    const token = localStorage.getItem('accessToken'); // 로컬 스토리지에서 JWT 토큰 가져오기
+        const token = localStorage.getItem('accessToken'); // 로컬 스토리지에서 JWT 토큰 가져오기
 
-    $.ajax({
-        url: '/api/user/info',
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        success: function(data) {
-            console.log('User Info:', data); // 서버에서 받은 전체 데이터를 출력
+        $.ajax({
+            url: '/api/user/info',
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(data) {
+                console.log('User Info:', data); // 서버에서 받은 전체 데이터를 출력
 
-            // userInfo 객체에서 userId를 가져오는 방법
-            const userId = data.id || data.userId || data.data?.id;
-            console.log('User ID:', userId);
+                // userInfo 객체에서 userId를 가져오는 방법
+                const userId = data.id || data.userId || data.data?.id;
+                console.log('User ID:', userId);
 
-            if (userId) {
-                // userId가 올바르게 존재할 때만 fetchMyBoards 호출
-                fetchMyBoards(userId, token);
-            } else {
-                console.error('User ID is undefined');
-                alert('사용자 정보를 가져오는 데 문제가 발생했습니다.');
+                if (userId) {
+                    // userId가 올바르게 존재할 때만 fetchMyBoards 호출
+                    fetchMyBoards(userId, token);
+                } else {
+                    console.error('User ID is undefined');
+                    alert('사용자 정보를 가져오는 데 문제가 발생했습니다.');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching user info:', error);
+                if (xhr.status === 401) {
+                    alert('인증 오류가 발생했습니다. 권한을 확인해주세요.');
+                } else {
+                    alert('사용자 정보를 가져오지 못했습니다. 다시 시도해주세요.');
+                }
             }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error fetching user info:', error);
-            if (xhr.status === 401) {
-                alert('인증 오류가 발생했습니다. 권한을 확인해주세요.');
-            } else {
-                alert('사용자 정보를 가져오지 못했습니다. 다시 시도해주세요.');
+        });
+    }
+
+    function fetchMyBoards(userId, token) {
+        $.ajax({
+            url: `/api/boards/myboards/${userId}`,
+            type: "GET",
+            dataType: "json",
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(boards) {
+                console.log('My Boards:', boards);
+                renderProjects(boards);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching my boards:", status, error, xhr.responseText);
+                if (xhr.status === 401) {
+                    alert('인증 오류가 발생했습니다. 권한을 확인해주세요.');
+                } else {
+                    alert('게시글을 가져오지 못했습니다. 다시 시도해주세요.');
+                }
             }
+        });
+    }
+
+    function extractUserName(writerString) {
+        const nameMatch = writerString.match(/name=([^,]+)/);
+        return nameMatch ? nameMatch[1] : '알 수 없음';
+    }
+
+    function renderProjects(projects) {
+        var projectContainer = $("#projectContainer");
+        projectContainer.empty();
+
+        if (projects.length === 0) {
+            projectContainer.append('<p class="text-center">프로젝트가 없습니다.</p>');
+            return;
         }
-    });
-}
-function fetchMyBoards(userId, token) {
-    $.ajax({
-        url: `/api/boards/myboards/${userId}`,
-        type: "GET",
-        dataType: "json",
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        success: function(boards) {
-            console.log('My Boards:', boards);
-            renderProjects(boards);
-        },
-        error: function(xhr, status, error) {
-            console.error("Error fetching my boards:", status, error, xhr.responseText);
-            if (xhr.status === 401) {
-                alert('인증 오류가 발생했습니다. 권한을 확인해주세요.');
-            } else {
-                alert('게시글을 가져오지 못했습니다. 다시 시도해주세요.');
-            }
-        }
-    });
-}
 
+        projects.forEach(function(project) {
+            var writerName = extractUserName(project.writer); // writer 문자열에서 이름 추출
 
-        function extractUserName(writerString) {
-            const nameMatch = writerString.match(/name=([^,]+)/);
-            return nameMatch ? nameMatch[1] : '알 수 없음';
-        }
-
-        function renderProjects(projects) {
-            var projectContainer = $("#projectContainer");
-            projectContainer.empty();
-
-            if (projects.length === 0) {
-                projectContainer.append('<p class="text-center">프로젝트가 없습니다.</p>');
-                return;
-            }
-
-            projects.forEach(function(project) {
-                var writerName = extractUserName(project.writer); // writer 문자열에서 이름 추출
-
-                var projectHtml = `
-                    <div class="col-md-4 mb-4" data-aos="fade-up">
-                        <div class="card" onclick="location.href='/boards/${project.id}'">
-                          <img src="${project.imagePath ? project.imagePath + '?v=' + new Date().getTime() : '/static/images/logo_1.jpg'}" class="card-img-top" alt="Project Image">
-
-
-
-                            <div class="card-body">
-                                <h5 class="card-title">${project.title}</h5>
-
-                                <p class="card-text"><small class="text-muted">작성자: ${writerName}</small></p>
-                            </div>
+            var projectHtml = `
+                <div class="col-md-4 mb-4" data-aos="fade-up">
+                    <div class="card" onclick="location.href='/boards/${project.id}'">
+                      <img src="${project.imagePath ? project.imagePath + '?v=' + new Date().getTime() : '/static/css/images/logo_1.jpg'}" class="card-img-top" alt="Project Image">
+                        <div class="card-body">
+                            <h5 class="card-title">${project.title}</h5>
+                            <p class="card-text"><small class="text-muted">작성자: ${writerName}</small></p>
                         </div>
                     </div>
-                `;
-                projectContainer.append(projectHtml);
-            });
-        }
+                </div>
+            `;
+            projectContainer.append(projectHtml);
+        });
+    }
 
-        function openUpdateModal(id) {
-            $.ajax({
-                url: "/api/boards/" + id,
-                type: "GET",
-                dataType: "json",
-                success: function(project) {
-                    console.log('Project Details:', project); // 응답 데이터 콘솔 출력
-                    $("#update-project-id").val(project.id);
-                    $("#update-title").val(project.title);
-                    $("#update-content").val(project.content);
-                    $("#update-writer").val(extractUserName(project.writer)); // 이름만 사용
+    function openUpdateModal(id) {
+        $.ajax({
+            url: "/api/boards/" + id,
+            type: "GET",
+            dataType: "json",
+            success: function(project) {
+                console.log('Project Details:', project); // 응답 데이터 콘솔 출력
+                $("#update-project-id").val(project.id);
+                $("#update-title").val(project.title);
+                $("#update-content").val(project.content);
+                $("#update-writer").val(extractUserName(project.writer)); // 이름만 사용
 
-                    if (project.imagePath) {
-                        $("#update-imagePreview").attr("src", project.imagePath).show();
-                    } else {
-                        $("#update-imagePreview").hide();
-                    }
-
-                    $('#updateProjectModal').modal('show');
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching project details:", status, error, xhr.responseText);
+                if (project.imagePath) {
+                    $("#update-imagePreview").attr("src", project.imagePath).show();
+                } else {
+                    $("#update-imagePreview").hide();
                 }
-            });
-        }
 
-        function deleteProject(id) {
-            if (!confirm("정말로 이 프로젝트를 삭제하시겠습니까?")) {
-                return;
+                $('#updateProjectModal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching project details:", status, error, xhr.responseText);
             }
+        });
+    }
 
-            const token = localStorage.getItem('accessToken'); // JWT 토큰을 로컬 스토리지에서 가져옴
-
-            $.ajax({
-                url: `/api/boards/${id}`,
-                type: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}` // 헤더에 JWT 토큰 추가
-                },
-                success: function(response) {
-                    loadProjects();
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error deleting project:", status, error, xhr.responseText);
-                    if (xhr.status === 401) {
-                        alert('인증이 만료되었습니다. 다시 로그인해주세요.');
-                        window.location.href = '/login';
-                    }
-                }
-            });
+    function deleteProject(id) {
+        if (!confirm("정말로 이 프로젝트를 삭제하시겠습니까?")) {
+            return;
         }
-    </script>
 
-    </body>
-    </html>
+        const token = localStorage.getItem('accessToken'); // JWT 토큰을 로컬 스토리지에서 가져옴
+
+        $.ajax({
+            url: `/api/boards/${id}`,
+            type: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}` // 헤더에 JWT 토큰 추가
+            },
+            success: function(response) {
+                loadProjects();
+            },
+            error: function(xhr, status, error) {
+                console.error("Error deleting project:", status, error, xhr.responseText);
+                if (xhr.status === 401) {
+                    alert('인증이 만료되었습니다. 다시 로그인해주세요.');
+                    window.location.href = '/login';
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

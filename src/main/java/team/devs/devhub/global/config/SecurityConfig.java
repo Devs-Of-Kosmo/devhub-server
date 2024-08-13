@@ -42,7 +42,7 @@ public class SecurityConfig {
             "/team_loading","/team_project","/team_project_list/**",
             "/boards", "/boards/new", "/boards/{id}", "/boards/edit/{id}",
       
-            "/footer.html", "/templates/**", "/css/**", "/js/**", "/images/**", "/videos/**", "/fonts/**",
+            "/footer.html", "/templates/**", "/css/**", "/js/**", "/static/css/images/**", "images/**","/videos/**", "/fonts/**",
       
             "/swagger-ui/**", "/v3/api-docs/**",
     };

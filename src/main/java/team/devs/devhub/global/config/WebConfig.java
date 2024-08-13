@@ -19,8 +19,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file://" + uploadDir + "/");
 
         // 정적 리소스를 처리하는 핸들러 (기본 이미지 포함)
-        registry.addResourceHandler("/static/images/**")
-                .addResourceLocations("classpath:/static/images/");
+        registry.addResourceHandler("/static/css/images/**")
+                .addResourceLocations("classpath:/static/css/images/");
     }
 
     @Override
