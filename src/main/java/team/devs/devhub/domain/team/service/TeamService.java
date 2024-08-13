@@ -8,7 +8,7 @@ import team.devs.devhub.domain.team.domain.team.TeamRole;
 import team.devs.devhub.domain.team.domain.team.UserTeam;
 import team.devs.devhub.domain.team.domain.team.repository.TeamRepository;
 import team.devs.devhub.domain.team.domain.team.repository.UserTeamRepository;
-import team.devs.devhub.domain.team.dto.*;
+import team.devs.devhub.domain.team.dto.team.*;
 import team.devs.devhub.domain.team.exception.TeamNameDuplicatedException;
 import team.devs.devhub.domain.team.exception.TeamNotFoundException;
 import team.devs.devhub.domain.team.exception.TeamRoleUnauthorizedException;

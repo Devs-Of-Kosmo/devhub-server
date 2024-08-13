@@ -1,4 +1,4 @@
-package team.devs.devhub.domain.team.dto;
+package team.devs.devhub.domain.team.dto.team;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

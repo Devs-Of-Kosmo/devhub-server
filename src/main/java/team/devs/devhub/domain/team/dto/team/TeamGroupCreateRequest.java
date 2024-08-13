@@ -1,4 +1,4 @@
-package team.devs.devhub.domain.team.dto;
+package team.devs.devhub.domain.team.dto.team;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
