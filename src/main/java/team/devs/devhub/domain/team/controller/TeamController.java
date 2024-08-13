@@ -64,4 +64,15 @@ public class TeamController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/group/{teamId}")
+    @Operation(summary = "팀 삭제 API")
+    public ResponseEntity<Void> deleteTeamGroup(
+            @Parameter(description = "삭제할 팀 id", example = "1")
+            @PathVariable(name = "teamId") Long teamId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        teamService.deleteTeam(teamId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }

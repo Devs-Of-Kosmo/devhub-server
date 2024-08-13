@@ -41,10 +41,10 @@ public class Team extends BaseTimeEntity {
     @Column(length = 20, nullable = false)
     private boolean deleteCondition;
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.PERSIST)
     private List<UserTeam> affiliatedUsers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.PERSIST)
     private List<TeamProject> projects = new ArrayList<>();
 
     @Builder
@@ -58,6 +58,10 @@ public class Team extends BaseTimeEntity {
     public void update(Team team) {
         this.name = team.getName();
         this.description = team.getDescription();
+    }
+
+    public void softDelete() {
+        this.deleteCondition = true;
     }
 
     @Override
