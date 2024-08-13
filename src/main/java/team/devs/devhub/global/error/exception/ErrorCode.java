@@ -44,6 +44,8 @@ public enum ErrorCode {
     TEAM_NAME_DUPLICATED(500, "T001", "팀 이름이 존재합니다"),
     TEAM_NOT_FOUND(500, "T002", "팀이 존재하지 않습니다"),
     USER_TEAM_NOT_FOUND(500, "T003", "유저와 일치하는 팀이 존재하지 않습니다"),
+    NOT_SUB_MANAGER_OR_HIGHER(500, "T004", "SUB_MANAGER 이상의 권환이 필요합니다"),
+    NOT_MANAGER_OR_HIGHER(500, "T005", "MANAGER 이상의 권환이 필요합니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
