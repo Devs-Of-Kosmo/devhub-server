@@ -47,7 +47,7 @@ public class TeamController {
     }
 
     @GetMapping("/group/{teamId}")
-    @Operation(summary = "팀 조회 API")
+    @Operation(summary = "팀 상세 조회 API")
     public ResponseEntity<TeamDetailsReadResponse> readTeamDetails(
             @Parameter(description = "조회할 팀 id", example = "1")
             @PathVariable(name = "teamId") Long teamId,
