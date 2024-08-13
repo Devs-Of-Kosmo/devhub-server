@@ -18,13 +18,21 @@
     </section>
 
     <!-- 메타데이터 카드 슬라이드 -->
-    <section class="metadata-cards-wrapper" style="display: none;"> <!-- 초기에는 숨김 -->
-        <button class="slide-btn left-btn">&#9664;</button>
+    <section class="metadata-cards-wrapper" style="display: none;">
+        <!-- 초기에는 숨김 -->
         <div class="metadata-cards-container">
             <!-- 메타데이터 카드가 추가될 영역 -->
         </div>
-        <button class="slide-btn right-btn">&#9654;</button>
     </section>
+    <div class="commit-and-content-container">
+        <div class="commit-cards-container">
+            <!-- 커밋 카드가 추가될 영역 -->
+        </div>
+        <!-- 파일 내용 표시 영역 -->
+        <div id="file-content-display">
+            <!-- 파일 내용이 여기 표시됩니다. -->
+        </div>
+    </div>
 </div>
 
 <div class="sidebar">
@@ -35,6 +43,7 @@
         <!-- Original file structure will be displayed here -->
     </div>
 </div>
+
 <div class="main-content">
     <h1>파일 비교</h1>
     <input type="text" id="commitMessage" placeholder="Enter commit message">
