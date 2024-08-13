@@ -55,6 +55,11 @@ public class Team extends BaseTimeEntity {
         this.createdBy = createdBy;
     }
 
+    public void update(Team team) {
+        this.name = team.getName();
+        this.description = team.getDescription();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

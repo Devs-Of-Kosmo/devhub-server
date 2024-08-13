@@ -11,14 +11,14 @@ import team.devs.devhub.domain.personal.domain.PersonalProject;
 public class PersonalProjectRepoUpdateResponse {
 
     private Long projectId;
-    private String changedProjectName;
-    private String changedDescription;
+    private String projectNameAfterChange;
+    private String descriptionAfterChange;
 
     public static PersonalProjectRepoUpdateResponse of(PersonalProject project) {
         return PersonalProjectRepoUpdateResponse.builder()
                 .projectId(project.getId())
-                .changedProjectName(project.getName())
-                .changedDescription(project.getDescription())
+                .projectNameAfterChange(project.getName())
+                .descriptionAfterChange(project.getDescription())
                 .build();
     }
 }

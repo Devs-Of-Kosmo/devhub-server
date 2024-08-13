@@ -8,10 +8,7 @@ import team.devs.devhub.domain.team.domain.team.TeamRole;
 import team.devs.devhub.domain.team.domain.team.UserTeam;
 import team.devs.devhub.domain.team.domain.team.repository.TeamRepository;
 import team.devs.devhub.domain.team.domain.team.repository.UserTeamRepository;
-import team.devs.devhub.domain.team.dto.TeamDetailsReadResponse;
-import team.devs.devhub.domain.team.dto.TeamGroupCreateRequest;
-import team.devs.devhub.domain.team.dto.TeamGroupCreateResponse;
-import team.devs.devhub.domain.team.dto.TeamGroupReadResponse;
+import team.devs.devhub.domain.team.dto.*;
 import team.devs.devhub.domain.team.exception.TeamNameDuplicatedException;
 import team.devs.devhub.domain.team.exception.TeamNotFoundException;
 import team.devs.devhub.domain.team.exception.UserTeamNotFoundException;
@@ -32,7 +29,7 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final UserTeamRepository userTeamRepository;
 
-    public TeamGroupCreateResponse saveTeamGroup(TeamGroupCreateRequest request, Long userId) {
+    public TeamGroupCreateResponse saveTeamGroup(TeamGroupCreateRequest request, long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
@@ -64,7 +61,8 @@ public class TeamService {
         return results;
     }
 
-    public TeamDetailsReadResponse readTeamDetails(Long teamId, Long userId) {
+    @Transactional(readOnly = true)
+    public TeamDetailsReadResponse readTeamDetails(long teamId, long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         Team team = teamRepository.findById(teamId)
@@ -74,6 +72,21 @@ public class TeamService {
         List<UserTeam> userTeamList = userTeamRepository.findAllByTeam(team);
 
         return TeamDetailsReadResponse.of(userTeamList);
+    }
+
+    public TeamGroupUpdateResponse updateTeamInfo(TeamGroupUpdateRequest request, long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        Team team = teamRepository.findById(request.getTeamId())
+                .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
+        validExistsUserAndTeam(user, team);
+
+        Team target = request.toEntity();
+        validDuplicatedTeamName(target);
+
+        team.update(target);
+
+        return TeamGroupUpdateResponse.of(team);
     }
 
     // exception
@@ -88,5 +101,4 @@ public class TeamService {
             throw new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND);
         }
     }
-
 }
