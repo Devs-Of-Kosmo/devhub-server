@@ -1,4 +1,3 @@
-
 function updateClock() {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
@@ -50,7 +49,6 @@ function createNewProject() {
         const newProjectIcon = document.createElement('div');
         newProjectIcon.className = 'icon';
 
-        // 여기서 folderName 변수를 projectName으로 설정
         const folderName = projectName;
 
         newProjectIcon.innerHTML = `
@@ -58,8 +56,8 @@ function createNewProject() {
             <span class="title">${projectName}</span>
         `;
         newProjectIcon.onclick = function() {
-            // 폴더 이름에 따라 URL로 이동
-            window.location.href = `/team_project_list/${folderName}`;
+
+            window.location.href = `/team_loading?name=${encodeURIComponent(projectName)}&description=${encodeURIComponent(projectDescription)}&folder=${encodeURIComponent(folderName)}`;
         };
         desktop.appendChild(newProjectIcon);
 
@@ -76,17 +74,6 @@ function createNewProject() {
     }
 }
 
-
-
-function addMessage(text, type) {
-    const messageContainer = document.getElementById('messageContainer');
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message', type);
-    messageElement.textContent = text;
-    messageContainer.appendChild(messageElement);
-    messageContainer.scrollTop = messageContainer.scrollHeight;
-}
-
 // 초기 설정
 document.addEventListener('DOMContentLoaded', (event) => {
     setInterval(updateClock, 1000);
@@ -97,16 +84,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const windowId = icon.getAttribute('data-title').replace(' ', '');
         icon.onclick = () => handleIconClick(icon, windowId);
     });
-
-    // 메시지 입력 필드에 엔터 키 이벤트 리스너 추가
-    const messageInput = document.getElementById('messageInput');
-    if (messageInput) {
-        messageInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-    } else {
-        console.error('Message input element not found');
-    }
 });
