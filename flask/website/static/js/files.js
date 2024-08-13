@@ -7,9 +7,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const reviewBtn = document.getElementById('review-btn');
     const accessToken = localStorage.getItem('accessToken');
     const metadataWrapper = document.querySelector('.metadata-cards-wrapper');
-    const leftBtn = document.querySelector('.slide-btn.left-btn');
-    const rightBtn = document.querySelector('.slide-btn.right-btn');
+    const commitCardsContainer = document.querySelector('.commit-cards-container');
     let currentProjectId = null; // 현재 프로젝트 ID 저장
+    let selectedMetadataCard = null; // 선택된 메타데이터 카드
 
     // 레포지토리 목록 가져오기
     fetchRepositories();
@@ -115,40 +115,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function initializeMetadataCarousel() {
         const metadataContainer = document.querySelector('.metadata-cards-container');
-        const leftBtn = document.querySelector('.metadata-cards-wrapper .left-btn');
-        const rightBtn = document.querySelector('.metadata-cards-wrapper .right-btn');
+        let isMouseDown = false;
+        let startX, scrollLeft;
 
-        let cardWidth = metadataContainer.querySelector('.commit-card').offsetWidth;
-        let containerWidth = metadataContainer.offsetWidth;
-
-        // 카드 너비 계산
-        window.addEventListener('resize', () => {
-            cardWidth = metadataContainer.querySelector('.commit-card').offsetWidth;
-            containerWidth = metadataContainer.offsetWidth;
+        metadataContainer.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            metadataContainer.classList.add('active');
+            startX = e.pageX - metadataContainer.offsetLeft;
+            scrollLeft = metadataContainer.scrollLeft;
         });
 
-        let scrollPosition = 0;
-
-        leftBtn.addEventListener('click', () => {
-            scrollPosition -= containerWidth;
-            if (scrollPosition < 0) {
-                scrollPosition = metadataContainer.scrollWidth - containerWidth;
-            }
-            metadataContainer.scrollTo({
-                left: scrollPosition,
-                behavior: 'smooth'
-            });
+        metadataContainer.addEventListener('mouseleave', () => {
+            isMouseDown = false;
+            metadataContainer.classList.remove('active');
         });
 
-        rightBtn.addEventListener('click', () => {
-            scrollPosition += containerWidth;
-            if (scrollPosition >= metadataContainer.scrollWidth) {
-                scrollPosition = 0;
-            }
-            metadataContainer.scrollTo({
-                left: scrollPosition,
-                behavior: 'smooth'
-            });
+        metadataContainer.addEventListener('mouseup', () => {
+            isMouseDown = false;
+            metadataContainer.classList.remove('active');
+        });
+
+        metadataContainer.addEventListener('mousemove', (e) => {
+            if (!isMouseDown) return;
+            e.preventDefault();
+            const x = e.pageX - metadataContainer.offsetLeft;
+            const walk = (x - startX) * 3; // 스크롤 속도 조정
+            metadataContainer.scrollLeft = scrollLeft - walk;
         });
     }
 
@@ -158,35 +150,18 @@ document.addEventListener("DOMContentLoaded", function () {
             const commitId = event.target.getAttribute('data-commit-id');
             const commitCard = event.target.parentElement; // 해당 커밋 카드
             const commitDetails = event.target.nextElementSibling; // 커밋 세부사항 영역
+
             if (commitId) {
+                // 이전에 선택된 메타데이터 카드가 있으면 초기화
+                if (selectedMetadataCard) {
+                    selectedMetadataCard.style.borderColor = '';
+                }
+
+                // 선택된 메타데이터 카드 스타일 변경
+                selectedMetadataCard = commitCard;
+                selectedMetadataCard.style.borderColor = 'blue';
+
                 fetchCommitDetails(commitId, commitDetails);
-
-                // 카드 확장
-                commitCard.classList.add('expanded');
-                const otherCards = document.querySelectorAll('.commit-card');
-                otherCards.forEach(card => {
-                    if (card !== commitCard) {
-                        card.style.display = 'none';
-                    }
-                });
-
-                // 돌아가기 버튼 생성
-                const backButton = document.createElement('button');
-                backButton.textContent = '돌아가기';
-                backButton.className = 'back-btn';
-                backButton.addEventListener('click', function () {
-                    // 돌아가기 버튼 클릭 시 메타데이터 슬라이드를 다시 불러옴
-                    fetchProjectMetadata(currentProjectId);
-                    metadataWrapper.style.display = 'flex';
-                    leftBtn.style.display = 'flex';
-                    rightBtn.style.display = 'flex';
-                });
-                commitCard.insertBefore(backButton, commitCard.firstChild);
-
-                // 기존 "커밋 조회" 버튼 숨기기
-                event.target.style.display = 'none';
-                leftBtn.style.display = 'none';
-                rightBtn.style.display = 'none';
             }
         }
     });
@@ -206,23 +181,243 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const data = await response.json();
-            displayCommitDetails(data, commitDetails);
+            displayCommitDetails(data, commitDetails, commitId); // commitId 추가
         } catch (error) {
             console.error('Error fetching commit details:', error);
         }
     }
 
-    function displayCommitDetails(data, commitDetails) {
+    function displayCommitDetails(data, commitDetails, commitId) {
         const { fileNameWithPathList } = data;
 
-        let detailsHtml = '<h3>커밋에 포함된 파일 목록:</h3><ul>';
-        fileNameWithPathList.forEach(filePath => {
-            detailsHtml += `<li>${filePath}</li>`;
-        });
-        detailsHtml += '</ul>';
+        // 트리 구조로 변환
+        const treeData = buildFileTree(fileNameWithPathList);
 
-        commitDetails.innerHTML = detailsHtml;
-        commitDetails.style.display = 'block'; // 커밋 세부사항 표시
+        // 트리 구조 표시
+        const treeHtml = renderFileTree(treeData, commitId);
+        commitCardsContainer.innerHTML = `<h3>커밋에 포함된 파일 목록:</h3>${treeHtml}`;
+        commitCardsContainer.style.display = 'block'; // 커밋 세부사항 표시
+
+        // 돌아가기 버튼 생성
+        const backButton = document.createElement('button');
+        backButton.textContent = '돌아가기';
+        backButton.className = 'back-btn';
+        backButton.addEventListener('click', function () {
+            // 돌아가기 버튼 클릭 시 초기 상태로 복원
+            commitCardsContainer.innerHTML = '';
+            if (selectedMetadataCard) {
+                selectedMetadataCard.style.borderColor = '';
+            }
+            selectedMetadataCard = null;
+        });
+        commitCardsContainer.appendChild(backButton);
+
+        // 트리 토글 기능 추가
+        addTreeToggleEvent();
+
+        // 파일 선택 이벤트 추가
+        addFileSelectEvent();
+    }
+
+    // 파일 경로를 트리 구조로 변환
+    function buildFileTree(paths) {
+        const root = {};
+
+        paths.forEach(path => {
+            const parts = path.split('/');
+            let currentNode = root;
+
+            parts.forEach((part, index) => {
+                if (!currentNode[part]) {
+                    currentNode[part] = index === parts.length - 1 ? null : {};
+                }
+                currentNode = currentNode[part];
+            });
+        });
+
+        return root;
+    }
+
+    // 트리 구조를 HTML로 변환
+    function renderFileTree(tree, commitId, path = '') {
+        let html = '<ul>';
+        for (const key in tree) {
+            const newPath = path ? `${path}/${key}` : key;
+            html += `<li class="tree-node" data-path="${newPath}" data-commit-id="${commitId}">`;
+            if (tree[key] !== null) {
+                html += `<span class="toggle-icon">></span> <span class="directory-icon">${key}</span>`;
+                html += renderFileTree(tree[key], commitId, newPath);
+            } else {
+                // 파일명 왼쪽에 체크박스 추가
+                html += `<input type="checkbox" class="file-checkbox" data-path="${newPath}" data-commit-id="${commitId}"> <span class="file-icon">${key}</span>`;
+            }
+            html += '</li>';
+        }
+        html += '</ul>';
+        return html;
+    }
+
+    // 트리 토글 기능 추가
+    function addTreeToggleEvent() {
+        document.querySelectorAll('.tree-node > .toggle-icon').forEach(toggleIcon => {
+            toggleIcon.addEventListener('click', function () {
+                const listItem = this.parentElement;
+                const sublist = listItem.querySelector('ul');
+
+                if (sublist) {
+                    if (sublist.style.display === 'none' || sublist.style.display === '') {
+                        sublist.style.display = 'block';
+                        this.textContent = 'v';
+                    } else {
+                        sublist.style.display = 'none';
+                        this.textContent = '>';
+                    }
+                }
+            });
+        });
+    }
+
+    // 파일 선택 이벤트 추가 (체크박스 하나만 선택 가능하도록 수정)
+    function addFileSelectEvent() {
+        document.querySelectorAll('.file-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', async function () {
+                if (this.checked) {
+                    // 모든 체크박스를 선택 해제
+                    document.querySelectorAll('.file-checkbox').forEach(box => {
+                        if (box !== this) box.checked = false;
+                    });
+
+                    const listItem = this.closest('.tree-node');
+                    const filePath = listItem.getAttribute('data-path');
+                    const commitId = listItem.getAttribute('data-commit-id');
+
+                    // 체크박스가 체크되었을 때 파일 내용을 가져와서 표시
+                    await fetchFileContent(commitId, filePath);
+                } else {
+                    // 체크박스가 체크 해제되었을 때 파일 내용을 지우기
+                    clearFileContent();
+                }
+            });
+        });
+
+        document.querySelectorAll('.file-icon').forEach(fileIcon => {
+            fileIcon.addEventListener('click', async function () {
+                const listItem = this.closest('.tree-node');
+                const checkbox = listItem.querySelector('.file-checkbox');
+
+                // 체크박스 상태를 토글
+                checkbox.checked = !checkbox.checked;
+
+                // 체크 상태에 따라 파일 내용 표시 혹은 지우기
+                const filePath = listItem.getAttribute('data-path');
+                const commitId = listItem.getAttribute('data-commit-id');
+                if (checkbox.checked) {
+                    await fetchFileContent(commitId, filePath);
+                } else {
+                    clearFileContent();
+                }
+            });
+        });
+
+        document.querySelectorAll('.file-icon').forEach(fileIcon => {
+            fileIcon.addEventListener('click', async function () {
+                const listItem = this.closest('.tree-node');
+                const filePath = listItem.getAttribute('data-path');
+                const commitId = listItem.getAttribute('data-commit-id');
+                const fileType = filePath.split('.').pop().toLowerCase();
+
+                if (fileType === 'png' || fileType === 'jpg' || fileType === 'jpeg' || fileType === 'gif' || fileType === 'bmp') {
+                    await fetchImageFile(commitId, filePath);
+                }
+            });
+        });
+    }
+
+    // 이미지 파일 가져오기
+    async function fetchImageFile(commitId, filePath) {
+        const apiUrl = `http://localhost:8080/api/personal/project/image-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}`;
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': '*/*'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch image file');
+            }
+
+            const blob = await response.blob();
+            displayImage(blob);
+        } catch (error) {
+            console.error('Error fetching image file:', error);
+        }
+    }
+
+    // 이미지 파일 표시
+    function displayImage(blob) {
+        const contentContainer = document.getElementById('file-content-display');
+        if (contentContainer) {
+            const imageUrl = URL.createObjectURL(blob);
+            contentContainer.innerHTML = `<img src="${imageUrl}" alt="Image" style="max-width: 100%; height: auto;">`;
+        }
+    }
+
+    // 파일 내용 가져오기
+    async function fetchFileContent(commitId, filePath) {
+        const apiUrl = `http://localhost:8080/api/personal/project/text-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}`;
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': '*/*'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch file content');
+            }
+
+            const textContent = await response.text();
+            displayTextContent(textContent);
+        } catch (error) {
+            console.error('Error fetching file content:', error);
+        }
+    }
+
+    // 텍스트 파일 내용 표시
+    function displayTextContent(text) {
+        const contentContainer = document.getElementById('file-content-display');
+        if (contentContainer) {
+            const lines = text.split('\n');
+            const numberedLines = lines.map((line, index) => {
+                return `<div class="line"><span class="line-number">${index + 1}</span> ${escapeHtml(line)}</div>`;
+            }).join('');
+            contentContainer.innerHTML = `<pre>${numberedLines}</pre>`;
+        }
+    }
+
+    // 파일 내용 지우기
+    function clearFileContent() {
+        const contentContainer = document.getElementById('file-content-display');
+        if (contentContainer) {
+            contentContainer.innerHTML = '';
+        }
+    }
+
+    // HTML 특수문자 이스케이프
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
     // 커밋 버튼 이벤트 리스너
