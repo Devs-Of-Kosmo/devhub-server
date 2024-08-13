@@ -78,8 +78,17 @@
 <div class="tab-content">
     <div class="tab-pane fade show active" id="overview">
         <div id="commit-history" class="activity-card">
-            <h5>커밋 기록</h5>
-            <div id="commit-list"></div>
+            <h5>프로젝트 및 커밋 기록</h5>
+            <div class="row">
+                <div class="col-md-4">
+                    <h6>프로젝트 목록</h6>
+                    <div id="project-list"></div>
+                </div>
+                <div class="col-md-8">
+                    <h6>커밋 기록</h6>
+                    <div id="commit-list"></div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="tab-pane fade" id="settings">설정 내용</div>
@@ -133,5 +142,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
 <script src="/js/mypage/script.js?v=1.0"></script>
 <script src="/js/mypage/message.js?v=1.0"></script>
+<script src="/js/mypage/project.js"></script>
 </body>
 </html>
