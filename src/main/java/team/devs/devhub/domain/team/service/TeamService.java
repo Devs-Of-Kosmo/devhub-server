@@ -37,12 +37,12 @@ public class TeamService {
         Team team = request.toEntity(user);
         validDuplicatedTeamName(team);
 
-        Team savedTeam = teamRepository.save(team);
+        teamRepository.save(team);
 
         userTeamRepository.save(
                 UserTeam.builder()
                 .user(user)
-                .team(savedTeam)
+                .team(team)
                 .role(TeamRole.MANAGER)
                 .build()
         );

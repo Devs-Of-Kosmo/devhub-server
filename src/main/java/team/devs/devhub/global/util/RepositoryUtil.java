@@ -3,6 +3,7 @@ package team.devs.devhub.global.util;
 import org.springframework.web.multipart.MultipartFile;
 import team.devs.devhub.domain.personal.domain.PersonalProject;
 import team.devs.devhub.domain.personal.exception.*;
+import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
 
 import java.io.File;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class RepositoryUtil {
 
-    public static void createRepository(PersonalProject project) {
+    public static void createRepository(ProjectUtilProvider project) {
         Path path = Paths.get(project.getRepositoryPath());
         try {
             Files.createDirectories(path);
