@@ -21,7 +21,7 @@ public class Board extends BaseTimeEntity {
     @Column(length = 50, nullable = false)
     private String title;
 
-    @Column(length = 400, nullable = false)
+    @Column(length = 800, nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
