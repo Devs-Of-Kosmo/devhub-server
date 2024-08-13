@@ -64,6 +64,10 @@ public class Team extends BaseTimeEntity {
         this.deleteCondition = true;
     }
 
+    public void cancelSoftDelete() {
+        this.deleteCondition = false;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

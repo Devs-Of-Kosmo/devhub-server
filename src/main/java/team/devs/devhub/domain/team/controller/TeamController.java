@@ -75,4 +75,15 @@ public class TeamController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PostMapping("/group/{teamId}")
+    @Operation(summary = "팀 삭제 취소 API")
+    public ResponseEntity<Void> cancelDeletedTeamGroup(
+            @Parameter(description = "삭제 취소할 팀 id", example = "1")
+            @PathVariable(name = "teamId") Long teamId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        teamService.updateDeleteCancelTeam(teamId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }
