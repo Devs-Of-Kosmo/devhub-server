@@ -11,6 +11,7 @@ import team.devs.devhub.domain.team.domain.team.repository.UserTeamRepository;
 import team.devs.devhub.domain.team.dto.*;
 import team.devs.devhub.domain.team.exception.TeamNameDuplicatedException;
 import team.devs.devhub.domain.team.exception.TeamNotFoundException;
+import team.devs.devhub.domain.team.exception.TeamRoleUnauthorizedException;
 import team.devs.devhub.domain.team.exception.UserTeamNotFoundException;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
@@ -81,6 +82,10 @@ public class TeamService {
                 .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
         validExistsUserAndTeam(user, team);
 
+        UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+        validateSubMasterOrHigher(userTeam);
+
         Team target = request.toEntity();
         validDuplicatedTeamName(target);
 
@@ -99,6 +104,13 @@ public class TeamService {
     private void validExistsUserAndTeam(User user, Team team) {
         if (!userTeamRepository.existsByUserAndTeam(user, team)) {
             throw new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND);
+        }
+    }
+
+    private void validateSubMasterOrHigher(UserTeam userTeam) {
+        if (!(userTeam.getRole() == TeamRole.MANAGER
+                || userTeam.getRole() == TeamRole.SUB_MANAGER)) {
+            throw new TeamRoleUnauthorizedException(ErrorCode.NOT_SUB_MANAGER_OR_HIGHER);
         }
     }
 }

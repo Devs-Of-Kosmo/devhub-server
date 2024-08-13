@@ -8,6 +8,7 @@ import team.devs.devhub.domain.team.domain.team.UserTeam;
 import team.devs.devhub.domain.user.domain.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
 
@@ -18,4 +19,6 @@ public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
     List<UserTeam> findAllByTeam(@Param("team") Team team);
 
     boolean existsByUserAndTeam(User user, Team team);
+
+    Optional<UserTeam> findByUserAndTeam(User user, Team team);
 }
