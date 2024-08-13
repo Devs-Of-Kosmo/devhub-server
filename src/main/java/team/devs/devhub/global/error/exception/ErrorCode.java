@@ -42,6 +42,8 @@ public enum ErrorCode {
 
     // Team
     TEAM_NAME_DUPLICATED(500, "T001", "팀 이름이 존재합니다"),
+    TEAM_NOT_FOUND(500, "T002", "팀이 존재하지 않습니다"),
+    USER_TEAM_NOT_FOUND(500, "T003", "유저와 일치하는 팀이 존재하지 않습니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
