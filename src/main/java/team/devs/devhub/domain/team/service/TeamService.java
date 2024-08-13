@@ -84,7 +84,7 @@ public class TeamService {
 
         UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
                 .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
-        validateSubMasterOrHigher(userTeam);
+        validSubManagerOrHigher(userTeam);
 
         Team target = request.toEntity();
         validDuplicatedTeamName(target);
@@ -92,6 +92,20 @@ public class TeamService {
         team.update(target);
 
         return TeamGroupUpdateResponse.of(team);
+    }
+
+    public void deleteTeam(long teamId, long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
+        validExistsUserAndTeam(user, team);
+
+        UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+        validManagerOrHigher(userTeam);
+
+        team.softDelete();
     }
 
     // exception
@@ -107,7 +121,13 @@ public class TeamService {
         }
     }
 
-    private void validateSubMasterOrHigher(UserTeam userTeam) {
+    private void validManagerOrHigher(UserTeam userTeam) {
+        if (!(userTeam.getRole() == TeamRole.MANAGER)) {
+            throw new TeamRoleUnauthorizedException(ErrorCode.NOT_MANAGER_OR_HIGHER);
+        }
+    }
+
+    private void validSubManagerOrHigher(UserTeam userTeam) {
         if (!(userTeam.getRole() == TeamRole.MANAGER
                 || userTeam.getRole() == TeamRole.SUB_MANAGER)) {
             throw new TeamRoleUnauthorizedException(ErrorCode.NOT_SUB_MANAGER_OR_HIGHER);
