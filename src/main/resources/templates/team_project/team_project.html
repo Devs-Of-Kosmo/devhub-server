@@ -8,15 +8,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="/css/team_project/style.css">
 </head>
 <body>
 <header>
     <ul class="left">
         <li><strong>Devhub</strong></li>
-        <li>File</li>
-        <li>Edit</li>
-        <li>View</li>
+        <li id="editMenu">Edit</li>
+        <li>Delete</li>
         <li>Go</li>
         <li>Window</li>
         <li>Help</li>
@@ -25,17 +25,18 @@
         <li><i class="fas fa-battery-full"></i></li>
         <li><i class="fas fa-wifi"></i></li>
         <li><span id="clock"></span></li>
+        <li><button id="logoutButton" style="display: none;">로그아웃</button></li>
     </ul>
 </header>
 
 <div id="Desktop">
     <div class="icon" data-title="listProjects" onclick="handleIconClick(this, 'listProjects')">
         <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="프로젝트 목록">
-        <span class="title">프로젝트 목록</span>
+        <span class="title">팀 목록</span>
     </div>
     <div class="icon" data-title="createProject" onclick="handleIconClick(this, 'createProject')">
         <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="프로젝트 만들기">
-        <span class="title">프로젝트 만들기</span>
+        <span class="title">팀 만들기</span>
     </div>
     <div class="icon" data-title="joinProject" onclick="handleIconClick(this, 'joinProject')">
         <img src="https://cdn-icons-png.flaticon.com/512/1967/1967199.png" alt="프로젝트 참가">
@@ -45,23 +46,27 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IMessage_logo.svg/234px-IMessage_logo.svg.png?20180402204645" alt="팀원 초대">
         <span class="title">팀원 초대</span>
     </div>
+    <div id="trashCan" class="icon">
+        <img src="/css/images/team_project/trash.png" alt="휴지통">
+        <span class="title">휴지통</span>
+    </div>
 </div>
 
 <div id="createProject" class="window">
-    <h2>새 프로젝트 만들기</h2>
-    <input type="text" id="projectName" placeholder="프로젝트 이름">
-    <textarea id="projectDescription" placeholder="프로젝트 설명"></textarea>
-    <button onclick="createNewProject()">만들기</button>
+    <h2>팀 만들기</h2>
+    <input type="text" id="projectName" placeholder="팀 이름">
+    <textarea id="projectDescription" placeholder="팀 설명"></textarea>
+    <button id="createProjectButton">만들기</button>
 </div>
 
 <div id="joinProject" class="window">
-    <h2>프로젝트 참가</h2>
+    <h2>팀 참가</h2>
     <input type="text" placeholder="프로젝트 코드">
     <button onclick="closeWindow('joinProject')">참가하기</button>
 </div>
 
 <div id="listProjects" class="window">
-    <h2>프로젝트 목록</h2>
+    <h2>팀 목록</h2>
     <ul id="projectList">
         <!-- 프로젝트 목록이 여기에 동적으로 추가됩니다 -->
     </ul>
@@ -86,6 +91,25 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- 로그인 모달 추가 -->
+<div id="loginModal" class="window">
+    <h2>로그인</h2>
+    <input type="email" id="loginEmail" placeholder="이메일">
+    <input type="password" id="loginPassword" placeholder="비밀번호">
+    <button id="loginButton">로그인</button>
+</div>
+
+<!-- 팀 수정 모달 추가 -->
+<div id="editProject" class="window">
+    <h2>팀 정보 수정</h2>
+    <select id="selectProject" style="margin-bottom: 30px;">
+        <!-- 프로젝트 옵션이 동적으로 추가됩니다 -->
+    </select>
+    <input type="text" id="editTeamName" placeholder="팀 이름">
+    <textarea id="editTeamDescription" placeholder="팀 설명"></textarea>
+    <button id="saveTeamChangesButton">저장</button>
 </div>
 
 <footer>

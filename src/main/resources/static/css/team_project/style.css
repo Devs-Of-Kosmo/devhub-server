@@ -70,6 +70,42 @@ header .right { float: right; }
 #Desktop .icon.clicked img {
     transform: scale(0.9);
 }
+/*
+#trashCan {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    text-align: center;
+}
+*/
+#trashCan img {
+    width: 64px;
+    height: 64px;
+    transition: all 0.3s ease;
+}
+
+#trashCan:hover img {
+    transform: scale(1.1);
+}
+
+#trashCan .title {
+    font-size: 12px;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+}
+
+.icon[draggable="true"]:active {
+    opacity: 0.5;
+    cursor: move;
+}
+
+/* 드래그 오버 시 휴지통 효과 */
+#trashCan.dragover img {
+    transform: scale(1.2);
+    filter: brightness(1.2);
+}
 
 /* 독(Dock) 스타일 */
 footer {
@@ -197,7 +233,80 @@ footer img:hover {
     position: relative;
     right: 130%;
 }
+#editProject.window {
+    background-color: #2d2d2d;
+    border-radius: 10px;
+    padding: 20px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
 
+#editProject h2 {
+    color: #fff;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#editProject .form-group {
+    margin-bottom: 15px;
+}
+
+#editProject label {
+    display: block;
+    margin-bottom: 5px;
+    color: #bbb;
+}
+
+#editProject .form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #383838;
+    color: #fff;
+    font-size: 14px;
+}
+
+#editProject .form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+#editProject .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+#editProject .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#editProject .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+}
+
+#editProject .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+#editProject .btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+#editProject .btn-secondary:hover {
+    background-color: #5a6268;
+}
 .border {
     position: absolute;
     top: 12.3%;
