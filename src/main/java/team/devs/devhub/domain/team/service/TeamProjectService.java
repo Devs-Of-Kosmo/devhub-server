@@ -11,9 +11,7 @@ import team.devs.devhub.domain.team.domain.team.TeamRole;
 import team.devs.devhub.domain.team.domain.team.UserTeam;
 import team.devs.devhub.domain.team.domain.team.repository.TeamRepository;
 import team.devs.devhub.domain.team.domain.team.repository.UserTeamRepository;
-import team.devs.devhub.domain.team.dto.project.TeamProjectRepoCreateRequest;
-import team.devs.devhub.domain.team.dto.project.TeamProjectRepoCreateResponse;
-import team.devs.devhub.domain.team.dto.project.TeamProjectRepoReadResponse;
+import team.devs.devhub.domain.team.dto.project.*;
 import team.devs.devhub.domain.team.exception.*;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
@@ -71,9 +69,36 @@ public class TeamProjectService {
         return results;
     }
 
+    public TeamProjectRepoUpdateResponse updateProjectRepo(TeamProjectRepoUpdateRequest request, Long userId) {
+        TeamProject project = teamProjectRepository.findById(request.getProjectId())
+                .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, project.getTeam())
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+        validSubManagerOrHigher(userTeam);
+
+        TeamProject target = request.toEntity();
+
+        validDuplicatedProjectName(project.getTeam(), target);
+
+        String oldRepoNamePath = project.getRepositoryPath();
+
+        project.update(target);
+        project.saveRepositoryPath(repositoryPathHead);
+
+        RepositoryUtil.changeRepositoryName(oldRepoNamePath, project);
+
+        return TeamProjectRepoUpdateResponse.of(project);
+    }
+
     // exception
-    private void validDuplicatedProjectName(TeamProject teamProject) {
-        if (teamProjectRepository.existsByTeamIdAndName(teamProject.getTeam().getId(), teamProject.getName())) {
+    private void validDuplicatedProjectName(TeamProject project) {
+        validDuplicatedProjectName(project.getTeam(), project);
+    }
+
+    private void validDuplicatedProjectName(Team team, TeamProject project) {
+        if (teamProjectRepository.existsByTeamIdAndName(team.getId(), project.getName())) {
             throw new TeamProjectNameDuplicatedException(ErrorCode.TEAM_PROJECT_NAME_DUPLICATED);
         }
     }

@@ -23,7 +23,7 @@ public class RepositoryUtil {
         }
     }
 
-    public static void changeRepositoryName(String oldRepoNamePath, PersonalProject project) {
+    public static void changeRepositoryName(String oldRepoNamePath, ProjectUtilProvider project) {
         File oldDirectory = new File(oldRepoNamePath);
         File newDirectory = new File(project.getRepositoryPath());
 
