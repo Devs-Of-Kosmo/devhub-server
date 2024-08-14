@@ -37,8 +37,6 @@ public class TeamProjectService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         Team team = teamRepository.findById(request.getTeamId())
                 .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
-        validExistsUserAndTeam(user, team);
-
         UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
                 .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
         validSubManagerOrHigher(userTeam);
@@ -58,12 +56,6 @@ public class TeamProjectService {
     private void validDuplicatedProjectName(TeamProject teamProject) {
         if (teamProjectRepository.existsByTeamIdAndName(teamProject.getTeam().getId(), teamProject.getName())) {
             throw new TeamProjectNameDuplicatedException(ErrorCode.TEAM_PROJECT_NAME_DUPLICATED);
-        }
-    }
-
-    private void validExistsUserAndTeam(User user, Team team) {
-        if (!userTeamRepository.existsByUserAndTeam(user, team)) {
-            throw new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND);
         }
     }
 
