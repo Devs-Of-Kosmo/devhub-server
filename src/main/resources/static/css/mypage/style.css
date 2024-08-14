@@ -181,6 +181,65 @@ body {
     align-items: center;
 }
 
+.team-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.team-item {
+    background-color: #2d2d2d;
+    border: 1px solid #3a3a3a;
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.team-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.team-item h4 {
+    color: #007bff;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.team-item p {
+    margin-bottom: 10px;
+    color: #ccc;
+}
+
+.team-item ul {
+    padding-left: 20px;
+    margin-top: 15px;
+}
+
+.team-item li {
+    margin-bottom: 5px;
+    color: #bbb;
+}
+
+.team-members {
+    max-height: 150px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.team-members::-webkit-scrollbar {
+    width: 5px;
+}
+
+.team-members::-webkit-scrollbar-thumb {
+    background-color: #666;
+    border-radius: 5px;
+}
+
+.team-members::-webkit-scrollbar-track {
+    background-color: #2d2d2d;
+}
 .view-details {
     background: #28a745;
     color: white;

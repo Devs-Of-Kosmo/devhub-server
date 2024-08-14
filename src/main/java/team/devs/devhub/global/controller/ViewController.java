@@ -25,7 +25,7 @@ public class ViewController {
 
     @GetMapping("/register")
     public String register() {
-        return "register";
+        return "register/register";
     }
 
     @GetMapping("/password-reset")
