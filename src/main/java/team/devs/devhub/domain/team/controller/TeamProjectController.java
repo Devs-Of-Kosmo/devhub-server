@@ -54,4 +54,15 @@ public class TeamProjectController {
         TeamProjectRepoUpdateResponse response = teamProjectService.updateProjectRepo(request, customUserDetails.getId());
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/repo/{projectId}")
+    @Operation(summary = "팀 레포지토리 삭제 API")
+    public ResponseEntity<Void> deleteTeamProjectRepo(
+            @Parameter(description = "삭제할 레포지토리의 projectId", example = "1")
+            @PathVariable(name = "projectId") Long projectId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        teamProjectService.deleteProjectRepo(projectId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

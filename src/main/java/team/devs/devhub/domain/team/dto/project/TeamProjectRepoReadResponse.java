@@ -15,6 +15,7 @@ public class TeamProjectRepoReadResponse {
     private Long projectId;
     private String projectName;
     private String description;
+    private Boolean deleteCondition;
     private LocalDateTime createdDate;
 
     public static TeamProjectRepoReadResponse of(TeamProject project) {
@@ -22,6 +23,7 @@ public class TeamProjectRepoReadResponse {
                 .projectId(project.getId())
                 .projectName(project.getName())
                 .description(project.getDescription())
+                .deleteCondition(project.isDeleteCondition())
                 .createdDate(project.getCreatedDate())
                 .build();
     }

@@ -69,7 +69,7 @@ public class TeamProjectService {
         return results;
     }
 
-    public TeamProjectRepoUpdateResponse updateProjectRepo(TeamProjectRepoUpdateRequest request, Long userId) {
+    public TeamProjectRepoUpdateResponse updateProjectRepo(TeamProjectRepoUpdateRequest request, long userId) {
         TeamProject project = teamProjectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
         User user = userRepository.findById(userId)
@@ -90,6 +90,18 @@ public class TeamProjectService {
         RepositoryUtil.changeRepositoryName(oldRepoNamePath, project);
 
         return TeamProjectRepoUpdateResponse.of(project);
+    }
+
+    public void deleteProjectRepo(long projectId, long userId) {
+        TeamProject project = teamProjectRepository.findById(projectId)
+                .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, project.getTeam())
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+        validSubManagerOrHigher(userTeam);
+
+        teamProjectRepository.deleteById(projectId);
     }
 
     // exception
