@@ -1,6 +1,7 @@
 package team.devs.devhub.domain.team.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +11,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import team.devs.devhub.domain.team.dto.project.TeamProjectRepoCreateRequest;
 import team.devs.devhub.domain.team.dto.project.TeamProjectRepoCreateResponse;
+import team.devs.devhub.domain.team.dto.project.TeamProjectRepoReadResponse;
 import team.devs.devhub.domain.team.service.TeamProjectService;
 import team.devs.devhub.global.security.CustomUserDetails;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:5000")
@@ -30,5 +34,16 @@ public class TeamProjectController {
     ) {
         TeamProjectRepoCreateResponse response = teamProjectService.saveProjectRepo(request, customUserDetails.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/repo/list/{teamId}")
+    @Operation(summary = "팀 레포지토리 목록 조회 API")
+    public ResponseEntity<List<TeamProjectRepoReadResponse>> readTeamProjectRepo(
+            @Parameter(description = "조회할 팀 id", example = "1")
+            @PathVariable(name = "teamId") Long teamId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        List<TeamProjectRepoReadResponse> responses = teamProjectService.readProjectRepo(teamId, customUserDetails.getId());
+        return ResponseEntity.ok(responses);
     }
 }
