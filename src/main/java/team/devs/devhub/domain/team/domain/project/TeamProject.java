@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SQLDelete;
 import team.devs.devhub.domain.team.domain.team.Team;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.common.BaseTimeEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 @Entity
 @Getter
 @DynamicInsert
+@SQLDelete(sql = "UPDATE team_project SET delete_condition = true WHERE team_project_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeamProject extends BaseTimeEntity implements ProjectUtilProvider {
 
@@ -46,7 +48,7 @@ public class TeamProject extends BaseTimeEntity implements ProjectUtilProvider {
     @Column(length = 20, nullable = false)
     private boolean deleteCondition;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     private List<TeamBranch> branches = new ArrayList<>();
 
     @Builder
