@@ -80,8 +80,6 @@ public class TeamService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         Team team = teamRepository.findById(request.getTeamId())
                 .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
-        validExistsUserAndTeam(user, team);
-
         UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
                 .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
         validSubManagerOrHigher(userTeam);
@@ -99,8 +97,6 @@ public class TeamService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
-        validExistsUserAndTeam(user, team);
-
         UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
                 .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
         validManagerOrHigher(userTeam);
@@ -113,8 +109,6 @@ public class TeamService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
-        validExistsUserAndTeam(user, team);
-
         UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
                 .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
         validManagerOrHigher(userTeam);

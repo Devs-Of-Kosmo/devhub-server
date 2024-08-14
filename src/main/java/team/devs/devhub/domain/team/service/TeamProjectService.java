@@ -13,12 +13,16 @@ import team.devs.devhub.domain.team.domain.team.repository.TeamRepository;
 import team.devs.devhub.domain.team.domain.team.repository.UserTeamRepository;
 import team.devs.devhub.domain.team.dto.project.TeamProjectRepoCreateRequest;
 import team.devs.devhub.domain.team.dto.project.TeamProjectRepoCreateResponse;
+import team.devs.devhub.domain.team.dto.project.TeamProjectRepoReadResponse;
 import team.devs.devhub.domain.team.exception.*;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
 import team.devs.devhub.domain.user.exception.UserNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.util.RepositoryUtil;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -37,8 +41,6 @@ public class TeamProjectService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         Team team = teamRepository.findById(request.getTeamId())
                 .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
-        validExistsUserAndTeam(user, team);
-
         UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
                 .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
         validSubManagerOrHigher(userTeam);
@@ -52,6 +54,21 @@ public class TeamProjectService {
         RepositoryUtil.createRepository(project);
 
         return TeamProjectRepoCreateResponse.of(project);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TeamProjectRepoReadResponse> readProjectRepo(long teamId, long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
+        validExistsUserAndTeam(user, team);
+
+        List<TeamProjectRepoReadResponse> results = teamProjectRepository.findAllByTeamId(team.getId()).stream()
+                .map(e -> TeamProjectRepoReadResponse.of(e))
+                .collect(Collectors.toList());
+
+        return results;
     }
 
     // exception

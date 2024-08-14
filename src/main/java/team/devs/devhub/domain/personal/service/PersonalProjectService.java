@@ -58,8 +58,8 @@ public class PersonalProjectService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        List<PersonalProjectRepoReadResponse> results = personalProjectRepository.findAllByMaster(user)
-                .stream().map(e -> PersonalProjectRepoReadResponse.of(e))
+        List<PersonalProjectRepoReadResponse> results = personalProjectRepository.findAllByMaster(user).stream()
+                .map(e -> PersonalProjectRepoReadResponse.of(e))
                 .collect(Collectors.toList());
 
         return results;
