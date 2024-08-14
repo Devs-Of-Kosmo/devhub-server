@@ -1,10 +1,7 @@
 package team.devs.devhub.domain.team.domain.project;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import team.devs.devhub.domain.team.domain.team.Team;
@@ -61,6 +58,11 @@ public class TeamProject extends BaseTimeEntity implements ProjectUtilProvider {
         this.team = team;
         this.createdBy = createdBy;
         this.deleteCondition = deleteCondition;
+    }
+
+    public void update(TeamProject project) {
+        this.name = project.getName();
+        this.description = project.getDescription();
     }
 
     public void saveRepositoryPath(String repositoryPathHead) {

@@ -1,22 +1,22 @@
-package team.devs.devhub.domain.personal.dto;
+package team.devs.devhub.domain.team.dto.project;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import team.devs.devhub.domain.personal.domain.PersonalProject;
+import team.devs.devhub.domain.team.domain.project.TeamProject;
 
 @Getter
-public class PersonalProjectRepoUpdateRequest {
-    
+public class TeamProjectRepoUpdateRequest {
+
     @NotNull
     private Long projectId;
     @NotBlank
     private String changedProjectName;
     @NotBlank
     private String changedDescription;
-    
-    public PersonalProject toEntity() {
-        return PersonalProject.builder()
+
+    public TeamProject toEntity() {
+        return TeamProject.builder()
                 .name(changedProjectName)
                 .description(changedDescription)
                 .build();

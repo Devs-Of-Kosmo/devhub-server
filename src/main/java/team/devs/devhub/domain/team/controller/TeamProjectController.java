@@ -9,9 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import team.devs.devhub.domain.team.dto.project.TeamProjectRepoCreateRequest;
-import team.devs.devhub.domain.team.dto.project.TeamProjectRepoCreateResponse;
-import team.devs.devhub.domain.team.dto.project.TeamProjectRepoReadResponse;
+import team.devs.devhub.domain.team.dto.project.*;
 import team.devs.devhub.domain.team.service.TeamProjectService;
 import team.devs.devhub.global.security.CustomUserDetails;
 
@@ -45,5 +43,15 @@ public class TeamProjectController {
     ) {
         List<TeamProjectRepoReadResponse> responses = teamProjectService.readProjectRepo(teamId, customUserDetails.getId());
         return ResponseEntity.ok(responses);
+    }
+
+    @PatchMapping("/repo")
+    @Operation(summary = "팀 레포지토리 수정 API")
+    public ResponseEntity<TeamProjectRepoUpdateResponse> updateTeamProjectRepo(
+            @RequestBody @Valid TeamProjectRepoUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamProjectRepoUpdateResponse response = teamProjectService.updateProjectRepo(request, customUserDetails.getId());
+        return ResponseEntity.ok(response);
     }
 }
