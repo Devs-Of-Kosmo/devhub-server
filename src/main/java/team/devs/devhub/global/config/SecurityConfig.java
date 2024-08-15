@@ -36,8 +36,7 @@ public class SecurityConfig {
             "/favicon.ico", "/error",
       
             "/api/*/public/**", "/ws/message",
-            "/api/team/**",
-      
+
             "/", "/register", "/login","/mypage",
             "loading","/personal_project","/project_list",
             "/team_loading","/team_project","/team_project_list/**",
