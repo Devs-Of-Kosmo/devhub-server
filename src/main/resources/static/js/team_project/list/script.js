@@ -5,6 +5,34 @@ const STEP = (MAX_WIDTH - MIN_WIDTH) * 0.05;
 let aniID = null;
 const dock = document.querySelector(".dock");
 
+// 사용자 정보를 조회하는 함수 (AJAX 사용)
+function getUserInfo() {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+        console.error('No access token found');
+        // 토큰이 없으면 로그인 페이지로 리다이렉트
+        window.location.href = '/login';
+        return;
+    }
+
+    $.ajax({
+        url: '/api/user/info',
+        type: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        success: function(data) {
+            console.log('User info:', data);
+            // 여기서 사용자 정보를 활용할 수 있습니다.
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching user info:', error);
+            // 에러 발생 시 (예: 토큰이 유효하지 않은 경우) 로그인 페이지로 리다이렉트
+            window.location.href = '/login';
+        }
+    });
+}
+
 const updateWidth = function (nextWidths) {
     window.cancelAnimationFrame(aniID);
     aniID = null;
@@ -63,6 +91,7 @@ document.querySelectorAll(".dock .item").forEach(item => {
         window.open(url, '_blank');
     });
 });
+
 dock.addEventListener("mousemove", function (e) {
     const dockTop = e.target.getBoundingClientRect().top;
     const y = e.clientY - dockTop;
