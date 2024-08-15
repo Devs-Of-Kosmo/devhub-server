@@ -1,0 +1,89 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Jua', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content-wrapper {
+    flex: 1; /* 나머지 공간을 차지하도록 설정 */
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.hero-section {
+    background-image: url('/static/css/images/board.jpg'); /* 이미지 경로를 여기에 적용하세요 */
+    background-size: cover;
+    background-position: center;
+    color: #ffffff; /* 글씨를 흰색으로 설정 */
+    padding: 60px 0;
+    animation: fadeIn 1s ease-in-out;
+    position: relative;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정 오버레이 추가로 텍스트 가독성 향상 */
+    z-index: 1;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-section .display-4 {
+    font-size: 3rem;
+    font-weight: bold; /* 글씨 굵기 추가로 강조 */
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7); /* 더 강한 텍스트 그림자 추가 */
+}
+
+.hero-section .lead {
+    font-size: 1.5rem;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* 텍스트 그림자 추가 */
+}
+
+.card-img-top {
+    width: 100%;
+    height: 200px; /* 동일한 높이 설정 */
+    object-fit: cover; /* 이미지 비율 유지 */
+}
+
+.boardRequest-image {
+    max-width: 100%;
+    height: auto;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.card {
+    transition: transform 0.3s ease;
+    cursor: pointer; /* 커서를 포인터로 변경하여 클릭 가능함을 나타냄 */
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.footer {
+    background-color: #343a40; /* bg-dark에 해당 */
+    color: #ffffff; /* text-white에 해당 */
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+}
