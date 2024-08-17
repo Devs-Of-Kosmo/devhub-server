@@ -714,3 +714,29 @@ footer img:hover {
     padding-left: 10px;
     color: #fff;
 }
+
+.icon.deleted {
+    opacity: 0.5;
+    position: relative;
+}
+
+.icon.deleted img {
+    filter: grayscale(100%);
+}
+
+.delete-mark {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 18px;
+    color: red;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}

@@ -1,5 +1,5 @@
 // 모든 창 닫기
-function closeAllWindows() {
+window.closeAllWindows = function() {
     const windows = document.querySelectorAll('.window');
     windows.forEach(window => {
         window.style.display = 'none';
@@ -7,8 +7,8 @@ function closeAllWindows() {
 }
 
 // 특정 창 열기
-function openWindow(id) {
-    closeAllWindows();
+window.openWindow = function(id) {
+    window.closeAllWindows();
     const windowElement = document.getElementById(id);
     if (windowElement) {
         windowElement.style.display = 'block';
@@ -18,7 +18,7 @@ function openWindow(id) {
 }
 
 // 특정 창 닫기
-function closeWindow(id) {
+window.closeWindow = function(id) {
     const windowElement = document.getElementById(id);
     if (windowElement) {
         windowElement.style.display = 'none';
@@ -42,6 +42,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // 아이콘 클릭 이벤트 핸들러
-function handleIconClick(icon, windowId) {
-    openWindow(windowId);
+window.handleIconClick = function(icon, windowId) {
+    window.openWindow(windowId);
 }
