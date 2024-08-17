@@ -119,13 +119,14 @@ public class TeamProjectService {
     }
 
     public TeamProjectInitResponse saveInitialProject(TeamProjectInitRequest request, long userId) {
-        TeamProject project = teamProjectRepository.findById(request.getProjectId())
+        TeamProject project = teamProjectRepository.findByIdForSaveProject(request.getProjectId())
                 .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, project.getTeam())
                 .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
         validSubManagerOrHigher(userTeam);
+        validExistsProjectBranch(project);
         validUploadFileSize(request.getFiles());
 
         RepositoryUtil.saveProjectFiles(project, request.getFiles());
@@ -186,6 +187,12 @@ public class TeamProjectService {
     private void validUploadFileSize(List<MultipartFile> files) {
         if (getFilesSize(files) > uploadFileMaxSize) {
             throw new FileSizeOverException(ErrorCode.TEAM_PROJECT_FILE_SIZE_OVER);
+        }
+    }
+
+    private void validExistsProjectBranch(TeamProject project) {
+        if (!project.getBranches().isEmpty()) {
+            throw new InitialProjectExistException(ErrorCode.INITIAL_PROJECT_ALREADY_EXIST);
         }
     }
 }
