@@ -1,28 +1,23 @@
 // 아이콘 클릭 처리
-function handleIconClick(icon, windowId) {
+window.handleIconClick = function(icon, windowId) {
     $('#Desktop .icon').removeClass('clicked');
     $(icon).addClass('clicked');
     setTimeout(function() {
         if (windowId === 'editTeam') {
-            populateEditProjectModal().then(function() {
-                openWindow('editProject');
+            window.populateEditProjectModal().then(function() {
+                window.openWindow('editProject');
             });
         } else {
-            openWindow(windowId);
+            window.openWindow(windowId);
         }
         $(icon).removeClass('clicked');
     }, 300);
 }
 
 // 사용자의 팀 정보를 가져오는 함수
-function loadUserTeams() {
-    return $.ajax({
-        url: '/api/team/group/list',
-        type: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-        },
-        success: function(teams) {
+window.loadUserTeams = function() {
+    return window.sendAuthenticatedRequest('/api/team/group/list')
+        .done(function(teams) {
             const desktop = $('#Desktop');
             const projectList = $('#projectList');
 
@@ -30,43 +25,55 @@ function loadUserTeams() {
             $('#projectList li[data-team-id]').remove();
 
             $.each(teams, function(_, team) {
-                const isTrashed = trashedTeams.some(t => t.id === team.teamId);
-                const projectIcon = $('<div>', {
-                    class: `icon ${isTrashed ? 'trashed' : ''}`,
-                    'data-team-id': team.teamId,
-                    html: `
-                        <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="${team.teamName}">
-                        <span class="title">${team.teamName}</span>
-                    `
-                });
+                const isTrashed = window.trashedTeams.some(t => t.id === team.teamId);
 
-                if (!isTrashed) {
-                    projectIcon.on('click', function() {
-                        window.location.href = `/team_loading?id=${encodeURIComponent(team.teamId)}&name=${encodeURIComponent(team.teamName)}`;
-                    });
-                    const listItem = $('<li>', {
-                        'data-team-id': team.teamId,
-                        text: team.teamName
-                    });
-                    projectList.append(listItem);
-                } else {
-                    projectIcon.css('pointer-events', 'none');
-                }
+                // 팀 상세 정보 조회
+                window.sendAuthenticatedRequest(`/api/team/group/${team.teamId}`)
+                    .done(function(teamDetail) {
+                        const isDeleted = teamDetail.deleteCondition;
 
-                desktop.append(projectIcon);
+                        const projectIcon = $('<div>', {
+                            class: `icon ${isTrashed ? 'trashed' : ''} ${isDeleted ? 'deleted' : ''}`,
+                            'data-team-id': team.teamId,
+                            draggable: !isDeleted,
+                            html: `
+                                <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="${team.teamName}">
+                                <span class="title">${team.teamName}</span>
+                                ${isDeleted ? '<span class="delete-mark">X</span>' : ''}
+                            `
+                        });
+
+                        if (!isTrashed && !isDeleted) {
+                            projectIcon.on('click', function() {
+                                window.location.href = `/team_loading?id=${encodeURIComponent(team.teamId)}&name=${encodeURIComponent(team.teamName)}`;
+                            });
+                            const listItem = $('<li>', {
+                                'data-team-id': team.teamId,
+                                text: team.teamName
+                            });
+                            projectList.append(listItem);
+                        } else {
+                            projectIcon.css('pointer-events', 'none');
+                        }
+
+                        desktop.append(projectIcon);
+                    })
+                    .fail(function(error) {
+                        console.error('Error loading team details:', error);
+                        window.handleAjaxError(error);
+                    });
             });
 
-            enableDragAndDrop();
-        },
-        error: function(error) {
+            window.enableDragAndDrop();
+        })
+        .fail(function(error) {
             console.error('Error loading teams:', error);
-            handleAjaxError(error);
-        }
-    });
+            window.handleAjaxError(error);
+        });
 }
 
-// 새 프로젝트 생성
-function createNewProject() {
+// 새 팀 생성
+window.createNewProject = function() {
     const createButton = $('#createProjectButton');
     const teamName = $('#projectName').val().trim();
     const description = $('#projectDescription').val().trim();
@@ -76,46 +83,64 @@ function createNewProject() {
         return;
     }
 
-    // 버튼 비활성화 및 중복 방지
     if (createButton.prop('disabled')) {
-        return; // 이미 요청이 진행 중이면 중복으로 처리하지 않음
+        return;
     }
     createButton.prop('disabled', true).text('처리 중...');
 
-    $.ajax({
-        url: '/api/team/group',
-        type: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-        },
-        contentType: 'application/json',
-        data: JSON.stringify({ teamName, description }),
-        success: function() {
-            closeWindow('createProject');
+    window.sendAuthenticatedRequest('/api/team/group', 'POST', { teamName, description })
+        .done(function(response) {
+            window.closeWindow('createProject');
             $('#projectName').val('');
             $('#projectDescription').val('');
             Swal.fire({
                 title: '성공',
-                text: '프로젝트가 성공적으로 생성되었습니다. 페이지를 새로고침합니다.',
+                text: '팀이 성공적으로 생성되었습니다. 페이지를 새로고침합니다.',
                 icon: 'success',
                 confirmButtonText: '확인'
             }).then(() => {
-                location.reload();
+                location.reload(); // 페이지 새로고침
             });
-        },
-        error: function(error) {
+        })
+        .fail(function(error) {
             console.error('Error:', error);
-            handleAjaxError(error);
-        },
-        complete: function() {
-            // 요청이 끝난 후 버튼을 다시 활성화
+            window.handleAjaxError(error);
+        })
+        .always(function() {
             createButton.prop('disabled', false).text('만들기');
-        }
+        });
+}
+
+// 새로 생성된 팀을 목록에 추가하는 함수
+window.addNewTeamToList = function(teamId, teamName) {
+    const desktop = $('#Desktop');
+    const projectList = $('#projectList');
+
+    const projectIcon = $('<div>', {
+        class: 'icon',
+        'data-team-id': teamId,
+        draggable: true,
+        html: `
+            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="${teamName}">
+            <span class="title">${teamName}</span>
+        `
     });
+
+    projectIcon.on('click', function() {
+        window.location.href = `/team_loading?id=${encodeURIComponent(teamId)}&name=${encodeURIComponent(teamName)}`;
+    });
+
+    desktop.append(projectIcon);
+
+    const listItem = $('<li>', {
+        'data-team-id': teamId,
+        text: teamName
+    });
+    projectList.append(listItem);
 }
 
 // Edit 모달에 프로젝트 목록을 채우는 함수
-function populateEditProjectModal() {
+window.populateEditProjectModal = function() {
     return new Promise((resolve) => {
         const projectList = $('#Desktop .icon[data-team-id]');
         const selectProject = $('#selectProject');
@@ -141,7 +166,7 @@ function populateEditProjectModal() {
 }
 
 // 팀 정보 수정
-function updateTeamInfo(teamId) {
+window.updateTeamInfo = function(teamId) {
     const changedTeamName = $('#editTeamName').val().trim();
     const changedDescription = $('#editTeamDescription').val().trim();
 
@@ -154,42 +179,15 @@ function updateTeamInfo(teamId) {
     if (changedTeamName) updateData.changedTeamName = changedTeamName;
     if (changedDescription) updateData.changedDescription = changedDescription;
 
-    $.ajax({
-        url: '/api/team/group',
-        type: 'PATCH',
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-        },
-        contentType: 'application/json',
-        data: JSON.stringify(updateData),
-        success: function() {
-            loadUserTeams().then(function() {
-                closeWindow('editProject');
+    window.sendAuthenticatedRequest('/api/team/group', 'PATCH', updateData)
+        .done(function() {
+            window.loadUserTeams().then(function() {
+                window.closeWindow('editProject');
                 alert('팀 정보가 성공적으로 수정되었습니다.');
             });
-        },
-        error: function(error) {
+        })
+        .fail(function(error) {
             console.error('Error:', error);
-            handleAjaxError(error);
-        }
-    });
+            window.handleAjaxError(error);
+        });
 }
-
-// 에러 처리 함수
-function handleAjaxError(error) {
-    if (error.responseJSON && error.responseJSON.message === 'Unauthorized: Please log in again') {
-        alert('세션이 만료되었습니다. 다시 로그인해주세요.');
-        openWindow('loginModal');
-    } else {
-        alert('오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-    }
-}
-
-// jQuery를 사용한 이벤트 리스너 설정
-$(document).ready(function() {
-    $('#createProjectButton').on('click', createNewProject);
-    $('#saveTeamChangesButton').on('click', function() {
-        const selectedProjectId = $('#selectProject').val();
-        updateTeamInfo(selectedProjectId);
-    });
-});
