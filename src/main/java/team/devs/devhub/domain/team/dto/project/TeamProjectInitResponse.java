@@ -15,6 +15,7 @@ public class TeamProjectInitResponse {
     private String branchName;
     private Long newCommitId;
     private String commitMessage;
+    private Long createdBy;
 
     public static TeamProjectInitResponse of(TeamBranch branch, TeamCommit commit) {
         return TeamProjectInitResponse.builder()
@@ -22,6 +23,7 @@ public class TeamProjectInitResponse {
                 .branchName(branch.getName())
                 .newCommitId(commit.getId())
                 .commitMessage(commit.getCommitMessage())
+                .createdBy(commit.getCreatedBy().getId())
                 .build();
     }
 }

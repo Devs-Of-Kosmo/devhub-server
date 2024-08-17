@@ -148,6 +148,7 @@ public class TeamProjectService {
                         .commitCode(newCommit.getName())
                         .commitMessage(request.getCommitMessage())
                         .branch(branch)
+                        .createdBy(user)
                         .build()
         );
 
