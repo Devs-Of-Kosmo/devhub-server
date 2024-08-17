@@ -8,6 +8,7 @@ import team.devs.devhub.domain.message.domain.Message;
 import team.devs.devhub.domain.personal.domain.PersonalCommit;
 import team.devs.devhub.domain.personal.domain.PersonalProject;
 import team.devs.devhub.domain.team.domain.project.TeamBranch;
+import team.devs.devhub.domain.team.domain.project.TeamCommit;
 import team.devs.devhub.domain.team.domain.project.TeamProject;
 import team.devs.devhub.domain.team.domain.team.Team;
 import team.devs.devhub.domain.team.domain.team.UserTeam;
@@ -62,6 +63,9 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.PERSIST)
     private List<TeamBranch> teamBranches = new ArrayList<>();
+
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.PERSIST)
+    private List<TeamCommit> teamCommits = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> senderMessages = new ArrayList<>();
