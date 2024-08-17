@@ -65,4 +65,15 @@ public class TeamProjectController {
         teamProjectService.deleteProjectRepo(projectId, customUserDetails.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @PostMapping("/project/init")
+    @Operation(summary = "팀 프로젝트 최초 저장 API")
+    public ResponseEntity<TeamProjectInitResponse> initTeamProject(
+            @Parameter(description = "projectId : 저장하는 프로젝트의 id, files : 경로가 포함된 파일 데이터, commitMessage : 남길 메시지")
+            @ModelAttribute TeamProjectInitRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamProjectInitResponse response = teamProjectService.saveInitialProject(request, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }

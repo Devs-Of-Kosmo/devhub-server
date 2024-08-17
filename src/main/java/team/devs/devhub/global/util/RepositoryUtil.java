@@ -63,7 +63,7 @@ public class RepositoryUtil {
         }
     }
 
-    public static void saveProjectFiles(PersonalProject project, List<MultipartFile> files) {
+    public static void saveProjectFiles(ProjectUtilProvider project, List<MultipartFile> files) {
         for (MultipartFile file : files) {
             try {
                 String relativePath = file.getOriginalFilename();

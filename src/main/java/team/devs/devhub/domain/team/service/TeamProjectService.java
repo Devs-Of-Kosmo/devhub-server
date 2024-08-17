@@ -1,9 +1,17 @@
 package team.devs.devhub.domain.team.service;
 
 import lombok.RequiredArgsConstructor;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import team.devs.devhub.domain.team.domain.project.TeamBranch;
+import team.devs.devhub.domain.team.domain.project.TeamCommit;
+import team.devs.devhub.domain.team.domain.project.repository.TeamBranchRepository;
+import team.devs.devhub.domain.team.domain.project.repository.TeamCommitRepository;
+import team.devs.devhub.global.common.exception.FileSizeOverException;
 import team.devs.devhub.domain.team.domain.project.TeamProject;
 import team.devs.devhub.domain.team.domain.project.repository.TeamProjectRepository;
 import team.devs.devhub.domain.team.domain.team.Team;
@@ -19,6 +27,7 @@ import team.devs.devhub.domain.user.exception.UserNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.util.RepositoryUtil;
 import team.devs.devhub.global.util.VersionControlUtil;
+import team.devs.devhub.global.util.exception.BranchNotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,8 +41,12 @@ public class TeamProjectService {
     private final TeamRepository teamRepository;
     private final UserTeamRepository userTeamRepository;
     private final TeamProjectRepository teamProjectRepository;
+    private final TeamBranchRepository teamBranchRepository;
+    private final TeamCommitRepository teamCommitRepository;
     @Value("${business.team.repository.path}")
     private String repositoryPathHead;
+    @Value("${business.team.multipart.max-size}")
+    private long uploadFileMaxSize;
 
     public TeamProjectRepoCreateResponse saveProjectRepo(TeamProjectRepoCreateRequest request, long userId) {
         User user = userRepository.findById(userId)
@@ -105,6 +118,47 @@ public class TeamProjectService {
         teamProjectRepository.deleteById(projectId);
     }
 
+    public TeamProjectInitResponse saveInitialProject(TeamProjectInitRequest request, long userId) {
+        TeamProject project = teamProjectRepository.findById(request.getProjectId())
+                .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, project.getTeam())
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+        validSubManagerOrHigher(userTeam);
+        validUploadFileSize(request.getFiles());
+
+        RepositoryUtil.saveProjectFiles(project, request.getFiles());
+        RepositoryUtil.createGitIgnoreFile(project);
+        RevCommit newCommit = VersionControlUtil.initializeProject(project, request.getCommitMessage());
+        Ref newBranch = VersionControlUtil.getBranch(project, newCommit)
+                .orElseThrow(() -> new BranchNotFoundException(ErrorCode.BRANCH_NOT_FOUND));
+
+        TeamBranch branch = teamBranchRepository.save(
+                TeamBranch.builder()
+                        .name(newBranch.getName())
+                        .project(project)
+                        .createdBy(user)
+                        .build()
+        );
+
+        TeamCommit commit = teamCommitRepository.save(
+                TeamCommit.builder()
+                        .commitCode(newCommit.getName())
+                        .commitMessage(request.getCommitMessage())
+                        .branch(branch)
+                        .build()
+        );
+
+        return TeamProjectInitResponse.of(branch, commit);
+    }
+
+    private long getFilesSize(List<MultipartFile> files) {
+        return files.stream()
+                .mapToLong(MultipartFile::getSize)
+                .sum();
+    }
+
     // exception
     private void validDuplicatedProjectName(TeamProject project) {
         validDuplicatedProjectName(project.getTeam(), project);
@@ -126,6 +180,12 @@ public class TeamProjectService {
         if (!(userTeam.getRole() == TeamRole.MANAGER
                 || userTeam.getRole() == TeamRole.SUB_MANAGER)) {
             throw new TeamRoleUnauthorizedException(ErrorCode.NOT_SUB_MANAGER_OR_HIGHER);
+        }
+    }
+
+    private void validUploadFileSize(List<MultipartFile> files) {
+        if (getFilesSize(files) > uploadFileMaxSize) {
+            throw new FileSizeOverException(ErrorCode.TEAM_PROJECT_FILE_SIZE_OVER);
         }
     }
 }

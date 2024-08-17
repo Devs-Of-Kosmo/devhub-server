@@ -48,6 +48,7 @@ public enum ErrorCode {
     NOT_MANAGER_OR_HIGHER(500, "T005", "MANAGER 이상의 권환이 필요합니다"),
     TEAM_PROJECT_NAME_DUPLICATED(500, "T006", "팀 프로젝트 이름이 존재합니다"),
     TEAM_PROJECT_NOT_FOUND(500, "T007", "팀 프로젝트가 존재하지 않습니다"),
+    TEAM_PROJECT_FILE_SIZE_OVER(500, "T008", "업로드한 파일의 용량이 200MB를 초과했습니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
@@ -61,7 +62,11 @@ public enum ErrorCode {
 
     // WebSocket
     EMAIL_NOT_FOUND(500, "W001", "이메일을 찾을 수 없습니다"),
-    INVALID_WEBSOCKET_SESSION(500, "W002", "유효하지 않은 웹소켓 세션입니다");
+    INVALID_WEBSOCKET_SESSION(500, "W002", "유효하지 않은 웹소켓 세션입니다"),
+
+    // VersionControlUtil
+    BRANCH_SEARCH_ERROR(500, "V001", "브랜치 탐색 과정 중 오류가 발생했습니다"),
+    BRANCH_NOT_FOUND(500, "V002", "브랜치가 존재하지 않습니다");
 
     private final String code;
     private final String message;
