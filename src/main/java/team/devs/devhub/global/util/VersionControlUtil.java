@@ -15,6 +15,7 @@ import team.devs.devhub.domain.personal.domain.PersonalProject;
 import team.devs.devhub.domain.personal.exception.*;
 import team.devs.devhub.domain.personal.exception.FileNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
+import team.devs.devhub.global.util.exception.VersionControlUtilException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -24,16 +25,7 @@ import java.util.zip.ZipOutputStream;
 
 public class VersionControlUtil {
 
-    public static void createGitIgnoreFile(PersonalProject project) {
-        File gitIgnoreFile = new File(project.getRepositoryPath(), ".gitignore");
-        try (FileWriter writer = new FileWriter(gitIgnoreFile)) {
-            writer.write(".DS_Store\n");
-        } catch (IOException e) {
-            throw new VersionControlUtilException(ErrorCode.PROJECT_SAVE_ERROR);
-        }
-    }
-
-    public static RevCommit initializeProject(PersonalProject project, String commitMessage) {
+    public static RevCommit initializeProject(ProjectUtilProvider project, String commitMessage) {
         try {
             File dir = new File(project.getRepositoryPath());
             Git git = Git.init().setDirectory(dir).call();
