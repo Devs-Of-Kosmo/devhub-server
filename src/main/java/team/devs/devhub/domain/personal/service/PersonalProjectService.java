@@ -108,7 +108,7 @@ public class PersonalProjectService {
         validMatchedProjectMaster(project, user);
 
         RepositoryUtil.saveProjectFiles(project, request.getFiles());
-        VersionControlUtil.createGitIgnoreFile(project);
+        RepositoryUtil.createGitIgnoreFile(project);
         RevCommit newCommit = VersionControlUtil.initializeProject(project, request.getCommitMessage());
 
         PersonalCommit commit = personalCommitRepository.save(
@@ -240,7 +240,7 @@ public class PersonalProjectService {
 
     private void validUploadFileSize(List<MultipartFile> files) {
         if (getFilesSize(files) > uploadFileMaxSize) {
-            throw new FileSizeOverException(ErrorCode.UPLOAD_FILE_SIZE_OVER);
+            throw new FileSizeOverException(ErrorCode.PERSONAL_PROJECT_FILE_SIZE_OVER);
         }
     }
 

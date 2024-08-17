@@ -12,7 +12,6 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import team.devs.devhub.domain.personal.domain.PersonalCommit;
 import team.devs.devhub.domain.personal.domain.PersonalProject;
-import team.devs.devhub.domain.personal.exception.*;
 import team.devs.devhub.domain.personal.exception.FileNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.util.exception.VersionControlUtilException;

@@ -24,6 +24,15 @@ public class RepositoryUtil {
         }
     }
 
+    public static void createGitIgnoreFile(ProjectUtilProvider project) {
+        File gitIgnoreFile = new File(project.getRepositoryPath(), ".gitignore");
+        try (FileWriter writer = new FileWriter(gitIgnoreFile)) {
+            writer.write(".DS_Store\n");
+        } catch (IOException e) {
+            throw new RepositoryUtilException(ErrorCode.PROJECT_SAVE_ERROR);
+        }
+    }
+
     public static void changeRepositoryName(String oldRepoNamePath, ProjectUtilProvider project) {
         File oldDirectory = new File(oldRepoNamePath);
         File newDirectory = new File(project.getRepositoryPath());

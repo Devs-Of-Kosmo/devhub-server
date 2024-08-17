@@ -38,7 +38,7 @@ public enum ErrorCode {
     REPOSITORY_UPDATE_ERROR(500, "P013", "레포지토리 업데이트 중 오류가 발생했습니다"),
     REPOSITORY_DELETE_ERROR(500, "P014", "레포지토리를 삭제하는 중 오류가 발생했습니다"),
     PARENT_COMMIT_NOT_FOUND(500, "P015", "부모 커밋이 존재하지 않습니다"),
-    UPLOAD_FILE_SIZE_OVER(500, "P016", "업로드한 파일의 용량이 100MB를 초과했습니다"),
+    PERSONAL_PROJECT_FILE_SIZE_OVER(500, "P016", "업로드한 파일의 용량이 100MB를 초과했습니다"),
 
     // Team
     TEAM_NAME_DUPLICATED(500, "T001", "팀 이름이 존재합니다"),

@@ -18,6 +18,7 @@ import team.devs.devhub.domain.user.domain.repository.UserRepository;
 import team.devs.devhub.domain.user.exception.UserNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.util.RepositoryUtil;
+import team.devs.devhub.global.util.VersionControlUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
