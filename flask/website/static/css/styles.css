@@ -297,7 +297,16 @@ header .container1 {
     50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
+.logo-title-container {
+    display: flex;
+    align-items: center;
+}
 
+.site-logo {
+    width: 30px; /* 로고의 크기를 설정 (필요에 따라 조정 가능) */
+    height: auto; /* 비율에 맞게 자동으로 높이 설정 */
+    margin-right: 10px; /* 로고와 제목 사이의 간격 */
+}
 #compare-btn, .open-file-btn, .compare-btn, #save-changes-btn, .action-btn, .submit-btn {
     background-color: #0e639c;
     color: white;

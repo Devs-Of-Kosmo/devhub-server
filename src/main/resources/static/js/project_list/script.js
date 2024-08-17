@@ -161,11 +161,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // 프로젝트 클릭 시
                 $(document).on('click', '.project-container', function() {
-                    var index = $(this).data('index');
-                    var url = 'http://127.0.0.1:5000';
-                    if (accessToken) {
-                        url += '?token=' + accessToken;
-                    }
+                    // projectName을 가져옵니다.
+                    var projectName = $(this).find('h1').text().trim();
+                    var url = `http://127.0.0.1:5000/save_token?token=${accessToken}&projectName=${encodeURIComponent(projectName)}`;
+
+                    // 프로젝트 데이터를 포함한 URL로 이동
                     window.location.href = url;
                 });
 
