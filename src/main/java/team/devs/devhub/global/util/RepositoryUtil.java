@@ -2,11 +2,12 @@ package team.devs.devhub.global.util;
 
 import org.springframework.web.multipart.MultipartFile;
 import team.devs.devhub.domain.personal.domain.PersonalProject;
-import team.devs.devhub.domain.personal.exception.*;
 import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
+import team.devs.devhub.global.util.exception.RepositoryUtilException;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -20,6 +21,15 @@ public class RepositoryUtil {
             Files.createDirectories(path);
         } catch (IOException e) {
             throw new RepositoryUtilException(ErrorCode.REPOSITORY_CREATION_ERROR);
+        }
+    }
+
+    public static void createGitIgnoreFile(ProjectUtilProvider project) {
+        File gitIgnoreFile = new File(project.getRepositoryPath(), ".gitignore");
+        try (FileWriter writer = new FileWriter(gitIgnoreFile)) {
+            writer.write(".DS_Store\n");
+        } catch (IOException e) {
+            throw new RepositoryUtilException(ErrorCode.PROJECT_SAVE_ERROR);
         }
     }
 
@@ -53,7 +63,7 @@ public class RepositoryUtil {
         }
     }
 
-    public static void saveProjectFiles(PersonalProject project, List<MultipartFile> files) {
+    public static void saveProjectFiles(ProjectUtilProvider project, List<MultipartFile> files) {
         for (MultipartFile file : files) {
             try {
                 String relativePath = file.getOriginalFilename();

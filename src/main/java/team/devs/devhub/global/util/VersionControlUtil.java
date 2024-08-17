@@ -5,6 +5,7 @@ import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -12,28 +13,21 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import team.devs.devhub.domain.personal.domain.PersonalCommit;
 import team.devs.devhub.domain.personal.domain.PersonalProject;
-import team.devs.devhub.domain.personal.exception.*;
 import team.devs.devhub.domain.personal.exception.FileNotFoundException;
+import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
+import team.devs.devhub.global.util.exception.VersionControlUtilException;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class VersionControlUtil {
 
-    public static void createGitIgnoreFile(PersonalProject project) {
-        File gitIgnoreFile = new File(project.getRepositoryPath(), ".gitignore");
-        try (FileWriter writer = new FileWriter(gitIgnoreFile)) {
-            writer.write(".DS_Store\n");
-        } catch (IOException e) {
-            throw new VersionControlUtilException(ErrorCode.PROJECT_SAVE_ERROR);
-        }
-    }
-
-    public static RevCommit initializeProject(PersonalProject project, String commitMessage) {
+    public static RevCommit initializeProject(ProjectUtilProvider project, String commitMessage) {
         try {
             File dir = new File(project.getRepositoryPath());
             Git git = Git.init().setDirectory(dir).call();
@@ -45,6 +39,30 @@ public class VersionControlUtil {
         } catch (GitAPIException e) {
             throw new VersionControlUtilException(ErrorCode.PROJECT_SAVE_ERROR);
         }
+    }
+
+    public static Optional<Ref> getBranch(ProjectUtilProvider project, RevCommit commit) {
+        try (Git git = Git.open(new File(project.getRepositoryPath()))) {
+            List<Ref> branches = git.branchList().call();
+            for (Ref branch : branches) {
+                if (isCommitInBranch(git, commit, branch)) {
+                    return Optional.of(branch);
+                }
+            }
+            return null;
+        } catch (IOException | GitAPIException e) {
+            throw new VersionControlUtilException(ErrorCode.BRANCH_SEARCH_ERROR);
+        }
+    }
+
+    private static boolean isCommitInBranch(Git git, RevCommit commit, Ref branch) throws IOException, GitAPIException {
+        Iterable<RevCommit> commits = git.log().add(git.getRepository().resolve(branch.getName())).call();
+        for (RevCommit revCommit : commits) {
+            if (revCommit.equals(commit)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static RevCommit saveWorkedProject(PersonalProject project, String commitMessage) {
