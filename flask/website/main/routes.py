@@ -33,46 +33,23 @@ def index():
 
 @main.route('/save_token', methods=['GET'])
 def save_token():
-    # URL 매개변수에서 토큰과 프로젝트 데이터를 가져옵니다.
     token = request.args.get('token')
-    project_id = request.args.get('projectId')
-    project_name = request.args.get('projectName')
-    description = request.args.get('description')
-    created_date = request.args.get('createdDate')
-    master_id = request.args.get('masterId')
+    project_name = request.args.get('projectName')  # projectId 대신 projectName으로 변경
 
-    # 토큰이 있으면 토큰을 로컬 스토리지에 저장할 수 있는 JavaScript 코드를 반환합니다.
+    if not token or not project_name:
+        return jsonify({"error": "토큰이나 프로젝트 이름이 제공되지 않았습니다."}), 400
+
+    # 이 부분에서 프로젝트 이름과 토큰을 처리합니다.
+    # 예를 들어, 이 정보를 클라이언트 측에서 사용하기 위해 JavaScript로 전송할 수 있습니다.
     response_script = f"""
         <script>
-            if ('{token}') {{
-                localStorage.setItem('accessToken', '{token}');
-                alert('토큰이 성공적으로 저장되었습니다.');
-            }} else {{
-                alert('Token not provided');
-                window.location.href = '/';  // 토큰이 없으면 홈 페이지로 리디렉션
-            }}
-    """
-
-    # 프로젝트 데이터가 모두 있는지 확인하고, 로컬 스토리지에 저장하는 코드를 추가합니다.
-    if project_id and project_name and description and master_id:
-        response_script += f"""
-            let projects = JSON.parse(localStorage.getItem('projects') || '[]');
-            projects.push({{
-                projectId: '{project_id}',
-                projectName: '{project_name}',
-                description: '{description}',
-                createdDate: '{created_date}',
-                masterId: '{master_id}'
-            }});
-            localStorage.setItem('projects', JSON.stringify(projects));
-            alert('프로젝트 데이터가 성공적으로 저장되었습니다.');
-            window.location.href = '/';  // 저장 후 홈 페이지로 리디렉션
+            localStorage.setItem('accessToken', '{token}');
+            sessionStorage.setItem('projectName', '{project_name}');  // projectId 대신 projectName을 세션 스토리지에 저장
+            window.location.href = '/';  // 리디렉션
         </script>
-        """
-    else:
-        response_script += "<script>alert('Some project data is missing'); window.location.href = '/';</script>"
+    """
+    return response_script, 200
 
-    return response_script, 400 if not token else 200
 
 @main.route('/api/personal/repo', methods=['POST'])
 @jwt_required()  # JWT 토큰이 필요함을 나타냅니다.
@@ -150,31 +127,26 @@ def save_personal_project():
 
 
 @main.route('/api/personal/repo/list', methods=['GET'])
-@jwt_required()
-def get_personal_projects():
-    # JWT에서 사용자 정보 가져오기
-    current_user = get_jwt_identity()
+def get_selected_project():
+    token = request.headers.get('Authorization').split(' ')[1]
+    selected_project_id = request.args.get('projectId')
 
-    # Authorization 헤더에서 'Bearer '를 포함하여 액세스 토큰을 가져옵니다.
-    access_token = request.headers.get('Authorization')
+    if not token or not selected_project_id:
+        return jsonify({"error": "토큰이나 프로젝트 ID가 제공되지 않았습니다."}), 400
 
-    if not access_token:
-        return jsonify({'message': 'Access token not provided'}), 401
-
+    # 스프링 부트 API로 요청 보내기
     try:
         response = requests.get(
-            f'{SPRING_BOOT_API_URL}/api/personal/repo/list',
-            headers={'Authorization': access_token}
+            f'{SPRING_BOOT_API_URL}/api/personal/repo/{selected_project_id}',
+            headers={'Authorization': f'Bearer {token}'}
         )
-
-        # API 응답 상태 코드에 따라 JSON 데이터 반환
         response.raise_for_status()
-        return jsonify(response.json())
+        project_data = response.json()
 
-    except requests.exceptions.HTTPError as http_err:
-        return jsonify({'message': 'HTTP error occurred', 'error': str(http_err)}), response.status_code
-    except requests.exceptions.RequestException as req_err:
-        return jsonify({'message': 'Failed to fetch personal projects', 'error': str(req_err)}), 500
+        return jsonify(project_data), 200
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({'message': 'Failed to fetch project', 'error': str(e)}), 500
 
 @main.route('/group')
 def grupt():
