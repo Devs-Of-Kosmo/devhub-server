@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     const elements = {
         '로그인': ['Login', '로그인'],
         '나의 프로젝트': ['My Projects', '나의 프로젝트'],
-        '팀의 프로젝트': ['Team Projects', '팀의 프로젝트'],
+        '팀 프로젝트': ['Team Projects', '팀 프로젝트'],
         '팀원 구하기': ['Find Team Members', '팀원 구하기'],
         '쪽지 보내기': ['Send Messages', '쪽지 보내기'],
         '초대 하기': ['Invite', '초대 하기'],

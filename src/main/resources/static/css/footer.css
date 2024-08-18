@@ -1,39 +1,89 @@
 * {
-    padding: 0;
     margin: 0;
+    padding: 0;
     box-sizing: border-box;
-    font-family: "Jua", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: normal; /* 또는 원하는 weight 값을 여기에 입력 */
-    font-style: normal;
 }
 
+body {
+    font-family: 'Jua', sans-serif;
+}
+
+/* Footer styles */
 footer {
-    background-color: #000000;
+    background-color: #000;
+    color: #fff;
+    padding: 40px 0;
 }
 
 .footerContainer {
-    width: 100%;
-    padding: 70px 30px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
+/* Social Icons */
 .socialIcons {
-    display: flex;
-    justify-content: center;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .socialIcons a {
+    color: #fff;
+    font-size: 24px;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+.socialIcons a:hover {
+    color: #ccc;
+}
+
+/* Footer Navigation */
+.footerNav {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.footerNav ul {
+    list-style-type: none;
+}
+
+.footerNav ul li {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.footerNav ul li a {
+    color: #fff;
     text-decoration: none;
-    padding: 10px;
-    background-color: white;
-    margin: 10px;
-    border-radius: 50%;
+    font-size: 16px;
+    transition: color 0.3s ease;
 }
 
-.socialIcons a i {
-    font-size: 2em;
-    color: black;
-    opacity: 0.9;
+.footerNav ul li a:hover {
+    color: #ccc;
 }
 
-/* Hover affect on social media icon */
+/* Footer Bottom */
+.footerBottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+.footerBottom p {
+    font-size: 14px;
+}
+
+.designer {
+    color: #ccc;
+    font-weight: bold;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .footerNav ul li {
+        display: block;
+        margin: 10px 0;
+    }
+}

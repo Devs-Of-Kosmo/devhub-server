@@ -30,27 +30,27 @@
                 <form id="registerForm" class="custom-form" role="form">
                     <h2 class="hero-title text-center mb-4 pb-2">Create an account</h2>
                     <div class="form-floating mb-3">
-                        <input type="text" name="name" id="name" class="form-control" placeholder="Full Name" required="">
-                        <label for="name">Full Name</label>
+                        <input type="text" name="name" id="name" class="form-control" placeholder="name" required="">
+                        <label for="name">이름</label>
                     </div>
                     <div class="form-floating mb-3 email-group">
-                        <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" required="">
-                        <label for="email">Email address</label>
+                        <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email" required="">
+                        <label for="email">Email</label>
                         <button type="button" id="emailVerifyBtn" class="btn btn-secondary">이메일 인증</button>
                     </div>
                     <div class="form-floating mb-3 email-group" id="verificationCodeSection">
                         <input type="text" name="verification_code" id="verification_code" class="form-control" placeholder="Verification Code">
-                        <label for="verification_code">Verification Code</label>
+                        <label for="verification_code">인증번호</label>
                         <button type="button" id="verifyCodeBtn" class="btn btn-secondary email-verify-btn">인증 코드 확인</button>
                     </div>
                     <div id="emailVerifiedMessage" style="display: none; color: #58fa90; font-weight: bolder;">이메일 인증이 완료되었습니다.</div>
                     <div class="form-floating mb-3">
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Password" required="">
-                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="password" required="">
+                        <label for="password">비밀번호</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm Password" required="">
-                        <label for="confirm_password">Confirm Password</label>
+                        <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="confirm password" required="">
+                        <label for="confirm_password">비밀번호 확인</label>
                     </div>
                     <div class="form-check mb-4">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckAll">
@@ -81,7 +81,7 @@
                             <button type="submit" class="form-control" id="submitBtn">Submit</button>
                         </div>
                         <div class="col-lg-6 col-md-6 col-7">
-                            <p class="mb-0">Already have an account? <a href="login" class="ms-2">Login</a></p>
+                            <p class="mb-0">이미 계정을 보유하셨습니까? <a href="login" class="ms-2">Login</a></p>
                         </div>
                     </div>
                 </form>

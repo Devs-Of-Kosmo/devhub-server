@@ -56,7 +56,8 @@ $(document).ready(function() {
         ajaxWithToken('/api/messages/received')
             .done(function(messages, textStatus, jqXHR) {
                 if (jqXHR.status >= 200 && jqXHR.status < 300) {
-                    displayMessages(messages, 'received');
+                    displayMessages(messages, 'received', '-activity');
+                    displayMessages(messages, 'received', '');
                 } else {
                     console.error('받은 메시지를 불러오는 데 실패했습니다:', textStatus, messages);
                     Swal.fire('오류', '받은 메시지를 불러오는 데 실패했습니다: ' + (messages.message || '알 수 없는 오류'), 'error');
@@ -72,7 +73,8 @@ $(document).ready(function() {
         ajaxWithToken('/api/messages/sent')
             .done(function(messages, textStatus, jqXHR) {
                 if (jqXHR.status >= 200 && jqXHR.status < 300) {
-                    displayMessages(messages, 'sent');
+                    displayMessages(messages, 'sent', '-activity');
+                    displayMessages(messages, 'sent', '');
                 } else {
                     console.error('보낸 메시지를 불러오는 데 실패했습니다:', textStatus, messages);
                     Swal.fire('오류', '보낸 메시지를 불러오는 데 실패했습니다: ' + (messages.message || '알 수 없는 오류'), 'error');
@@ -84,8 +86,8 @@ $(document).ready(function() {
             });
     }
 
-    function displayMessages(messages, type) {
-        var messageList = type === 'received' ? $('#received-message-list') : $('#sent-message-list');
+    function displayMessages(messages, type, suffix) {
+        var messageList = $('#' + type + '-message-list' + suffix);
         messageList.empty();
 
         if (messages.length === 0) {
@@ -188,6 +190,15 @@ $(document).ready(function() {
         sendMessage();
     });
 
+    $('#pills-received-tab-activity').on('click', function() {
+        loadReceivedMessages();
+    });
+
+    $('#pills-sent-tab-activity').on('click', function() {
+        loadSentMessages();
+    });
+
+    // 초기 로드
     loadReceivedMessages();
 
     $('head').append('<style>' +
