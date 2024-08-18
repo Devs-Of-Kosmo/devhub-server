@@ -60,7 +60,7 @@
         <a class="nav-link" href="#settings" data-bs-toggle="tab">팀 목록</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#security" data-bs-toggle="tab">보안</a>
+        <a class="nav-link" href="#security" data-bs-toggle="tab">개인 커밋 기록</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="#activity" data-bs-toggle="tab">활동</a>
@@ -72,7 +72,7 @@
         <a class="nav-link" href="#progress" data-bs-toggle="tab">진행</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#recommendations" data-bs-toggle="tab">추천</a>
+        <a class="nav-link" href="#recommendations" data-bs-toggle="tab">AI</a>
     </li>
 </ul>
 <div class="tab-content">
@@ -94,9 +94,24 @@
     <div class="tab-pane fade" id="settings">설정 내용</div>
     <div class="tab-pane fade" id="security">보안 내용</div>
     <div class="tab-pane fade" id="activity">
-        <div id="message-area">
+        <div id="message-area-activity">
             <h5>쪽지함</h5>
-            <div id="message-list"></div>
+            <ul class="nav nav-pills mb-3" id="pills-tab-activity" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-received-tab-activity" data-bs-toggle="pill" data-bs-target="#pills-received-activity" type="button" role="tab" aria-controls="pills-received-activity" aria-selected="true">받은 쪽지</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-sent-tab-activity" data-bs-toggle="pill" data-bs-target="#pills-sent-activity" type="button" role="tab" aria-controls="pills-sent-activity" aria-selected="false">보낸 쪽지</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent-activity">
+                <div class="tab-pane fade show active" id="pills-received-activity" role="tabpanel" aria-labelledby="pills-received-tab-activity">
+                    <div id="received-message-list-activity" class="message-list"></div>
+                </div>
+                <div class="tab-pane fade" id="pills-sent-activity" role="tabpanel" aria-labelledby="pills-sent-tab-activity">
+                    <div id="sent-message-list-activity" class="message-list"></div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="tab-pane fade" id="payment">결제 내용</div>

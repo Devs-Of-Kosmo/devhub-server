@@ -68,19 +68,21 @@ $(document).ready(function() {
     });
 
     function loadTeamProjects() {
-        var dummyData = [{ id: 1, name: "Project 1" }, { id: 2, name: "Project 2" }];
-        $('#team-projects-count').text(dummyData.length);
-        console.log('Team Projects (Dummy):', dummyData);
-    }
-
-    function setupProjectLinks() {
-        $('#personal-project-link').on('click', function() {
-            window.location.href = 'loading';
-        });
-
-        $('#team-project-link').on('click', function() {
-            window.location.href = '/team_project';
-        });
+        ajaxWithToken('/api/team/group/list')
+            .done(function(data) {
+                if (Array.isArray(data)) {
+                    $('#team-projects-count').text(data.length);
+                    console.log('Team Projects:', data);
+                } else {
+                    console.error('Unexpected data format:', data);
+                    $('#team-projects-count').text(0);
+                }
+            })
+            .fail(function(error) {
+                console.error('Error fetching team projects:', error);
+                $('#team-projects-count').text(0); // 오류 발생 시 0으로 설정
+                handleAjaxError(error);
+            });
     }
 
     function ajaxWithToken(url, options = {}) {
