@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
     AOS.init(); // AOS 초기화
     loadProjects();
 
@@ -122,6 +123,7 @@ function renderProjects(projects) {
         var writerName = extractUserName(project.writer); // writer 문자열에서 이름 추출
 
         var projectHtml = `
+
                 <div class="col-md-4 mb-4" data-aos="fade-up">
                     <div class="card" onclick="location.href='/boards/${project.id}'">
                       <img src="${project.imagePath ? project.imagePath + '?v=' + new Date().getTime() : '/static/css/images/logo_1.jpg'}" class="card-img-top" alt="Project Image">
@@ -132,6 +134,7 @@ function renderProjects(projects) {
                     </div>
                 </div>
             `;
+
         projectContainer.append(projectHtml);
     });
 }
@@ -187,3 +190,4 @@ function deleteProject(id) {
         }
     });
 }
+

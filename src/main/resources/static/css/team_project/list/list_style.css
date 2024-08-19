@@ -1,0 +1,219 @@
+body {
+    background-image: url('../../images/team_project/background.jpg');
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+}
+
+.dock {
+    position: fixed;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 70px;
+    padding: 10px 5px;
+    border-radius: 14px;
+    background-color: rgba(36, 36, 36, 0.8);
+    border: 1px solid #565656;
+    box-shadow: 0px 0px 0px 1px #3f3f3f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.item {
+    text-align: center;
+    margin: 10px 0;
+    width: 100%;
+}
+
+.item img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    background-color: transparent;
+    border-radius: 8px;
+    padding: 5px;
+    transition: transform 0.3s ease;
+}
+
+.item img:hover {
+    transform: scale(1.2);
+}
+
+.item p {
+    margin-top: 5px;
+    font-size: 10px;
+    color: #ffffff;
+}
+
+#desktop {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+    height: calc(100vh - 100px);
+    overflow-y: auto;
+}
+
+.disk-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    cursor: pointer;
+    width: 100px;
+    text-align: center;
+}
+
+.disk-icon img {
+    width: 64px;
+    height: 64px;
+    transition: all 0.2s;
+}
+
+.disk-icon p {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #ffffff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.disk-icon:hover img {
+    transform: scale(1.1);
+}
+
+.disk-icon[data-deleted="true"] {
+    position: relative;
+    opacity: 0.5 !important;
+    pointer-events: none !important;
+}
+
+.disk-icon[data-deleted="true"]::after {
+    content: '❌';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 20px;
+    color: red;
+    text-shadow: 0px 0px 3px white;
+}
+
+/* 맥 스타일 모달 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: rgba(255, 255, 255, 0.95);
+    margin: 10% auto;
+    padding: 0;
+    width: 50%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 23px 0 rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.modal-header {
+    background-color: #f1f1f1;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.close-button {
+    width: 12px;
+    height: 12px;
+    background-color: #ff5f56;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+}
+
+.close-button::before,
+.close-button::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 2px;
+    background-color: #450701;
+    top: 5px;
+    left: 2px;
+}
+
+.close-button::before {
+    transform: rotate(45deg);
+}
+
+.close-button::after {
+    transform: rotate(-45deg);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-body input,
+.modal-body textarea,
+.modal-body select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.modal-body button {
+    background-color: #0077ed;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.modal-body button:hover {
+    background-color: #0066cc;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.primary-button {
+    background-color: #0077ed;
+}
+
+.danger-button {
+    background-color: #ff3b30;
+}
+
+.secondary-button {
+    background-color: #e0e0e0;
+    color: #333;
+}

@@ -1,0 +1,32 @@
+html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Jua', sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+
+        .board-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .navbar-brand, .nav-link, h2, .form-label, .btn, .footer p {
+            font-family: 'Jua', sans-serif;
+        }
+
+        .content-wrapper {
+            flex: 1;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: #ffffff;
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+        }

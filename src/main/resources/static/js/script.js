@@ -7,6 +7,13 @@ $(document).ready(function() {
     $('#login-link').attr('href', 'login');
     $('#login-side').attr('href', 'login');
 
+    function handleUnauthenticatedClick(event) {
+        event.preventDefault();
+        Swal.fire('로그인이 필요합니다.', '', 'warning').then(() => {
+            window.location.href = 'login';
+        });
+    }
+
     if (accessToken) {
         $.ajax({
             type: 'GET',
@@ -33,28 +40,17 @@ $(document).ready(function() {
                 }
 
                 // 로그인된 경우 링크를 활성화
-                var myProjectsLink = document.getElementById('my-projects-link');
-                var projectLink = document.getElementById('project-link');
-                var soloSideLink = document.getElementById('solo_side');
-                var teamSideLink = document.querySelector('.offcanvas-body nav ul li:nth-child(6) a');
+                $('a[href="#"]').each(function() {
+                    var $link = $(this);
+                    if ($link.text() === '나의 프로젝트') {
+                        $link.attr('href', 'loading');
+                    } else if ($link.text() === '팀 프로젝트') {
+                        $link.attr('href', '/team_project');
+                    }
+                    $link.off('click', handleUnauthenticatedClick);
+                });
 
-                if (myProjectsLink) {
-                    myProjectsLink.href = 'loading';
-                }
-
-                if (projectLink) {
-                    projectLink.href = '/team_project'; // 수정된 부분: /team_project로 변경
-                }
-
-                if (soloSideLink) {
-                    soloSideLink.href = 'loading';
-                }
-
-                if (teamSideLink) {
-                    teamSideLink.href = '/team_project'; // 수정된 부분: /team_project로 변경
-                }
-
-                // 로그아웃 요청 보내기 - JavaScript
+                // 로그아웃 요청 보내기
                 document.getElementById('log-out').addEventListener('click', function() {
                     // localStorage에서 토큰 제거
                     localStorage.removeItem('accessToken');
@@ -63,9 +59,9 @@ $(document).ready(function() {
                     // 서버에 로그아웃 요청 보내기
                     fetch('/api/auth/logout', {
                         method: 'GET',
-                        credentials: 'same-origin', // 인증된 요청을 보낼 때 필요
+                        credentials: 'same-origin',
                         headers: {
-                            'Authorization': 'Bearer ' + accessToken // 여기에 토큰을 포함해야 할 수도 있습니다.
+                            'Authorization': 'Bearer ' + accessToken
                         }
                     })
                         .then(response => {
@@ -95,49 +91,11 @@ $(document).ready(function() {
         $('#login-link').attr('href', 'login');
 
         // 로그인되지 않은 경우 링크를 비활성화
-        var myProjectsLink = document.getElementById('my-projects-link');
-        var projectLink = document.getElementById('project-link');
-        var soloSideLink = document.getElementById('solo_side');
-        var teamSideLink = document.querySelector('.offcanvas-body nav ul li:nth-child(6) a');
-
-        if (myProjectsLink) {
-            myProjectsLink.href = '#';
-            myProjectsLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                Swal.fire('로그인이 필요합니다.', '', 'warning').then(() => {
-                    window.location.href = 'login';
-                });
-            });
-        }
-
-        if (projectLink) {
-            projectLink.href = '#';
-            projectLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                Swal.fire('로그인이 필요합니다.', '', 'warning').then(() => {
-                    window.location.href = 'login';
-                });
-            });
-        }
-
-        if (soloSideLink) {
-            soloSideLink.href = '#';
-            soloSideLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                Swal.fire('로그인이 필요합니다.', '', 'warning').then(() => {
-                    window.location.href = 'login';
-                });
-            });
-        }
-
-        if (teamSideLink) {
-            teamSideLink.href = '#';
-            teamSideLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                Swal.fire('로그인이 필요합니다.', '', 'warning').then(() => {
-                    window.location.href = 'login';
-                });
-            });
-        }
+        $('a[href="#"]').each(function() {
+            var $link = $(this);
+            if ($link.text() === '나의 프로젝트' || $link.text() === '팀 프로젝트') {
+                $link.on('click', handleUnauthenticatedClick);
+            }
+        });
     }
 });
