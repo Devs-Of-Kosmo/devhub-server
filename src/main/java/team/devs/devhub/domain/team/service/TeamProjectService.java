@@ -163,6 +163,7 @@ public class TeamProjectService {
         TeamCommit fromCommit = teamCommitRepository.findById(request.getFromCommitId())
                 .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
         TeamBranch prePersistBranch = request.toEntity(user, project);
+        validDuplicatedBranchName(prePersistBranch);
 
         VersionControlUtil.createBranch(prePersistBranch, fromCommit);
 
@@ -194,6 +195,12 @@ public class TeamProjectService {
     private void validDuplicatedProjectName(Team team, TeamProject project) {
         if (teamProjectRepository.existsByTeamIdAndName(team.getId(), project.getName())) {
             throw new TeamProjectNameDuplicatedException(ErrorCode.TEAM_PROJECT_NAME_DUPLICATED);
+        }
+    }
+
+    private void validDuplicatedBranchName(TeamBranch branch) {
+        if (teamBranchRepository.existsByProjectIdAndName(branch.getProject().getId(), branch.getName())) {
+            throw new TeamBranchDuplicatedException(ErrorCode.TEAM_BRANCH_DUPLICATED);
         }
     }
 
