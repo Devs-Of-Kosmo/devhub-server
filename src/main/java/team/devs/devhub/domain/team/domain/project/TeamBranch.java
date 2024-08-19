@@ -26,6 +26,9 @@ public class TeamBranch extends BaseTimeEntity {
     @Column(length = 20, nullable = false)
     private String name;
 
+    @Column(length = 100)
+    private String description;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private TeamProject project;
@@ -38,9 +41,10 @@ public class TeamBranch extends BaseTimeEntity {
     private List<TeamCommit> commits = new ArrayList<>();
 
     @Builder
-    public TeamBranch(Long id, String name, TeamProject project, User createdBy) {
+    public TeamBranch(Long id, String name, String description, TeamProject project, User createdBy) {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.project = project;
         this.createdBy = createdBy;
     }
