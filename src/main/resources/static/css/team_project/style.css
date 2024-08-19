@@ -1,13 +1,13 @@
 /* 전역 스타일 */
-    body, html {
-        height: 100%;
-        margin: 0;
-        font-family: 'Noto Sans KR', sans-serif;
-        background-image: url('../images/team_project/background.jpg');
-        overflow: hidden;
-        color: #ffffff;
-        font-size: 16px; /* 기본 폰트 크기 설정 */
-    }
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-image: url('../images/team_project/background.jpg');
+    overflow: hidden;
+    color: #ffffff;
+    font-size: 16px; /* 기본 폰트 크기 설정 */
+}
 
 /* 헤더 (메뉴바) 스타일 */
 header {
@@ -40,35 +40,87 @@ header .right { float: right; }
     flex-wrap: wrap;
     align-content: flex-start;
     height: calc(100% - 2em);
-    padding: 10px;
-    justify-content: center;
+    padding: 20px;
+    justify-content: flex-start;
     align-items: flex-start;
 }
+
 #Desktop .icon {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
     margin: 10px;
     width: 100px;
+    height: 100px;
     text-align: center;
     cursor: pointer;
 }
+
 #Desktop .icon img {
     width: 64px;
     height: 64px;
+    object-fit: contain;
     transition: all 0.2s;
+    margin-bottom: 5px;
 }
+
+/* 팀 설정 아이콘 특별 스타일 */
+#Desktop .icon[data-title="editTeam"] img {
+    width: 72px;
+    height: 72px;
+}
+
 #Desktop .icon:hover img {
     transform: scale(1.1);
 }
+
 #Desktop .icon .title {
-    margin-top: 5px;
     font-size: 0.9em;
     word-break: break-word;
     text-shadow: 0px 0px 4px #000;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2em;
+    height: 2.4em; /* 두 줄 높이 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 #Desktop .icon.clicked img {
     transform: scale(0.9);
+}
+
+/* 휴지통 아이콘 스타일 */
+#trashCan img {
+    width: 64px;
+    height: 64px;
+    transition: all 0.3s ease;
+}
+
+#trashCan:hover img {
+    transform: scale(1.1);
+}
+
+#trashCan .title {
+    font-size: 12px;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+}
+
+.icon[draggable="true"]:active {
+    opacity: 0.5;
+    cursor: move;
+}
+
+/* 드래그 오버 시 휴지통 효과 */
+#trashCan.dragover img {
+    transform: scale(1.2);
+    filter: brightness(1.2);
 }
 
 /* 독(Dock) 스타일 */
@@ -138,7 +190,7 @@ footer img:hover {
 
 /* 프로젝트 창 스타일 */
 .window {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -148,19 +200,22 @@ footer img:hover {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     display: none;
     color: #ffffff;
+    background-color: #2d2d2d;
+    overflow: hidden;
+    z-index: 1000;
 }
 .window h2 {
     margin-top: 0;
     color: #ffffff;
 }
-.window input, .window textarea {
-    width: 90%;
+.window input, .window textarea, .window select {
+    width: calc(90% - 20px);
     padding: 10px;
-    margin-bottom: 10px;
+    margin: 10px;
     border: 1px solid #555;
     border-radius: 5px;
-    background: rgba(70, 70, 70, 0.8);
-    color: #ffffff;
+    background: rgb(255, 255, 255);
+    color: #000000;
 }
 .window button {
     background: #0077ed;
@@ -169,12 +224,11 @@ footer img:hover {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin: 10px;
 }
 .window button:hover {
     background: #0066cc;
 }
-
-/* 기존의 전역 스타일 유지 */
 
 /* 아이폰 UI 스타일 */
 #inviteMembers.window {
@@ -183,19 +237,14 @@ footer img:hover {
     padding: 0;
     background: none;
     box-shadow: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 .iphone {
     width: 375px;
     height: 667px;
-    background-image:   url('http://www.adobewordpress.com/tasarim/images/iphone6.png');
+    background-image: url('http://www.adobewordpress.com/tasarim/images/iphone6.png');
     background-size: 100% 100%;
     position: relative;
-    right: 130%;
 }
 
 .border {
@@ -209,181 +258,485 @@ footer img:hover {
     border-radius: 30px;
 }
 
-.responsive-html5-chat {
+/* 채팅 창 스타일 개선 */
+#inviteMembers .responsive-html5-chat {
     height: 100%;
     display: flex;
     flex-direction: column;
+    background-color: #ffffff;
 }
 
-form.chat {
+#inviteMembers .chat {
     display: flex;
     flex-direction: column;
     height: 100%;
-    margin: 0;
-    cursor: default;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
-    user-select: none;
 }
 
-form.chat .messages {
-    display: block;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    position: relative;
-    height: 90%;
-    width: 100%;
-    padding: 2% 3%;
-    border-bottom: 1px solid #ecf0f1;
+#inviteMembers .messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #fff;
 }
 
-form.chat .message {
-    display: block;
-    width: 98%;
-    padding: 0.5%;
+#inviteMembers .input-area {
+    display: flex;
+    padding: 10px;
+    background-color: #f2f2f2;
+    border-top: 1px solid #e0e0e0;
 }
 
-form.chat .myMessage,
-form.chat .fromThem {
-    max-width: 75%;
-    word-wrap: break-word;
-    margin-bottom: 20px;
-    font: 16px 'Helvetica Neue', Helvetica, sans-serif;
-    position: relative;
-    padding: 10px 20px;
-    border-radius: 25px;
-    clear: both;
-}
-
-form.chat .myMessage {
-    background: #007aff;
-    color: white;
-    float: right;
-    clear: both;
-}
-
-form.chat .fromThem {
-    background: #e5e5ea;
-    color: black;
-    float: left;
-    clear: both;
-}
-
-form.chat .myMessage:before {
-    content: "";
-    position: absolute;
-    z-index: 1;
-    bottom: -2px;
-    right: -8px;
-    height: 19px;
-    border-right: 20px solid #007aff;
-    border-bottom-left-radius: 16px 14px;
-    transform: translate(0, -2px);
-}
-
-form.chat .fromThem:before {
-    content: "";
-    position: absolute;
-    z-index: 2;
-    bottom: -2px;
-    left: -7px;
-    height: 19px;
-    border-left: 20px solid #e5e5ea;
-    border-bottom-right-radius: 16px 14px;
-    transform: translate(0, -2px);
-}
-
-form.chat date {
-    position: absolute;
-    top: -20px;
-    font-size: 12px;
-    white-space: nowrap;
-    color: #8b8b90;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-form.chat .myMessage date {
-    right: 0;
-}
-
-form.chat .fromThem date {
-    left: 0;
-}
-
-form.chat input {
-    font: 16px 'Helvetica Neue', Helvetica, sans-serif;
-    border: 0;
-    padding: 0 15px;
-    height: 10%;
-    outline: 0;
-}
-
-form.chat input[type='text'] {
-    width: 73%;
-    float: left;
+#inviteMembers #userInput {
+    flex-grow: 1;
     border: 1px solid #ccc;
     border-radius: 20px;
+    padding: 8px 15px;
+    margin-right: 10px;
+    font-size: 16px;
     background-color: #fff;
-    color:black;
 }
 
-form.chat input[type='submit'] {
-    width: 23%;
-    background: transparent;
-    color: #007aff;
-    font-weight: bold;
-    text-align: center;
-    float: right;
-}
-
-/* 스크롤바 스타일 */
-form.chat ::-webkit-scrollbar {
-    width: 3px;
-    height: 1px;
-    transition: all .5s;
-    z-index: 10;
-}
-
-form.chat ::-webkit-scrollbar-track {
+#inviteMembers .send-button {
     background-color: transparent;
+    color: #007aff;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
 }
 
-form.chat ::-webkit-scrollbar-thumb {
-    background-color: #bec4c8;
+#inviteMembers .send-button:hover {
+    opacity: 0.7;
+}
+
+#inviteMembers .message {
+    margin-bottom: 10px;
+    max-width: 70%;
+    clear: both;
+}
+
+#inviteMembers .myMessage,
+#inviteMembers .fromThem {
+    padding: 10px 15px;
+    border-radius: 20px;
+    position: relative;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+#inviteMembers .myMessage {
+    background-color: #007aff;
+    color: white;
+    float: right;
+    border-bottom-right-radius: 5px;
+}
+
+#inviteMembers .fromThem {
+    background-color: #e5e5ea;
+    color: black;
+    float: left;
+    border-bottom-left-radius: 5px;
+}
+
+#inviteMembers .message date {
+    font-size: 12px;
+    color: #ccc;
+    display: block;
+    margin-top: 5px;
+    clear: both;
+}
+
+#inviteMembers .myMessage date {
+    text-align: right;
+}
+
+#inviteMembers .fromThem date {
+    text-align: left;
+}
+
+/* 말풍선 꼬리 스타일 */
+#inviteMembers .myMessage::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: -10px;
+    width: 20px;
+    height: 25px;
+    background-color: #007aff;
+    border-bottom-left-radius: 16px 14px;
+}
+
+#inviteMembers .myMessage::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: -11px;
+    width: 20px;
+    height: 25px;
+    background-color: #ffffff;
+    border-bottom-left-radius: 10px;
+}
+
+#inviteMembers .fromThem::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -10px;
+    width: 20px;
+    height: 25px;
+    background-color: #e5e5ea;
+    border-bottom-right-radius: 16px 14px;
+}
+
+#inviteMembers .fromThem::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -11px;
+    width: 20px;
+    height: 25px;
+    background-color: #ffffff;
+    border-bottom-right-radius: 10px;
+}
+
+/* 스크롤바 스타일 (채팅창용) */
+#inviteMembers .messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#inviteMembers .messages::-webkit-scrollbar-thumb {
+    background-color: #c7c7cc;
     border-radius: 3px;
 }
 
-/* 반응형 스타일 */
-@media (max-width: 768px) {
-    #inviteMembers.window {
-        width: 90%;
-        height: 80vh;
-    }
+#inviteMembers .messages::-webkit-scrollbar-track {
+    background-color: transparent;
+}
 
-    .iphone {
-        width: 100%;
-        height: 100%;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
+#editProject.window {
+    background-color: #2d2d2d;
+    border-radius: 10px;
+    padding: 20px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+#editProject h2 {
+    color: #fff;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#editProject .form-group {
+    margin-bottom: 15px;
+}
+
+#editProject label {
+    display: block;
+    margin-bottom: 5px;
+    color: #bbb;
+}
+
+#editProject .form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #383838;
+    color: #fff;
+    font-size: 14px;
+}
+
+#editProject .form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+#editProject .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+#editProject .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#editProject .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+}
+
+#editProject .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+#editProject .btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+#editProject .btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* 휴지통 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #2d2d2d;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: #fff;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* 맥북 스타일 select 박스 */
+.select-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.select-wrapper::after {
+    content: "\25BC";
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #666;
+    pointer-events: none;
+}
+
+#selectProject {
+    width: 100%;
+    padding: 10px 30px 10px 10px;
+    font-size: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#selectProject:hover {
+    border-color: #999;
+}
+
+#selectProject:focus {
+    border-color: #0070c9;
+    box-shadow: 0 0 0 3px rgba(0, 112, 201, 0.25);
+}
+
+#selectProject option {
+    padding: 10px;
+}
+
+#trashItems {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.trash-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #444;
+}
+
+.trash-item:last-child {
+    border-bottom: none;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.modal-buttons button {
+    margin-left: 10px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-buttons button:hover {
+    background-color: #0056b3;
+}
+
+/* 휴지통 아이템 복구 버튼 */
+.trash-item button {
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s ease;
+}
+
+.trash-item button:hover {
+    background-color: #218838;
+}
+
+/* 스크롤바 스타일 (휴지통 모달용) */
+#trashItems::-webkit-scrollbar {
+    width: 5px;
+}
+
+#trashItems::-webkit-scrollbar-thumb {
+    background-color: #666;
+    border-radius: 5px;
+}
+
+#trashItems::-webkit-scrollbar-track {
+    background-color: #2d2d2d;
+}
+
+/* 휴지통으로 비워진 아이콘 스타일 */
+.icon.trashed {
+    opacity: 0.5;
+    filter: grayscale(100%);
+    position: relative;
+}
+
+.icon.trashed img {
+    position: relative;
+}
+
+.icon.trashed::after {
+    content: 'X';
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 24px;
+    color: red;
+    font-weight: bold;
+}
+
+/* 반응형 디자인 (휴지통 모달용) */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 80%;
     }
 }
 
 @media (max-width: 480px) {
-    #inviteMembers.window {
-        width: 100%;
-        height: 100vh;
-        border-radius: 0;
+    .modal-content {
+        width: 95%;
     }
+}
 
-    .border {
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
-        border-radius: 0;
-    }
+/* 창 헤더 스타일 */
+.window-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #333;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* 닫기 버튼 스타일 */
+.close-button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ff5f56;
+    margin-right: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.close-button:before {
+    content: '×';
+    color: #4d0000;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.close-button:hover:before {
+    opacity: 1;
+}
+
+/* 창 제목 스타일 */
+.window-header h2 {
+    margin: 0;
+    padding-left: 10px;
+    color: #fff;
+}
+
+.icon.deleted {
+    opacity: 0.5;
+    position: relative;
+}
+
+.icon.deleted img {
+    filter: grayscale(100%);
+}
+
+.delete-mark {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 18px;
+    color: red;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
 }

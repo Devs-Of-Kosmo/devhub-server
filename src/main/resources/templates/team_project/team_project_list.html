@@ -4,9 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>프로젝트</title>
-    <link rel="stylesheet" href="/css/team_project/list_style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="/css/team_project/list/list_style.css">
 </head>
 <body>
+
+<div id="desktop">
+    <div id="create-repo-disk" class="disk-icon">
+        <img src="/css/images/team_project/repo.png" alt="Create New Repository">
+        <p>새 레포 만들기</p>
+    </div>
+    <!-- 생성된 레포지토리 디스크 아이콘들이 여기에 추가됩니다 -->
+</div>
+
+<!-- 레포지토리 생성 모달 -->
+<div id="createRepoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>새 레포지토리 만들기</h2>
+            <div class="close-button"></div>
+        </div>
+        <div class="modal-body">
+            <select id="repoTeamId">
+                <option value="">팀 선택</option>
+            </select>
+            <input type="text" id="repoProjectName" placeholder="프로젝트 이름">
+            <textarea id="repoDescription" placeholder="설명 (선택사항)"></textarea>
+            <button id="createRepoButton">레포 생성</button>
+        </div>
+    </div>
+</div>
+
+<!-- 레포지토리 수정 모달 -->
+<div id="editRepoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>레포지토리 수정</h2>
+            <div class="close-button"></div>
+        </div>
+        <div class="modal-body">
+            <select id="editTeamSelect">
+                <option value="">팀 선택</option>
+            </select>
+            <select id="editRepoSelect" disabled>
+                <option value="">레포지토리 선택</option>
+            </select>
+            <input type="text" id="editProjectName" placeholder="새 프로젝트 이름" disabled style="width: 95%;">
+            <textarea id="editDescription" placeholder="새 설명" disabled style="width: 95%;"></textarea>
+            <div class="button-group">
+                <button id="editRepoButton" class="primary-button" disabled>수정</button>
+                <button id="deleteRepoButton" class="danger-button" disabled>삭제</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 네비게이션 -->
 <nav class="dock">
     <a href="https://www.google.com" target="_blank" rel="noopener noreferrer">
         <div class="item" data-folder="google">
@@ -14,22 +68,22 @@
             <p>Google</p>
         </div>
     </a>
-    <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-        <div class="item" data-folder="git">
-            <img src="https://git-scm.com/images/logos/downloads/Git-Icon-1788C.png" alt="Git">
-            <p>Git</p>
+    <a href="/" onclick="window.location.href='/';">
+        <div class="item">
+            <img src="/css/images/team_project/home.png" alt="Home">
+            <p>Home</p>
         </div>
     </a>
-    <a href="#" target="_blank" rel="noopener noreferrer"> <!-- 설정 페이지 URL을 여기에 추가하세요 -->
+    <a href="#" id="settingsButton">
         <div class="item" data-folder="settings">
-            <img src="https://upload.wikimedia.org/wikipedia/en/2/23/System_Preferences_icon.png" alt="Setting">
-            <p>Setting</p>
+            <img src="/css/images/team_project/edit.png" alt="Setting">
+            <p>설정</p>
         </div>
     </a>
-    <a href="https://codepen.io" target="_blank" rel="noopener noreferrer">
+    <a href="#" class="trash-can">
         <div class="item" data-folder="codepen">
-            <img src="https://blog.codepen.io/wp-content/uploads/2012/06/Button-Fill-Black-Large.png" alt="CodePen">
-            <p>CodePen</p>
+            <img src="/css/images/team_project/trash.png" alt="쓰레기통">
+            <p>휴지통</p>
         </div>
     </a>
     <a href="https://www.postman.com" target="_blank" rel="noopener noreferrer">
@@ -39,6 +93,29 @@
         </div>
     </a>
 </nav>
+
+<!-- 휴지통 모달 -->
+<div id="trashModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>휴지통</h2>
+            <div class="close-button"></div>
+        </div>
+        <div class="modal-body">
+            <select id="selectProject">
+                <option value="">모든 프로젝트</option>
+            </select>
+            <div id="trashItems">
+                <!-- 휴지통 아이템들이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/team_project/list/create_repo.js"></script>
+<script src="/js/team_project/list/edit_repo.js"></script>
+<script src="/js/team_project/list/delete_repo.js"></script>
 <script src="/js/team_project/list/script.js"></script>
+
 </body>
 </html>

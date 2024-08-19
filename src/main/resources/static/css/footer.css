@@ -1,104 +1,89 @@
 * {
-    padding: 0;
     margin: 0;
+    padding: 0;
     box-sizing: border-box;
-    font-family: "Jua", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: normal; /* 또는 원하는 weight 값을 여기에 입력 */
-    font-style: normal;
 }
 
+body {
+    font-family: 'Jua', sans-serif;
+}
+
+/* Footer styles */
 footer {
-    background-color: #000000;
+    background-color: #000;
+    color: #fff;
+    padding: 40px 0;
 }
 
 .footerContainer {
-    width: 100%;
-    padding: 70px 30px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
+/* Social Icons */
 .socialIcons {
-    display: flex;
-    justify-content: center;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .socialIcons a {
-    text-decoration: none;
-    padding: 10px;
-    background-color: white;
-    margin: 10px;
-    border-radius: 50%;
+    color: #fff;
+    font-size: 24px;
+    margin: 0 10px;
+    transition: color 0.3s ease;
 }
 
-.socialIcons a i {
-    font-size: 2em;
-    color: black;
-    opacity: 0.9;
-}
-
-/* Hover affect on social media icon */
 .socialIcons a:hover {
-    background-color: #000000;
-    transition: 0.5s;
+    color: #ccc;
 }
 
-.socialIcons a:hover i {
-    color: white;
-    transition: 0.5s;
-}
-
+/* Footer Navigation */
 .footerNav {
-    margin: 30px 0;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .footerNav ul {
-    display: flex;
-    justify-content: center;
     list-style-type: none;
 }
 
+.footerNav ul li {
+    display: inline-block;
+    margin: 0 10px;
+}
+
 .footerNav ul li a {
-    color: white;
-    margin: 20px;
+    color: #fff;
     text-decoration: none;
-    font-size: 1.3em;
-    opacity: 0.7;
-    transition: 0.5s;
+    font-size: 16px;
+    transition: color 0.3s ease;
 }
 
 .footerNav ul li a:hover {
-    opacity: 1;
+    color: #ccc;
 }
 
+/* Footer Bottom */
 .footerBottom {
-    background-color: #000;
-    padding: 20px;
     text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #333;
 }
 
 .footerBottom p {
-    color: white;
+    font-size: 14px;
 }
 
 .designer {
-    opacity: 0.7;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 400;
-    margin: 0px 5px;
+    color: #ccc;
+    font-weight: bold;
 }
 
-@media (max-width: 700px) {
-    .footerNav ul {
-        flex-direction: column;
-    }
+/* Responsive design */
+@media (max-width: 768px) {
     .footerNav ul li {
-        width: 100%;
-        text-align: center;
-        margin: 10px;
-    }
-    .socialIcons a {
-        padding: 8px;
-        margin: 4px;
+        display: block;
+        margin: 10px 0;
     }
 }

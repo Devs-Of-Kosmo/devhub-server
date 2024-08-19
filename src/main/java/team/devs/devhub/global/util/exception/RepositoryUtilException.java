@@ -1,4 +1,4 @@
-package team.devs.devhub.domain.personal.exception;
+package team.devs.devhub.global.util.exception;
 
 import team.devs.devhub.global.error.exception.BusinessException;
 import team.devs.devhub.global.error.exception.ErrorCode;

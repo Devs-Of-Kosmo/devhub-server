@@ -8,7 +8,7 @@ function ajaxWithToken(url, options = {}) {
 }
 
 function responsiveChat(element) {
-    $(element).html('<form class="chat"><span></span><div class="messages"></div><input type="text" placeholder="메시지를 입력하세요"><input type="submit" value="전송"></form>');
+    $(element).html('<form class="chat"><span></span><div class="messages"></div><input type="text" placeholder="메시지를 입력하세요"><input type="submit" value="전송" style="margin-left: 29px"></form>');
 
     function showLatestMessage(element) {
         $(element).find('.messages').scrollTop($(element + ' .messages')[0].scrollHeight);

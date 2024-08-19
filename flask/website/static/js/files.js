@@ -6,14 +6,38 @@ document.addEventListener("DOMContentLoaded", function () {
     const commitMessageInput = document.getElementById('commitMessage');
     const reviewBtn = document.getElementById('review-btn');
     const accessToken = localStorage.getItem('accessToken');
+    const projectName = sessionStorage.getItem('projectName'); // 세션 스토리지에서 projectName 가져오기
     const metadataWrapper = document.querySelector('.metadata-cards-wrapper');
-    const leftBtn = document.querySelector('.slide-btn.left-btn');
-    const rightBtn = document.querySelector('.slide-btn.right-btn');
-    let currentProjectId = null; // 현재 프로젝트 ID 저장
+    const commitCardsContainer = document.querySelector('.commit-cards-container');
+    const metadataContainer = document.querySelector('.metadata-cards-container');
+    let selectedMetadataCard = null;
+
+    if (!projectName) {
+        console.error('프로젝트 이름이 설정되지 않았습니다.');
+        return;
+    }
+
+    // 모달 관련 요소
+    const sideContentModal = document.getElementById('sideContentModal');
+    const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+    const closeModalBtn = document.querySelector('.close-btn');
+
+    toggleSidebarBtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        sideContentModal.style.display = "block";
+    });
+
+    closeModalBtn.addEventListener('click', function () {
+        sideContentModal.style.display = "none";
+    });
+
+    window.addEventListener('click', function (event) {
+        if (event.target == sideContentModal) {
+            sideContentModal.style.display = "none";
+        }
+    });
 
     // 레포지토리 목록 가져오기
-    fetchRepositories();
-
     function fetchRepositories() {
         fetch('http://localhost:8080/api/personal/repo/list', {
             method: 'GET',
@@ -29,21 +53,24 @@ document.addEventListener("DOMContentLoaded", function () {
             return response.json();
         })
         .then(data => {
-            console.log('Fetched data:', data);
             const cardsContainer = document.querySelector('.cards-container');
             cardsContainer.innerHTML = '';
 
-            const projects = JSON.parse(localStorage.getItem('projects') || '[]');
-
+            // 가져온 레포지토리 정보를 바탕으로 카드 생성 (projectName이 일치하는 레포만 표시)
             data.forEach(repo => {
-                if (projects.some(p => p.projectId === repo.projectId)) {
+                if (repo.projectName === projectName) {
                     const card = document.createElement('div');
                     card.className = 'repo-card';
                     card.innerHTML = `
                         <div class="content">
                             <h3>${repo.projectName}</h3>
                             <p>${repo.description}</p>
-                            <button class="see-more-btn" data-project-id="${repo.projectId}">더 보기</button>
+                            <div style="display: flex; justify-content: space-between;">
+                                <button class="see-more-btn" data-project-name="${repo.projectName}">Commit History</button>
+                                <button class="delete-repo-btn" data-project-name="${repo.projectName}" style="background: none; border: none; cursor: pointer;">
+                                    <i class="fas fa-trash-alt" style="color: red;"></i>
+                                </button>
+                            </div>
                         </div>
                     `;
                     cardsContainer.appendChild(card);
@@ -53,21 +80,54 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error('Error fetching repositories:', error));
     }
 
-    // "더 보기" 버튼 클릭 이벤트 리스너 추가
+    // "더 보기" 버튼 및 삭제 버튼 클릭 이벤트 리스너 추가
     document.querySelector('.cards-container').addEventListener('click', function (event) {
-        if (event.target.classList.contains('see-more-btn')) {
-            const projectId = event.target.getAttribute('data-project-id');
-            if (projectId) {
-                currentProjectId = projectId; // 현재 프로젝트 ID 저장
-                metadataWrapper.style.display = 'flex';
-                fetchProjectMetadata(projectId);
+        const target = event.target;
+
+        // 커밋 히스토리 보기 버튼 클릭
+        if (target.classList.contains('see-more-btn')) {
+            const projectName = target.getAttribute('data-project-name');
+            if (projectName) {
+                fetchProjectMetadata(projectName);
+            }
+        }
+
+        // 레포지토리 삭제 버튼 클릭
+        if (target.closest('.delete-repo-btn')) {
+            const projectName = target.closest('.delete-repo-btn').getAttribute('data-project-name');
+            if (projectName) {
+                const confirmDelete = confirm('정말로 이 레포지토리를 삭제하시겠습니까?');
+                if (confirmDelete) {
+                    deleteRepository(projectName);
+                }
             }
         }
     });
 
-    async function fetchProjectMetadata(projectId) {
+    async function deleteRepository(projectName) {
         try {
-            const response = await fetch(`http://localhost:8080/api/personal/project/metadata?projectId=${projectId}`, {
+            const response = await fetch(`http://localhost:8080/api/personal/repo?projectName=${encodeURIComponent(projectName)}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (response.status === 204) {
+                alert('레포지토리가 성공적으로 삭제되었습니다.');
+                window.location.href = 'http://localhost:8080/project_list';
+            } else {
+                throw new Error('Failed to delete repository');
+            }
+        } catch (error) {
+            console.error('Error deleting repository:', error);
+            alert('레포지토리 삭제 중 오류가 발생했습니다.');
+        }
+    }
+
+    async function fetchProjectMetadata(projectName) {
+        try {
+            const response = await fetch(`http://localhost:8080/api/personal/project/metadata?projectName=${encodeURIComponent(projectName)}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -95,7 +155,19 @@ document.addEventListener("DOMContentLoaded", function () {
             const commitCard = document.createElement('div');
             commitCard.className = 'commit-card';
             commitCard.innerHTML = `
-                <h3>${projectName}</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0;">
+                        ${projectName}
+                    </h3>
+                    <div>
+                        <button class="delete-icon-btn" data-commit-id="${commit.commitId}" style="background: none; border: none; cursor: pointer; margin-right: 8px;">
+                            <i class="fas fa-trash-alt" style="color: white;"></i>
+                        </button>
+                        <button class="download-icon-btn" data-commit-id="${commit.commitId}" style="background: none; border: none; cursor: pointer;">
+                            <i class="fas fa-download" style="color: white;"></i>
+                        </button>
+                    </div>
+                </div>
                 <p>${description}</p>
                 <ul>
                     <li>
@@ -104,51 +176,108 @@ document.addEventListener("DOMContentLoaded", function () {
                         <strong>생성 날짜:</strong> ${new Date(commit.createdDate).toLocaleString()}
                     </li>
                 </ul>
-                <button class="view-commit-btn" data-commit-id="${commit.commitId}">커밋 조회</button>
+                <button class="view-commit-btn" data-commit-id="${commit.commitId}" style="color: white;">Changes</button>
                 <div class="commit-details" style="display: none;"></div>
             `;
             metadataContainer.appendChild(commitCard);
         });
-
-        initializeMetadataCarousel();
     }
 
+    // 이벤트 리스너를 한 번만 등록
+    metadataContainer.addEventListener('click', async function(event) {
+        if (event.target.closest('.delete-icon-btn')) {
+            const button = event.target.closest('.delete-icon-btn');
+            const commitId = button.getAttribute('data-commit-id');
+            const confirmDelete = confirm('정말로 이 커밋을 삭제하시겠습니까?');
+
+            if (confirmDelete) {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/personal/project/commit/${commitId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`
+                        }
+                    });
+
+                    if (response.status === 204) {
+                        alert('커밋이 성공적으로 삭제되었습니다.');
+                        button.closest('.commit-card').remove();
+                    } else {
+                        throw new Error('Failed to delete commit');
+                    }
+                } catch (error) {
+                    console.error('Error deleting commit:', error);
+                    alert('커밋 삭제 중 오류가 발생했습니다.');
+                }
+            }
+        }
+
+        if (event.target.closest('.download-icon-btn')) {
+            const button = event.target.closest('.download-icon-btn');
+            const commitId = button.getAttribute('data-commit-id');
+            const apiUrl = `http://localhost:8080/api/personal/project/download?commitId=${commitId}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Accept': '*/*'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to download file');
+                }
+
+                const contentDisposition = response.headers.get('Content-Disposition');
+                const fileName = contentDisposition ? contentDisposition.split('filename=')[1].replace(/"/g, '') : 'downloaded_file.zip';
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = decodeURIComponent(fileName);
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error downloading file:', error);
+                alert('파일을 다운로드하는 도중 오류가 발생했습니다.');
+            }
+        }
+    });
+
+    // 초기화 로직에서 이벤트 리스너를 한 번만 호출하도록 변경
     function initializeMetadataCarousel() {
         const metadataContainer = document.querySelector('.metadata-cards-container');
-        const leftBtn = document.querySelector('.metadata-cards-wrapper .left-btn');
-        const rightBtn = document.querySelector('.metadata-cards-wrapper .right-btn');
+        let isMouseDown = false;
+        let startX, scrollLeft;
 
-        let cardWidth = metadataContainer.querySelector('.commit-card').offsetWidth;
-        let containerWidth = metadataContainer.offsetWidth;
-
-        // 카드 너비 계산
-        window.addEventListener('resize', () => {
-            cardWidth = metadataContainer.querySelector('.commit-card').offsetWidth;
-            containerWidth = metadataContainer.offsetWidth;
+        metadataContainer.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            metadataContainer.classList.add('active');
+            startX = e.pageX - metadataContainer.offsetLeft;
+            scrollLeft = metadataContainer.scrollLeft;
         });
 
-        let scrollPosition = 0;
-
-        leftBtn.addEventListener('click', () => {
-            scrollPosition -= containerWidth;
-            if (scrollPosition < 0) {
-                scrollPosition = metadataContainer.scrollWidth - containerWidth;
-            }
-            metadataContainer.scrollTo({
-                left: scrollPosition,
-                behavior: 'smooth'
-            });
+        metadataContainer.addEventListener('mouseleave', () => {
+            isMouseDown = false;
+            metadataContainer.classList.remove('active');
         });
 
-        rightBtn.addEventListener('click', () => {
-            scrollPosition += containerWidth;
-            if (scrollPosition >= metadataContainer.scrollWidth) {
-                scrollPosition = 0;
-            }
-            metadataContainer.scrollTo({
-                left: scrollPosition,
-                behavior: 'smooth'
-            });
+        metadataContainer.addEventListener('mouseup', () => {
+            isMouseDown = false;
+            metadataContainer.classList.remove('active');
+        });
+
+        metadataContainer.addEventListener('mousemove', (e) => {
+            if (!isMouseDown) return;
+            e.preventDefault();
+            const x = e.pageX - metadataContainer.offsetLeft;
+            const walk = (x - startX) * 3;
+            metadataContainer.scrollLeft = scrollLeft - walk;
         });
     }
 
@@ -156,37 +285,18 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector('.metadata-cards-container').addEventListener('click', function (event) {
         if (event.target.classList.contains('view-commit-btn')) {
             const commitId = event.target.getAttribute('data-commit-id');
-            const commitCard = event.target.parentElement; // 해당 커밋 카드
-            const commitDetails = event.target.nextElementSibling; // 커밋 세부사항 영역
+            const commitCard = event.target.closest('.commit-card');
+            const commitDetails = commitCard.querySelector('.commit-details');
+
             if (commitId) {
+                if (selectedMetadataCard) {
+                    selectedMetadataCard.style.borderColor = '';
+                }
+
+                selectedMetadataCard = commitCard;
+                selectedMetadataCard.style.borderColor = 'blue';
+
                 fetchCommitDetails(commitId, commitDetails);
-
-                // 카드 확장
-                commitCard.classList.add('expanded');
-                const otherCards = document.querySelectorAll('.commit-card');
-                otherCards.forEach(card => {
-                    if (card !== commitCard) {
-                        card.style.display = 'none';
-                    }
-                });
-
-                // 돌아가기 버튼 생성
-                const backButton = document.createElement('button');
-                backButton.textContent = '돌아가기';
-                backButton.className = 'back-btn';
-                backButton.addEventListener('click', function () {
-                    // 돌아가기 버튼 클릭 시 메타데이터 슬라이드를 다시 불러옴
-                    fetchProjectMetadata(currentProjectId);
-                    metadataWrapper.style.display = 'flex';
-                    leftBtn.style.display = 'flex';
-                    rightBtn.style.display = 'flex';
-                });
-                commitCard.insertBefore(backButton, commitCard.firstChild);
-
-                // 기존 "커밋 조회" 버튼 숨기기
-                event.target.style.display = 'none';
-                leftBtn.style.display = 'none';
-                rightBtn.style.display = 'none';
             }
         }
     });
@@ -206,26 +316,218 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const data = await response.json();
-            displayCommitDetails(data, commitDetails);
+            displayCommitDetails(data, commitDetails, commitId);
         } catch (error) {
             console.error('Error fetching commit details:', error);
         }
     }
 
-    function displayCommitDetails(data, commitDetails) {
+    function displayCommitDetails(data, commitDetails, commitId) {
         const { fileNameWithPathList } = data;
 
-        let detailsHtml = '<h3>커밋에 포함된 파일 목록:</h3><ul>';
-        fileNameWithPathList.forEach(filePath => {
-            detailsHtml += `<li>${filePath}</li>`;
-        });
-        detailsHtml += '</ul>';
+        const treeData = buildFileTree(fileNameWithPathList);
+        const treeHtml = renderFileTree(treeData, commitId);
+        commitCardsContainer.innerHTML = `${treeHtml}`;
+        commitCardsContainer.style.display = 'block';
 
-        commitDetails.innerHTML = detailsHtml;
-        commitDetails.style.display = 'block'; // 커밋 세부사항 표시
+        const backButton = document.createElement('button');
+        backButton.textContent = '돌아가기';
+        backButton.className = 'back-btn';
+        backButton.addEventListener('click', function () {
+            commitCardsContainer.innerHTML = '';
+            if (selectedMetadataCard) {
+                selectedMetadataCard.style.borderColor = '';
+            }
+            selectedMetadataCard = null;
+        });
+        commitCardsContainer.appendChild(backButton);
+
+        addTreeToggleEvent();
+        addFileSelectEvent();
     }
 
-    // 커밋 버튼 이벤트 리스너
+    function buildFileTree(paths) {
+        const root = {};
+
+        paths.forEach(path => {
+            const parts = path.split('/');
+            let currentNode = root;
+
+            parts.forEach((part, index) => {
+                if (!currentNode[part]) {
+                    currentNode[part] = index === parts.length - 1 ? null : {};
+                }
+                currentNode = currentNode[part];
+            });
+        });
+
+        return root;
+    }
+
+    function renderFileTree(tree, commitId, path = '') {
+        let html = '<ul>';
+        for (const key in tree) {
+            const newPath = path ? `${path}/${key}` : key;
+            html += `<li class="tree-node" data-path="${newPath}" data-commit-id="${commitId}">`;
+            if (tree[key] !== null) {
+                html += `<span class="toggle-icon">></span> <span class="directory-icon">${key}</span>`;
+                html += renderFileTree(tree[key], commitId, newPath);
+            } else {
+                html += `<input type="checkbox" class="file-checkbox" data-path="${newPath}" data-commit-id="${commitId}"> <span class="file-icon">${key}</span>`;
+            }
+            html += '</li>';
+        }
+        html += '</ul>';
+        return html;
+    }
+
+    function addTreeToggleEvent() {
+        document.querySelectorAll('.tree-node > .toggle-icon').forEach(toggleIcon => {
+            toggleIcon.addEventListener('click', function () {
+                const listItem = this.parentElement;
+                const sublist = listItem.querySelector('ul');
+
+                if (sublist) {
+                    if (sublist.style.display === 'none' || sublist.style.display === '') {
+                        sublist.style.display = 'block';
+                        this.textContent = 'v';
+                    } else {
+                        sublist.style.display = 'none';
+                        this.textContent = '>';
+                    }
+                }
+            });
+        });
+    }
+
+    function addFileSelectEvent() {
+        document.querySelectorAll('.file-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', async function () {
+                if (this.checked) {
+                    document.querySelectorAll('.file-checkbox').forEach(box => {
+                        if (box !== this) box.checked = false;
+                    });
+
+                    const listItem = this.closest('.tree-node');
+                    const filePath = listItem.getAttribute('data-path');
+                    const commitId = listItem.getAttribute('data-commit-id');
+
+                    await fetchFileContent(commitId, filePath);
+                } else {
+                    clearFileContent();
+                }
+            });
+        });
+
+        document.querySelectorAll('.file-icon').forEach(fileIcon => {
+            fileIcon.addEventListener('click', async function () {
+                const listItem = this.closest('.tree-node');
+                const checkbox = listItem.querySelector('.file-checkbox');
+
+                document.querySelectorAll('.file-checkbox').forEach(box => {
+                    box.checked = false;
+                });
+
+                checkbox.checked = true;
+
+                const filePath = listItem.getAttribute('data-path');
+                const commitId = listItem.getAttribute('data-commit-id');
+                const fileType = filePath.split('.').pop().toLowerCase();
+
+                if (checkbox.checked) {
+                    if (['png', 'jpg', 'jpeg', 'gif', 'bmp'].includes(fileType)) {
+                        await fetchImageFile(commitId, filePath);
+                    } else {
+                        await fetchFileContent(commitId, filePath);
+                    }
+                } else {
+                    clearFileContent();
+                }
+            });
+        });
+    }
+
+    async function fetchImageFile(commitId, filePath) {
+        const apiUrl = `http://localhost:8080/api/personal/project/image-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}`;
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': '*/*'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch image file');
+            }
+
+            const blob = await response.blob();
+            displayImage(blob);
+        } catch (error) {
+            console.error('Error fetching image file:', error);
+        }
+    }
+
+    function displayImage(blob) {
+        const contentContainer = document.getElementById('file-content-display');
+        if (contentContainer) {
+            const imageUrl = URL.createObjectURL(blob);
+            contentContainer.innerHTML = `<img src="${imageUrl}" alt="Image" style="max-width: 100%; height: auto;">`;
+        }
+    }
+
+    async function fetchFileContent(commitId, filePath) {
+        const apiUrl = `http://localhost:8080/api/personal/project/text-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}`;
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': '*/*'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch file content');
+            }
+
+            const textContent = await response.text();
+            displayTextContent(textContent);
+        } catch (error) {
+            console.error('Error fetching file content:', error);
+        }
+    }
+
+    function displayTextContent(text) {
+        const contentContainer = document.getElementById('file-content-display');
+        if (contentContainer) {
+            const lines = text.split('\n');
+            const numberedLines = lines.map((line, index) => {
+                return `<div class="line"><span class="line-number">${index + 1}</span> ${escapeHtml(line)}</div>`;
+            }).join('');
+            contentContainer.innerHTML = `<pre>${numberedLines}</pre>`;
+        }
+    }
+
+    function clearFileContent() {
+        const contentContainer = document.getElementById('file-content-display');
+        if (contentContainer) {
+            contentContainer.innerHTML = '';
+        }
+    }
+
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     if (commitBtn) {
         commitBtn.addEventListener('click', async function () {
             const files = file1.files;
@@ -242,50 +544,28 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // 로컬 스토리지에서 현재 프로젝트 ID 가져오기
-            const projects = JSON.parse(localStorage.getItem('projects') || '[]');
-            const currentProject = projects[0]; // 첫 번째 프로젝트 선택 (필요 시 로직 수정)
-
-            if (!currentProject || !currentProject.projectId) {
-                alert('선택된 프로젝트가 없습니다.');
-                return;
-            }
-
-            console.log('Access Token:', accessToken);
-            console.log('Project ID:', currentProject.projectId);
-            console.log('Files:', files);
-            for (let file of files) {
-                console.log(`File: ${file.name}, Size: ${file.size}`);
-            }
-            console.log('Commit Message:', commitMessage);
-
             try {
-                // FormData 객체 생성 및 데이터 추가
                 const formData = new FormData();
                 for (let file of files) {
-                    formData.append('files', file, file.webkitRelativePath); // 상대 경로 포함
+                    formData.append('files', file, file.webkitRelativePath);
                 }
                 formData.append('commitMessage', commitMessage);
 
                 let apiUrl = 'http://localhost:8080/api/personal/project/init';
                 let method = 'POST';
 
-                // 로컬 스토리지에 personal_project가 존재하는지 확인
                 if (personalProjects.length > 0) {
-                    // 다음 버전 저장 API 호출 준비
                     const latestProject = personalProjects[personalProjects.length - 1];
-                    formData.append('fromCommitId', latestProject.newCommitId); // 가장 최근 커밋 ID 사용
+                    formData.append('fromCommitId', latestProject.newCommitId);
                     apiUrl = 'http://localhost:8080/api/personal/project/save';
                 } else {
-                    // 최초 저장인 경우 projectId 추가
-                    formData.append('projectId', currentProject.projectId); // 실제 projectId 사용
+                    formData.append('projectId', projectId);
                 }
 
-                // 스프링부트 서버로 POST 요청 보내기
                 const response = await fetch(apiUrl, {
                     method: method,
                     headers: {
-                        'Authorization': 'Bearer ' + accessToken // 헤더에 액세스 토큰 포함
+                        'Authorization': 'Bearer ' + accessToken
                     },
                     body: formData
                 });
@@ -305,13 +585,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 const newCommitData = await response.json();
-
-                // 로컬 스토리지에 personal_project 리스트로 저장
                 personalProjects.push(newCommitData);
-                localStorage.setItem('personal_project', JSON.stringify(personalProjects));
+                localStorage.setItem('personal_project', JSON.stringify(personProjects));
 
                 alert('커밋 성공!');
-                console.log(newCommitData); // 응답 데이터 로그 출력
             } catch (error) {
                 console.error('Error committing files:', error);
                 alert('파일을 커밋하는 도중 오류가 발생했습니다.');
@@ -319,20 +596,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // file1 변경 이벤트 리스너
     if (file1) {
         file1.addEventListener('change', async function () {
             const files = this.files;
             try {
                 const fileContents = await getFileContents(files);
                 displayFileContents(fileContents, 'original');
-
-                // 파일 내용 콘솔에 출력
-                console.log('Files:', files);
-                for (let file of files) {
-                    const content = await readFileContent(file);
-                    console.log(`File: ${file.name}, Size: ${file.size}, Content:`, content.slice(0, 100)); // 첫 100자만 출력
-                }
             } catch (error) {
                 console.error('Error reading files:', error);
                 alert('파일을 읽는 도중 오류가 발생했습니다.');
@@ -340,7 +609,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // file2 변경 이벤트 리스너
     if (file2) {
         file2.addEventListener('change', async function () {
             const fileName = this.files[0].name;
@@ -349,44 +617,57 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // compare 버튼 이벤트 리스너
     if (compareBtn) {
         compareBtn.addEventListener('click', async function () {
             await compareFiles();
         });
     }
 
-    // review 버튼 이벤트 리스너
     if (reviewBtn) {
         reviewBtn.addEventListener('click', async function () {
             await reviewFiles();
         });
     }
 
-    async function uploadFile(input, type) {
-        const formData = new FormData();
-        formData.append(input.name, input.files[0]);
-
-        try {
-            const response = await fetch('/upload', { method: 'POST', body: formData });
-            const data = await response.json();
-
-            if (type === 'original') {
-                document.getElementById('original-structure-container').innerHTML = data.combined_structure.original_structure;
-                addDirectoryToggle();
-                addFileClickEvent();
-                // Read the original file content and display it
-                let originalFileContent = '';
-                for (let file of data.files) {
-                    originalFileContent += `<h3>${file.name}</h3><pre>${file.content}</pre>`;
+    async function getFileContents(files) {
+        const fileContents = [];
+        for (let file of files) {
+            if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
+                try {
+                    const content = await readFileContent(file);
+                    fileContents.push({ name: file.webkitRelativePath, content: content });
+                } catch (error) {
+                    console.error('Error reading file:', file.name, error);
+                    throw error;
                 }
-                document.getElementById('original-file-content').innerHTML = originalFileContent;
-            } else if (type === 'changed') {
-                document.getElementById('changed-file-content').innerText = data.content;
+            } else {
+                console.warn('Skipping non-text file:', file.name);
             }
-        } catch (error) {
-            console.error('Error:', error);
         }
+        return fileContents;
+    }
+
+    function displayFileContents(fileContents, type) {
+        if (type === 'original') {
+            let contentHtml = '';
+            fileContents.forEach(file => {
+                contentHtml += `<h3>${file.name}</h3><pre>${escapeHtml(file.content)}</pre>`;
+            });
+            document.getElementById('original-file-content').innerHTML = contentHtml;
+        }
+    }
+
+    function readFileContent(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                resolve(event.target.result);
+            };
+            reader.onerror = function (error) {
+                reject(error);
+            }
+            reader.readAsText(file);
+        });
     }
 
     async function readFile(input, type) {
@@ -396,21 +677,10 @@ document.addEventListener("DOMContentLoaded", function () {
         reader.onload = function (event) {
             const content = event.target.result;
             if (type === 'changed') {
-                document.getElementById('changed-file-content').innerText = content;
+                displayChangedFileContent(content);
             }
         };
 
-        reader.readAsText(file);
-    }
-
-    async function displayFileContent(file, type) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            const content = event.target.result;
-            if (type === 'original') {
-                document.getElementById('original-file-content').innerText = content;
-            }
-        };
         reader.readAsText(file);
     }
 
@@ -425,6 +695,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 body: JSON.stringify({ original: originalContent, changed: changedContent }),
             });
             const data = await response.json();
+
             const resultElement = document.getElementById('comparison-result');
             resultElement.innerHTML = data.differences;
             resultElement.classList.add('show');
@@ -504,102 +775,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    let openDirectories = {};
-
-    async function getFileContents(files) {
-        const fileContents = [];
-        for (let file of files) {
-            // MIME 타입을 검사하여 텍스트 파일만 읽음
-            if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
-                try {
-                    const content = await readFileContent(file);
-                    fileContents.push({ name: file.webkitRelativePath, content: content });
-                } catch (error) {
-                    console.error('Error reading file:', file.name, error);
-                    throw error; // Rethrow the error to handle it in the calling function
-                }
-            } else {
-                console.warn('Skipping non-text file:', file.name);
-            }
-        }
-        return fileContents;
-    }
-
-    function displayFileContents(fileContents, type) {
-        if (type === 'original') {
-            let contentHtml = '';
-            fileContents.forEach(file => {
-                contentHtml += `<h3>${file.name}</h3><pre>${escapeHtml(file.content)}</pre>`;
-            });
-            document.getElementById('original-file-content').innerHTML = contentHtml;
-        }
-    }
-
-    function readFileContent(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                resolve(event.target.result);
-            };
-            reader.onerror = function (error) {
-                reject(error);
-            };
-            reader.readAsText(file);
-        });
-    }
-
-    function addDirectoryToggle() {
-        const toggler = document.getElementsByClassName("directory");
-        for (let i = 0; i < toggler.length; i++) {
-            const directoryPath = toggler[i].getAttribute("data-path");
-
-            if (!toggler[i].classList.contains("bound")) {
-                toggler[i].classList.add("bound");
-                toggler[i].addEventListener("click", async function (event) {
-                    if (event.target.tagName === 'LI') {
-                        const nested = this.querySelector(".nested");
-                        if (nested) {
-                            nested.classList.toggle("active");
-                            this.classList.toggle("directory-open");
-
-                            if (!nested.innerHTML) {
-                                const path = this.getAttribute("data-path");
-                                const type = this.getAttribute("data-type");
-                                try {
-                                    const response = await fetch(`/subdirectories?path=${encodeURIComponent(path)}&type=${type}`);
-                                    const data = await response.json();
-                                    if (data.result === "Subdirectories loaded successfully") {
-                                        nested.innerHTML = data.subdirectories;
-                                        addDirectoryToggle();
-                                        addFileClickEvent();
-                                        openDirectories[path] = true;
-                                        updateOpenDirectories();
-                                    } else {
-                                        alert(data.result);
-                                    }
-                                } catch (error) {
-                                    console.error('Error:', error);
-                                }
-                            } else {
-                                if (nested.classList.contains("active")) {
-                                    openDirectories[directoryPath] = true;
-                                } else {
-                                    delete openDirectories[directoryPath];
-                                }
-                                updateOpenDirectories();
-                            }
-                        }
-                    }
-                });
-            }
-
-            if (openDirectories[directoryPath]) {
-                toggler[i].classList.add("directory-open");
-                const nested = toggler[i].querySelector(".nested");
-                if (nested) {
-                    nested.classList.add("active");
-                }
-            }
+    function displayChangedFileContent(content) {
+        const contentContainer = document.getElementById('changed-file-content');
+        if (contentContainer) {
+            const lines = content.split('\n');
+            const numberedLines = lines.map((line, index) => {
+                return `<div class="line"><span class="line-number">${index + 1}</span> ${escapeHtml(line)}</div>`;
+            }).join('');
+            contentContainer.innerHTML = `<pre>${numberedLines}</pre>`;
         }
     }
 
@@ -612,49 +795,5 @@ document.addEventListener("DOMContentLoaded", function () {
             .replace(/'/g, "&#039;");
     }
 
-    function updateOpenDirectories() {
-        const toggler = document.getElementsByClassName("directory");
-        for (let i = 0; i < toggler.length; i++) {
-            const directoryPath = toggler[i].getAttribute("data-path");
-            if (openDirectories[directoryPath]) {
-                toggler[i].classList.add("directory-open");
-                const nested = toggler[i].querySelector(".nested");
-                if (nested) {
-                    nested.classList.add("active");
-                }
-            } else {
-                toggler[i].classList.remove("directory-open");
-                const nested = toggler[i].querySelector(".nested");
-                if (nested) {
-                    nested.classList.remove("active");
-                }
-            }
-        }
-    }
-
-    function addFileClickEvent() {
-        const files = document.getElementsByClassName("file");
-        for (let i = 0; i < files.length; i++) {
-            if (!files[i].classList.contains("bound")) {
-                files[i].classList.add("bound");
-                files[i].addEventListener("click", async function () {
-                    const filePath = this.getAttribute("data-path");
-                    const fileType = this.getAttribute("data-type");
-                    try {
-                        const response = await fetch('/file?path=' + encodeURIComponent(filePath));
-                        const data = await response.json();
-                        if (data.result === "File loaded successfully") {
-                            if (fileType === 'original') {
-                                document.getElementById('original-file-content').innerText = data.content;
-                            }
-                        } else {
-                            alert(data.result);
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                    }
-                });
-            }
-        }
-    }
+    fetchRepositories();
 });

@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cute+Font&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="/css/mypage/style.css">
+    <link rel="stylesheet" href="/css/images/mypage/style.css">
 </head>
 <body>
 <div class="container">
@@ -25,6 +25,11 @@
             <button class="btn btn-success" id="send-message">쪽지 보내기</button>
         </div>
         <div class="projects-info">
+            <div id="home-link">
+                <img src="/css/images/mypage/home.png" alt="Home">
+                <p><strong></strong></p>
+                <p>홈으로 가기</p>
+            </div>
             <div id="personal-project-link">
                 <img id="personal_project" src="/css/images/profile/solo_project.png" alt="Personal Project">
                 <p><strong id="personal-projects-count">0</strong></p>
@@ -57,10 +62,10 @@
         <a class="nav-link active" href="#overview" data-bs-toggle="tab">기록</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#settings" data-bs-toggle="tab">팀원목록</a>
+        <a class="nav-link" href="#settings" data-bs-toggle="tab">팀 목록</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#security" data-bs-toggle="tab">보안</a>
+        <a class="nav-link" href="#security" data-bs-toggle="tab">게시판 기록</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="#activity" data-bs-toggle="tab">활동</a>
@@ -72,22 +77,46 @@
         <a class="nav-link" href="#progress" data-bs-toggle="tab">진행</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#recommendations" data-bs-toggle="tab">추천</a>
+        <a class="nav-link" href="#recommendations" data-bs-toggle="tab">AI</a>
     </li>
 </ul>
 <div class="tab-content">
     <div class="tab-pane fade show active" id="overview">
         <div id="commit-history" class="activity-card">
-            <h5>커밋 기록</h5>
-            <div id="commit-list"></div>
+            <h5>프로젝트 및 커밋 기록</h5>
+            <div class="row">
+                <div class="col-md-4">
+                    <h6>프로젝트 목록</h6>
+                    <div id="project-list"></div>
+                </div>
+                <div class="col-md-8">
+                    <h6>커밋 기록</h6>
+                    <div id="commit-list"></div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="tab-pane fade" id="settings">설정 내용</div>
     <div class="tab-pane fade" id="security">보안 내용</div>
     <div class="tab-pane fade" id="activity">
-        <div id="message-area">
+        <div id="message-area-activity">
             <h5>쪽지함</h5>
-            <div id="message-list"></div>
+            <ul class="nav nav-pills mb-3" id="pills-tab-activity" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-received-tab-activity" data-bs-toggle="pill" data-bs-target="#pills-received-activity" type="button" role="tab" aria-controls="pills-received-activity" aria-selected="true">받은 쪽지</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-sent-tab-activity" data-bs-toggle="pill" data-bs-target="#pills-sent-activity" type="button" role="tab" aria-controls="pills-sent-activity" aria-selected="false">보낸 쪽지</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent-activity">
+                <div class="tab-pane fade show active" id="pills-received-activity" role="tabpanel" aria-labelledby="pills-received-tab-activity">
+                    <div id="received-message-list-activity" class="message-list"></div>
+                </div>
+                <div class="tab-pane fade" id="pills-sent-activity" role="tabpanel" aria-labelledby="pills-sent-tab-activity">
+                    <div id="sent-message-list-activity" class="message-list"></div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="tab-pane fade" id="payment">결제 내용</div>
@@ -133,5 +162,8 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
 <script src="/js/mypage/script.js?v=1.0"></script>
 <script src="/js/mypage/message.js?v=1.0"></script>
+<script src="/js/mypage/project.js"></script>
+<script src="/js/mypage/team_list.js"></script>
+<script src="/js/mypage/boards.js"></script>
 </body>
 </html>

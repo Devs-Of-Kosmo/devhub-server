@@ -1,0 +1,369 @@
+@import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
+body {
+    background: #1a1a1a;
+    color: #fff;
+    font-weight: 400;
+    font-family: 'Jua', sans-serif;
+    font-size: 16px;
+}
+
+.container {
+    margin-top: 30px;
+    width: 90%;
+    max-width: 1400px;
+}
+
+.profile-card {
+    background: #2d2d2d;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.profile-card img {
+    width: 100px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.profile-card .profile-info {
+    flex-grow: 1;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.profile-card .projects-info {
+    display: flex;
+    justify-content: space-around;
+    width: 60%;
+    margin-left: 20px;
+}
+
+.profile-card .projects-info img {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+}
+
+.profile-card .btn {
+    margin-top: 10px;
+    color: #fff;
+    background: #007bff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.profile-card .btn:hover {
+    background: #0056b3;
+}
+
+.nav-tabs .nav-link {
+    color: #ccc;
+}
+
+.nav-tabs .nav-link.active {
+    color: #007bff;
+    font-weight: bold;
+    background-color: #2d2d2d;
+    border-color: #007bff #007bff #2d2d2d;
+}
+
+.tab-content {
+    background: #2d2d2d;
+    padding: 20px;
+    border: 1px solid #007bff;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    color: #fff;
+}
+
+.activity-card {
+    background: #2d2d2d;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+#project-list {
+    background: #1e1e1e;
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.project-item {
+    background: #2d2d2d;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s;
+}
+
+.project-item.selected {
+    background: #3a3a3a;
+    border: 1px solid #007bff;
+}
+
+.project-item h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.project-item p {
+    font-size: 14px;
+    color: #bbb;
+    margin-bottom: 10px;
+}
+
+#commit-list {
+    background: #1e1e1e;
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.commit-item {
+    background: #2d2d2d;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.commit-icon {
+    background: #007bff;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.commit-content {
+    flex-grow: 1;
+}
+
+.commit-message {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.commit-info {
+    font-size: 12px;
+    color: #bbb;
+    margin-bottom: 10px;
+}
+
+.commit-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.team-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.team-item {
+    background-color: #2d2d2d;
+    border: 1px solid #3a3a3a;
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.team-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.team-item h4 {
+    color: #007bff;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.team-item p {
+    margin-bottom: 10px;
+    color: #ccc;
+}
+
+.team-item ul {
+    padding-left: 20px;
+    margin-top: 15px;
+}
+
+.team-item li {
+    margin-bottom: 5px;
+    color: #bbb;
+}
+
+.team-members {
+    max-height: 150px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.team-members::-webkit-scrollbar {
+    width: 5px;
+}
+
+.team-members::-webkit-scrollbar-thumb {
+    background-color: #666;
+    border-radius: 5px;
+}
+
+.team-members::-webkit-scrollbar-track {
+    background-color: #2d2d2d;
+}
+.view-details {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.view-details:hover {
+    background: #218838;
+}
+
+.file-count {
+    color: #bbb;
+    font-size: 12px;
+}
+
+.no-commits {
+    color: #bbb;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+.refresh-commits {
+    margin-bottom: 15px;
+}
+
+/* SweetAlert 커스텀 스타일 */
+.swal2-popup {
+    background: #2d2d2d;
+    color: #fff;
+}
+
+.swal2-title {
+    color: #fff;
+}
+
+.changed-files-list {
+    text-align: left;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-left: 20px;
+}
+
+.changed-files-list li {
+    margin-bottom: 5px;
+}
+
+.message-area {
+    background: #2d2d2d;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.message-area h5 {
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.nav-pills .nav-link {
+    color: #ccc;
+    background-color: #1a1a1a;
+    margin-right: 10px;
+}
+
+.nav-pills .nav-link.active {
+    color: #fff;
+    background-color: #007bff;
+}
+
+.message-list {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 10px;
+    background: #1e1e1e;
+    border-radius: 8px;
+}
+
+.message-item {
+    background: #2d2d2d;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s;
+}
+
+.message-item:hover {
+    background: #3a3a3a;
+}
+
+.message-item p {
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.message-item .email-link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.message-item .email-link:hover {
+    text-decoration: underline;
+}
+
+.message-item .message-details {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #444;
+}
+
+.message-item .delete-message {
+    margin-top: 10px;
+}
+
+.message-item .message-title {
+    font-weight: bold;
+    color: #ddd;
+}
+
+.message-item .message-date {
+    font-size: 0.9em;
+    color: #888;
+}

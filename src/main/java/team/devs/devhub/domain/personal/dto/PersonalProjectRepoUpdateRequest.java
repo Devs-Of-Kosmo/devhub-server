@@ -10,10 +10,8 @@ public class PersonalProjectRepoUpdateRequest {
     
     @NotNull
     private Long projectId;
-    
     @NotBlank
     private String changedProjectName;
-    
     @NotBlank
     private String changedDescription;
     

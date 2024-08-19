@@ -6,13 +6,19 @@
     <title>{% block title %} DEVHUV {% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/plugins/line-numbers/prism-line-numbers.css" rel="stylesheet" />
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
 <header>
     <div class="container1">
-        <h1 class="site-title">DEVHUV</h1>
+        <!-- 로고 이미지와 제목을 같은 div 내에 배치 -->
+        <div class="logo-title-container">
+            <img src="{{ url_for('static', filename='img/logo_1.jpg') }}" alt="Logo" class="site-logo">
+            <h1 class="site-title">DEVHUV</h1>
+        </div>
         <nav class="navbar">
             <ul>
                 <li><a href="/">Home</a></li>
@@ -23,7 +29,8 @@
         </nav>
     </div>
 </header>
-{% block content %}{% endblock %}
+{% block content %}
+{% endblock %}
 <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 <script src="{{ url_for('static', filename='js/files.js') }}"></script>
 </body>

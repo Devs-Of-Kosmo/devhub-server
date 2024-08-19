@@ -22,23 +22,34 @@ public enum ErrorCode {
     AUTHENTICATION_CODE_NOT_EXIST(500, "Ma002", "메일 인증 코드가 존재하지 않습니다"),
     AUTHENTICATION_CODE_NOT_MATCHED(500, "Ma003", "인증 코드가 일치하지 않습니다"),
 
-    // PersonalProject
-    REPOSITORY_CREATION_ERROR(500, "PP001", "레포지토리 생성 중 오류가 발생했습니다"),
-    REPOSITORY_NAME_DUPLICATED(500, "PP002", "레포지토리 이름이 존재합니다"),
-    PERSONAL_PROJECT_NOT_FOUND(500, "PP003", "개인 프로젝트를 찾을 수 없습니다"),
-    PROJECT_SAVE_ERROR(500, "PP004", "프로젝트 저장 중 오류가 발생했습니다"),
-    PERSONAL_PROJECT_MASTER_NOT_MATCH(500, "PP005", "프로젝트 소유자가 일치하지 않습니다"),
-    PERSONAL_COMMIT_NOT_FOUND(500, "PP006", "해당 커밋을 찾을 수 없습니다"),
-    DIRECTORY_DELETE_ERROR(500, "PP007", "프로젝트 파일을 삭제하는 중 오류가 발생했습니다"),
-    COMMIT_SEARCH_ERROR(500, "PP008", "커밋 이름 탐색 중 오류가 발생했습니다"),
-    FILE_NOT_FOUND(500, "PP009", "파일을 찾지 못했습니다"),
-    FILE_SEARCH_ERROR(500, "PP010", "파일을 찾는 중 오류가 발생했습니다"),
-    COMMIT_RESET_ERROR(500, "PP011", "커밋 삭제 중 오류가 발생했습니다"),
-    ZIP_FILE_GENERATE_ERROR(500, "PP012", "zip파일 생성 중 오류가 발생했습니다"),
-    REPOSITORY_UPDATE_ERROR(500, "PP013", "레포지토리 업데이트 중 오류가 발생했습니다"),
-    REPOSITORY_DELETE_ERROR(500, "PP014", "레포지토리를 삭제하는 중 오류가 발생했습니다"),
-    PARENT_COMMIT_NOT_FOUND(500, "PP015", "부모 커밋이 존재하지 않습니다"),
-    UPLOAD_FILE_SIZE_OVER(500, "PP016", "업로드한 파일의 용량이 100MB를 초과했습니다"),
+    // Personal
+    REPOSITORY_CREATION_ERROR(500, "P001", "레포지토리 생성 중 오류가 발생했습니다"),
+    REPOSITORY_NAME_DUPLICATED(500, "P002", "레포지토리 이름이 존재합니다"),
+    PERSONAL_PROJECT_NOT_FOUND(500, "P003", "개인 프로젝트를 찾을 수 없습니다"),
+    PROJECT_SAVE_ERROR(500, "P004", "프로젝트 저장 중 오류가 발생했습니다"),
+    PERSONAL_PROJECT_MASTER_NOT_MATCH(500, "P005", "프로젝트 소유자가 일치하지 않습니다"),
+    PERSONAL_COMMIT_NOT_FOUND(500, "P006", "해당 커밋을 찾을 수 없습니다"),
+    DIRECTORY_DELETE_ERROR(500, "P007", "프로젝트 파일을 삭제하는 중 오류가 발생했습니다"),
+    COMMIT_SEARCH_ERROR(500, "P008", "커밋 이름 탐색 중 오류가 발생했습니다"),
+    FILE_NOT_FOUND(500, "P009", "파일을 찾지 못했습니다"),
+    FILE_SEARCH_ERROR(500, "P010", "파일을 찾는 중 오류가 발생했습니다"),
+    COMMIT_RESET_ERROR(500, "P011", "커밋 삭제 중 오류가 발생했습니다"),
+    ZIP_FILE_GENERATE_ERROR(500, "P012", "zip파일 생성 중 오류가 발생했습니다"),
+    REPOSITORY_UPDATE_ERROR(500, "P013", "레포지토리 업데이트 중 오류가 발생했습니다"),
+    REPOSITORY_DELETE_ERROR(500, "P014", "레포지토리를 삭제하는 중 오류가 발생했습니다"),
+    PARENT_COMMIT_NOT_FOUND(500, "P015", "부모 커밋이 존재하지 않습니다"),
+    PERSONAL_PROJECT_FILE_SIZE_OVER(500, "P016", "업로드한 파일의 용량이 100MB를 초과했습니다"),
+
+    // Team
+    TEAM_NAME_DUPLICATED(500, "T001", "팀 이름이 존재합니다"),
+    TEAM_NOT_FOUND(500, "T002", "팀이 존재하지 않습니다"),
+    USER_TEAM_NOT_FOUND(500, "T003", "유저와 일치하는 팀이 존재하지 않습니다"),
+    NOT_SUB_MANAGER_OR_HIGHER(500, "T004", "SUB_MANAGER 이상의 권환이 필요합니다"),
+    NOT_MANAGER_OR_HIGHER(500, "T005", "MANAGER 이상의 권환이 필요합니다"),
+    TEAM_PROJECT_NAME_DUPLICATED(500, "T006", "팀 프로젝트 이름이 존재합니다"),
+    TEAM_PROJECT_NOT_FOUND(500, "T007", "팀 프로젝트가 존재하지 않습니다"),
+    TEAM_PROJECT_FILE_SIZE_OVER(500, "T008", "업로드한 파일의 용량이 200MB를 초과했습니다"),
+    INITIAL_PROJECT_ALREADY_EXIST(500, "T009", "최초 저장한 프로젝트가 이미 존재합니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
@@ -52,7 +63,11 @@ public enum ErrorCode {
 
     // WebSocket
     EMAIL_NOT_FOUND(500, "W001", "이메일을 찾을 수 없습니다"),
-    INVALID_WEBSOCKET_SESSION(500, "W002", "유효하지 않은 웹소켓 세션입니다");
+    INVALID_WEBSOCKET_SESSION(500, "W002", "유효하지 않은 웹소켓 세션입니다"),
+
+    // VersionControlUtil
+    BRANCH_SEARCH_ERROR(500, "V001", "브랜치 탐색 과정 중 오류가 발생했습니다"),
+    BRANCH_NOT_FOUND(500, "V002", "브랜치가 존재하지 않습니다");
 
     private final String code;
     private final String message;

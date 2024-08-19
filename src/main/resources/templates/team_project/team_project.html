@@ -8,16 +8,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="/css/team_project/style.css">
 </head>
 <body>
 <header>
     <ul class="left">
-        <li class="apple"><i class="fab fa-apple"></i></li>
-        <li><strong>Finder</strong></li>
-        <li>File</li>
-        <li>Edit</li>
-        <li>View</li>
+        <li><strong>Devhub</strong></li>
+        <li id="editMenu">Edit</li>
+        <li>Delete</li>
         <li>Go</li>
         <li>Window</li>
         <li>Help</li>
@@ -26,43 +25,62 @@
         <li><i class="fas fa-battery-full"></i></li>
         <li><i class="fas fa-wifi"></i></li>
         <li><span id="clock"></span></li>
+        <li><button id="logoutButton" style="display: none;">로그아웃</button></li>
     </ul>
 </header>
 
 <div id="Desktop">
     <div class="icon" data-title="listProjects" onclick="handleIconClick(this, 'listProjects')">
-        <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="프로젝트 목록">
-        <span class="title">프로젝트 목록</span>
+        <img src="/css/images/team_project/list.png" alt="프로젝트 목록">
+        <span class="title">팀 목록</span>
     </div>
     <div class="icon" data-title="createProject" onclick="handleIconClick(this, 'createProject')">
-        <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="프로젝트 만들기">
-        <span class="title">프로젝트 만들기</span>
+        <img src="/css/images/team_project/create.png" alt="프로젝트 만들기">
+        <span class="title">팀 만들기</span>
     </div>
     <div class="icon" data-title="joinProject" onclick="handleIconClick(this, 'joinProject')">
-        <img src="https://cdn-icons-png.flaticon.com/512/1967/1967199.png" alt="프로젝트 참가">
+        <img src="/css/images/team_project/join.png" alt="프로젝트 참가">
         <span class="title">프로젝트 참가</span>
     </div>
+    <div class="icon" data-title="editTeam" onclick="handleIconClick(this,'editTeam')">
+        <img src="/css/images/team_project/edit.png" alt="팀 설정">
+        <span class="title">팀 설정</span>
+    </div>
     <div class="icon" data-title="inviteMembers" onclick="handleIconClick(this, 'inviteMembers')">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IMessage_logo.svg/234px-IMessage_logo.svg.png?20180402204645" alt="팀원 초대">
+        <img src="/css/images/team_project/invite.png" alt="팀원 초대">
         <span class="title">팀원 초대</span>
+    </div>
+    <div id="trashCan" class="icon">
+        <img src="/css/images/team_project/trash.png" alt="휴지통">
+        <span class="title">휴지통</span>
     </div>
 </div>
 
 <div id="createProject" class="window">
-    <h2>새 프로젝트 만들기</h2>
-    <input type="text" id="projectName" placeholder="프로젝트 이름">
-    <textarea id="projectDescription" placeholder="프로젝트 설명"></textarea>
-    <button onclick="createNewProject()">만들기</button>
+    <div class="window-header">
+        <div class="close-button"></div>
+        <h2>팀 만들기</h2>
+    </div>
+    <input type="text" id="projectName" placeholder="팀 이름">
+    <textarea id="projectDescription" placeholder="팀 설명"></textarea>
+    <button id="createProjectButton">만들기</button>
 </div>
 
 <div id="joinProject" class="window">
-    <h2>프로젝트 참가</h2>
+    <div class="window-header">
+        <div class="close-button"></div>
+        <h2>팀 참가</h2>
+    </div>
     <input type="text" placeholder="프로젝트 코드">
     <button onclick="closeWindow('joinProject')">참가하기</button>
 </div>
 
+
 <div id="listProjects" class="window">
-    <h2>프로젝트 목록</h2>
+    <div class="window-header">
+        <div class="close-button"></div>
+        <h2>팀 목록</h2>
+    </div>
     <ul id="projectList">
         <!-- 프로젝트 목록이 여기에 동적으로 추가됩니다 -->
     </ul>
@@ -89,6 +107,48 @@
     </div>
 </div>
 
+<!-- 로그인 모달 추가 -->
+<div id="loginModal" class="window">
+    <div class="window-header">
+        <div class="close-button"></div>
+        <h2>로그인</h2>
+    </div>
+    <input type="email" id="loginEmail" placeholder="이메일">
+    <input type="password" id="loginPassword" placeholder="비밀번호">
+    <button id="loginButton">로그인</button>
+</div>
+
+<div id="editProject" class="window">
+    <div class="window-header">
+        <div class="close-button"></div>
+        <h2>레포지토리 정보 수정</h2>
+    </div>
+    <div class="select-wrapper">
+        <select id="selectProject">
+            <!-- 프로젝트 옵션이 동적으로 추가됩니다 -->
+        </select>
+    </div>
+    <input type="text" id="editTeamName" placeholder="팀 이름">
+    <textarea id="editTeamDescription" placeholder="팀 설명"></textarea>
+    <button id="saveTeamChangesButton">저장</button>
+</div>
+
+<!---- 휴지통 모달 ----->
+<div id="trashModal" class="modal">
+    <div class="modal-content">
+        <div class="window-header">
+            <div class="close-button"></div>
+            <h2>휴지통</h2>
+        </div>
+        <div id="trashItems"></div>
+        <div class="modal-buttons">
+            <button id="emptyTrashBtn">휴지통 비우기</button>
+            <button id="closeTrashBtn">닫기</button>
+        </div>
+    </div>
+</div>
+
+
 <footer>
     <ul>
         <li data-title="ChatGPT">
@@ -97,8 +157,8 @@
             </a>
         </li>
         <li data-title="Chrome">
-            <a href="https://www.google.com/chrome" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/888/888846.png" alt="Chrome">
+            <a href="/">
+                <img src="/css/images/team_project/home.png" alt="Home">
             </a>
         </li>
         <li data-title="Gmail">
@@ -118,7 +178,15 @@
         </li>
     </ul>
 </footer>
-<script src="/js/team_project/script.js"></script>
+
+
+<!-- 자바스크립트 파일 포함 -->
+<script src="/js/team_project/util.js"></script>
+<script src="/js/team_project/windows.js"></script>
+<script src="/js/team_project/authAndInit.js"></script>
+<script src="/js/team_project/teams.js"></script>
+<script src="/js/team_project/dragAndDrop.js"></script>
+<script src="/js/team_project/trash.js"></script>
 <script src="/js/team_project/message.js"></script>
 </body>
 </html>

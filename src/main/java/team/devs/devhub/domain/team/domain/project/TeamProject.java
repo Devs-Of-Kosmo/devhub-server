@@ -1,24 +1,25 @@
 package team.devs.devhub.domain.team.domain.project;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SQLDelete;
 import team.devs.devhub.domain.team.domain.team.Team;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.common.BaseTimeEntity;
+import team.devs.devhub.global.common.ProjectUtilProvider;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @DynamicInsert
+@SQLDelete(sql = "UPDATE team_project SET delete_condition = true WHERE team_project_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TeamProject extends BaseTimeEntity {
+public class TeamProject extends BaseTimeEntity implements ProjectUtilProvider {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +48,7 @@ public class TeamProject extends BaseTimeEntity {
     @Column(length = 20, nullable = false)
     private boolean deleteCondition;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     private List<TeamBranch> branches = new ArrayList<>();
 
     @Builder
@@ -59,6 +60,17 @@ public class TeamProject extends BaseTimeEntity {
         this.team = team;
         this.createdBy = createdBy;
         this.deleteCondition = deleteCondition;
+    }
+
+    public void update(TeamProject project) {
+        this.name = project.getName();
+        this.description = project.getDescription();
+    }
+
+    public void saveRepositoryPath(String repositoryPathHead) {
+        this.repositoryPath = repositoryPathHead
+                + team.getId() + "_" + team.getName() + "/"
+                + name + "_" + getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
     }
 
 }

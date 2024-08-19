@@ -42,7 +42,7 @@ public class PersonalProjectMetaReadResponse {
         private String commitMessage;
         private LocalDateTime createdDate;
 
-        public static CommitInfoResponse of(PersonalCommit commit) {
+        private static CommitInfoResponse of(PersonalCommit commit) {
             return CommitInfoResponse.builder()
                     .commitId(commit.getId())
                     .commitCode(commit.getCommitCode())
