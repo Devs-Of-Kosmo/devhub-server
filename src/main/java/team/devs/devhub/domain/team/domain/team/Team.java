@@ -26,7 +26,7 @@ public class Team extends BaseTimeEntity {
     @Column(name = "team_id")
     private Long id;
 
-    @Column(length = 20, nullable = false, unique = true)
+    @Column(length = 20, nullable = false)
     private String name;
 
     @ColumnDefault("''")

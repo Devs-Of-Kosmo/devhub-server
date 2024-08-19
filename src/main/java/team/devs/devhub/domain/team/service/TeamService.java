@@ -9,7 +9,6 @@ import team.devs.devhub.domain.team.domain.team.UserTeam;
 import team.devs.devhub.domain.team.domain.team.repository.TeamRepository;
 import team.devs.devhub.domain.team.domain.team.repository.UserTeamRepository;
 import team.devs.devhub.domain.team.dto.team.*;
-import team.devs.devhub.domain.team.exception.TeamNameDuplicatedException;
 import team.devs.devhub.domain.team.exception.TeamNotFoundException;
 import team.devs.devhub.domain.team.exception.TeamRoleUnauthorizedException;
 import team.devs.devhub.domain.team.exception.UserTeamNotFoundException;
@@ -34,10 +33,9 @@ public class TeamService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        Team team = request.toEntity(user);
-        validDuplicatedTeamName(team);
+        Team prePersistTeam = request.toEntity(user);
 
-        teamRepository.save(team);
+        Team team = teamRepository.save(prePersistTeam);
 
         userTeamRepository.save(
                 UserTeam.builder()
@@ -85,7 +83,6 @@ public class TeamService {
         validSubManagerOrHigher(userTeam);
 
         Team target = request.toEntity();
-        validDuplicatedTeamName(target);
 
         team.update(target);
 
@@ -117,12 +114,6 @@ public class TeamService {
     }
 
     // exception
-    private void validDuplicatedTeamName(Team team) {
-        if (teamRepository.existsByName(team.getName())) {
-            throw new TeamNameDuplicatedException(ErrorCode.TEAM_NAME_DUPLICATED);
-        }
-    }
-
     private void validExistsUserAndTeam(User user, Team team) {
         if (!userTeamRepository.existsByUserAndTeam(user, team)) {
             throw new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND);
