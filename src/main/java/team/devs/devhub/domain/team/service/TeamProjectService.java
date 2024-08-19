@@ -155,6 +155,31 @@ public class TeamProjectService {
         return TeamProjectInitResponse.of(branch, commit);
     }
 
+    public TeamProjectBranchCreateResponse saveBranch(TeamProjectBranchCreateRequest request, Long userId) {
+        TeamProject project = teamProjectRepository.findByIdForSaveProject(request.getProjectId())
+                .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        TeamCommit fromCommit = teamCommitRepository.findById(request.getFromCommitId())
+                .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
+        TeamBranch prePersistBranch = request.toEntity(user, project);
+
+        VersionControlUtil.createBranch(prePersistBranch, fromCommit);
+
+        TeamBranch branch = teamBranchRepository.save(prePersistBranch);
+
+        TeamCommit commit = teamCommitRepository.save(
+                TeamCommit.builder()
+                        .commitCode(fromCommit.getCommitCode())
+                        .commitMessage(fromCommit.getCommitMessage())
+                        .branch(branch)
+                        .createdBy(user)
+                        .build()
+        );
+
+        return TeamProjectBranchCreateResponse.of(branch, commit);
+    }
+
     private long getFilesSize(List<MultipartFile> files) {
         return files.stream()
                 .mapToLong(MultipartFile::getSize)

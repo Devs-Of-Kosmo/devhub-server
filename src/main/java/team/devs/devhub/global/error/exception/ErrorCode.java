@@ -50,6 +50,7 @@ public enum ErrorCode {
     TEAM_PROJECT_NOT_FOUND(500, "T007", "팀 프로젝트가 존재하지 않습니다"),
     TEAM_PROJECT_FILE_SIZE_OVER(500, "T008", "업로드한 파일의 용량이 200MB를 초과했습니다"),
     INITIAL_PROJECT_ALREADY_EXIST(500, "T009", "최초 저장한 프로젝트가 이미 존재합니다"),
+    TEAM_COMMIT_NOT_FOUND(500, "T010", "팀 커밋이 존재하지 않습니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),

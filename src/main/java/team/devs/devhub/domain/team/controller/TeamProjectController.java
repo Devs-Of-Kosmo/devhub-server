@@ -76,4 +76,14 @@ public class TeamProjectController {
         TeamProjectInitResponse response = teamProjectService.saveInitialProject(request, customUserDetails.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @PostMapping("/project/branch")
+    @Operation(summary = "팀 프로젝트 브랜치 생성 API")
+    public ResponseEntity<TeamProjectBranchCreateResponse> createTeamProjectBranch(
+            @RequestBody @Valid TeamProjectBranchCreateRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamProjectBranchCreateResponse response = teamProjectService.saveBranch(request, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }

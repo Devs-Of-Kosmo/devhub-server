@@ -3,7 +3,7 @@ package team.devs.devhub.global.util;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.*;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
@@ -14,6 +14,8 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 import team.devs.devhub.domain.personal.domain.PersonalCommit;
 import team.devs.devhub.domain.personal.domain.PersonalProject;
 import team.devs.devhub.domain.personal.exception.FileNotFoundException;
+import team.devs.devhub.domain.team.domain.project.TeamBranch;
+import team.devs.devhub.domain.team.domain.project.TeamCommit;
 import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.util.exception.VersionControlUtilException;
@@ -38,6 +40,28 @@ public class VersionControlUtil {
             return commit;
         } catch (GitAPIException e) {
             throw new VersionControlUtilException(ErrorCode.PROJECT_SAVE_ERROR);
+        }
+    }
+
+    public static void createBranch(TeamBranch branch, TeamCommit fromTeamCommit) {
+        try {
+            Git git = Git.open(new File(branch.getProject().getRepositoryPath()));
+            Repository repository = git.getRepository();
+
+            String fromCommitHash = fromTeamCommit.getCommitCode();
+            String newBranchName = branch.getName();
+
+            RevWalk walk = new RevWalk(repository);
+            RevCommit fromCommit = walk.parseCommit(repository.resolve(fromCommitHash));
+
+            git.branchCreate()
+                    .setName(newBranchName)
+                    .setStartPoint(fromCommit)
+                    .call();
+
+            git.close();
+        } catch (IOException | GitAPIException e) {
+            throw new RuntimeException(e);
         }
     }
 
