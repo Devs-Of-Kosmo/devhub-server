@@ -39,17 +39,22 @@ function fetchAndUpdateBoardPosts() {
             let boardContent = '<h5>내 게시글 목록</h5><ul class="list-group">';
 
             posts.forEach(post => {
-                const createdAt = new Date(post.createdAt).toLocaleString(); // 작성 시간 포맷팅
                 boardContent += `
                     <li class="list-group-item">
-                        <h6>제목 : ${post.title}</h6>
-                        <p>내용 : ${post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''}</p>
+                        <h6><a href="#" class="post-title" data-post-id="${post.id}">제목 : ${post.title}</a></h6>
                     </li>
                 `;
             });
 
             boardContent += '</ul>';
             securityTab.html(boardContent);
+
+            // 게시글 제목 클릭 이벤트 추가
+            $('.post-title').on('click', function(e) {
+                e.preventDefault();
+                const postId = $(this).data('post-id');
+                window.location.href = `/boards/${postId}`;
+            });
         })
         .catch(error => {
             console.error('Error in fetchAndUpdateBoardPosts:', error);
