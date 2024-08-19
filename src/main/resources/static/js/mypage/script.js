@@ -16,9 +16,24 @@ $(document).ready(function() {
         loadUserInfo().then(() => {
             loadPersonalRepoList();
             loadTeamProjects();
-            setupProjectLinks();
+            if (typeof fetchAndUpdateBoardPosts === 'function') {
+                fetchAndUpdateBoardPosts();
+            }
         });
     }
+
+    document.getElementById('home-link').addEventListener('click', function() {
+        window.location.href = '/';
+    });
+
+    function ajaxWithToken(url, options = {}) {
+        options.headers = options.headers || {};
+        options.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken');
+        return $.ajax(url, options);
+    }
+
+    // ajaxWithToken 함수를 전역으로 설정
+    window.ajaxWithToken = ajaxWithToken;
 
     function loadUserInfo() {
         return new Promise((resolve, reject) => {
@@ -83,12 +98,6 @@ $(document).ready(function() {
                 $('#team-projects-count').text(0); // 오류 발생 시 0으로 설정
                 handleAjaxError(error);
             });
-    }
-
-    function ajaxWithToken(url, options = {}) {
-        options.headers = options.headers || {};
-        options.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken');
-        return $.ajax(url, options);
     }
 
     function loadPersonalRepoList() {
@@ -197,42 +206,30 @@ $(document).ready(function() {
         });
     }
 
-    $(document).ready(function() {
-        // 기존 코드 유지
+    function displayPaymentHistory() {
+        let paymentHistory = JSON.parse(localStorage.getItem('paymentHistory')) || [];
+        let paymentContent = $('#payment');
 
-        // 결제 탭 클릭 시 결제 내역 표시
-        $('a[href="#payment"]').on('click', function() {
-            displayPaymentHistory();
-        });
-
-        function displayPaymentHistory() {
-            let paymentHistory = JSON.parse(localStorage.getItem('paymentHistory')) || [];
-            let paymentContent = $('#payment');
-
-            if (paymentHistory.length === 0) {
-                paymentContent.html('<p>결제 내역이 없습니다.</p>');
-                return;
-            }
-
-            let historyHTML = '<h3>결제 내역</h3><ul class="list-group">';
-            paymentHistory.forEach(function(payment) {
-                historyHTML += `
-                <li class="list-group-item">
-                    <strong>주문번호:</strong> ${payment.merchant_uid}<br>
-                    <strong>상품명:</strong> ${payment.name}<br>
-                    <strong>금액:</strong> ${payment.amount}원<br>
-                    <strong>결제일:</strong> ${payment.date}
-                </li>
-            `;
-            });
-            historyHTML += '</ul>';
-
-            paymentContent.html(historyHTML);
+        if (paymentHistory.length === 0) {
+            paymentContent.html('<p>결제 내역이 없습니다.</p>');
+            return;
         }
 
-        // 페이지 로드 시 결제 내역 표시
-        displayPaymentHistory();
-    });
+        let historyHTML = '<h3>결제 내역</h3><ul class="list-group">';
+        paymentHistory.forEach(function(payment) {
+            historyHTML += `
+            <li class="list-group-item">
+                <strong>주문번호:</strong> ${payment.merchant_uid}<br>
+                <strong>상품명:</strong> ${payment.name}<br>
+                <strong>금액:</strong> ${payment.amount}원<br>
+                <strong>결제일:</strong> ${payment.date}
+            </li>
+        `;
+        });
+        historyHTML += '</ul>';
+
+        paymentContent.html(historyHTML);
+    }
 
     function handleAjaxError(error) {
         if (error.status === 401) {
@@ -266,7 +263,10 @@ $(document).ready(function() {
         $('#slider-value').text(value + '%');
     });
 
-    checkAccessToken();
+    // 결제 탭 클릭 시 결제 내역 표시
+    $('a[href="#payment"]').on('click', function() {
+        displayPaymentHistory();
+    });
 
     $('#login-link').on('click', function() {
         window.location.href = '/login';
@@ -276,4 +276,8 @@ $(document).ready(function() {
     $('.modal').on('shown.bs.modal', function () {
         $(this).find('.btn-close').removeAttr('aria-hidden');
     });
+
+    // 초기화 함수 호출
+    checkAccessToken();
+    displayPaymentHistory();
 });
