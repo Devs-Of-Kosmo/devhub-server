@@ -3,7 +3,6 @@
 {% block title %}File Comparison{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/index/index.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 {% endblock %}
 
@@ -36,9 +35,6 @@
                         <input type="file" webkitdirectory directory name="file1" id="file1" class="file-input" style="display: none;" required>
                         <button type="button" class="open-file-btn" onclick="document.getElementById('file1').click();">Upload File</button>
                     </div>
-                    <div class="file-content" id="original-file-content">
-                        <!-- Original file content will be displayed here -->
-                    </div>
                 </div>
             </div>
 
@@ -67,7 +63,7 @@
             </section>
 
             <!-- 메타데이터 카드 슬라이드 -->
-            <section class="metadata-cards-wrapper" style="display: none;">
+            <section class="metadata-cards-wrapper" style="display: block;">
                 <!-- 초기에는 숨김 -->
                 <div class="metadata-cards-container">
                     <!-- 메타데이터 카드가 추가될 영역 -->
@@ -97,31 +93,6 @@
             <button id="review-btn" class="action-btn">AI 코드 리뷰</button>
             <div id="review-result">
                 <!-- Review feedback will be displayed here -->
-            </div>
-        </div>
-
-        <!-- 댓글 섹션 -->
-        <div id="comment-section">
-            <h2>댓글</h2>
-            <form id="comment-form">
-                <textarea id="user-comment" placeholder="Your Comment" class="textarea-field" required></textarea>
-                <input type="hidden" id="page" value="home">
-                <button id="submit-btn" type="submit" class="submit-btn">작성</button>
-            </form>
-            <div id="comments-list">
-                {% for comment in comments %}
-                <div class="comment">
-                    <p><strong>{{ comment.username }}</strong>: {{ comment.user_comment }}</p>
-                    {% if comment.admin_response %}
-                    <p><em>Admin:</em> {{ comment.admin_response }}</p>
-                    {% elif current_user.is_authenticated and current_user.is_admin %}
-                    <form class="response-form" data-id="{{ comment.id }}">
-                        <textarea placeholder="Admin Response" class="textarea-field"></textarea>
-                        <button type="submit" class="submit-btn">쓰기</button>
-                    </form>
-                    {% endif %}
-                </div>
-                {% endfor %}
             </div>
         </div>
     </div>

@@ -7,17 +7,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const reviewBtn = document.getElementById('review-btn');
     const accessToken = localStorage.getItem('accessToken');
     const projectName = sessionStorage.getItem('projectName'); // 세션 스토리지에서 projectName 가져오기
+    const projectId = sessionStorage.getItem('projectId'); // 세션 스토리지에서 projectId 가져오기
+    const description = sessionStorage.getItem('description'); // 세션 스토리지에서 description 가져오기
+    const createdDate = sessionStorage.getItem('createdDate'); // 세션 스토리지에서 createdDate 가져오기
     const metadataWrapper = document.querySelector('.metadata-cards-wrapper');
     const commitCardsContainer = document.querySelector('.commit-cards-container');
     const metadataContainer = document.querySelector('.metadata-cards-container');
     let selectedMetadataCard = null;
 
-    if (!projectName) {
-        console.error('프로젝트 이름이 설정되지 않았습니다.');
-        return;
-    }
-
-    // 모달 관련 요소
     const sideContentModal = document.getElementById('sideContentModal');
     const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
     const closeModalBtn = document.querySelector('.close-btn');
@@ -105,8 +102,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     async function deleteRepository(projectName) {
+        console.log('Deleting project with ID:', projectId);
+        console.log('Using accessToken:', accessToken);
+
         try {
-            const response = await fetch(`http://localhost:8080/api/personal/repo?projectName=${encodeURIComponent(projectName)}`, {
+            const response = await fetch(`http://localhost:8080/api/personal/repo/${projectId}`, {  // 수정된 부분
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
@@ -117,6 +117,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert('레포지토리가 성공적으로 삭제되었습니다.');
                 window.location.href = 'http://localhost:8080/project_list';
             } else {
+                const errorText = await response.text();  // 서버에서 전달하는 에러 메시지 확인
+                console.error('Failed to delete repository:', errorText);
                 throw new Error('Failed to delete repository');
             }
         } catch (error) {
@@ -125,9 +127,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+
+
     async function fetchProjectMetadata(projectName) {
+        console.log('fetchProjectMetadata 호출됨, 프로젝트 이름:', projectName);
         try {
-            const response = await fetch(`http://localhost:8080/api/personal/project/metadata?projectName=${encodeURIComponent(projectName)}`, {
+            const response = await fetch(`http://localhost:8080/api/personal/project/metadata?projectId=${projectId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -140,6 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const data = await response.json();
+            console.log('프로젝트 메타데이터 가져옴:', data);
             displayProjectMetadata(data);
         } catch (error) {
             console.error('Error fetching project metadata:', error);
@@ -149,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function displayProjectMetadata(metadata) {
         const { projectName, description, commitInfo } = metadata;
         const metadataContainer = document.querySelector('.metadata-cards-container');
-        metadataContainer.innerHTML = '';
+        metadataContainer.innerHTML = ''; // 기존 내용을 지우고 새로 채우기
 
         commitInfo.forEach(commit => {
             const commitCard = document.createElement('div');
@@ -181,6 +187,8 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
             metadataContainer.appendChild(commitCard);
         });
+
+        console.log('메타데이터가 제대로 표시되었습니다.');
     }
 
     // 이벤트 리스너를 한 번만 등록
@@ -534,6 +542,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const commitMessage = commitMessageInput.value.trim();
             const personalProjects = JSON.parse(localStorage.getItem('personal_project') || '[]');
 
+            console.log("커밋 버튼 클릭됨");
+            console.log("선택된 파일 수:", files.length);
+            console.log("입력된 커밋 메시지:", commitMessage);
+
             if (!files.length) {
                 alert('커밋할 파일을 선택하세요.');
                 return;
@@ -551,6 +563,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 formData.append('commitMessage', commitMessage);
 
+                console.log("FormData 생성 완료");
+                console.log("FormData 내용:", Array.from(formData.entries()));
+
                 let apiUrl = 'http://localhost:8080/api/personal/project/init';
                 let method = 'POST';
 
@@ -562,6 +577,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     formData.append('projectId', projectId);
                 }
 
+                console.log("API URL:", apiUrl);
+
                 const response = await fetch(apiUrl, {
                     method: method,
                     headers: {
@@ -570,11 +587,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     body: formData
                 });
 
-                const contentType = response.headers.get('content-type');
+                console.log("API 요청 완료. 응답 상태 코드:", response.status);
+                console.log("응답 Content-Type:", response.headers.get('content-type'));
 
                 if (!response.ok) {
+                    const contentType = response.headers.get('content-type');
                     if (contentType && contentType.includes('application/json')) {
                         const errorData = await response.json();
+                        console.log("커밋 실패 (JSON 응답):", errorData);
                         alert('커밋 실패: ' + errorData.message);
                     } else {
                         const errorText = await response.text();
@@ -586,7 +606,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const newCommitData = await response.json();
                 personalProjects.push(newCommitData);
-                localStorage.setItem('personal_project', JSON.stringify(personProjects));
+                localStorage.setItem('personal_project', JSON.stringify(personalProjects));
 
                 alert('커밋 성공!');
             } catch (error) {
@@ -595,6 +615,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+
 
     if (file1) {
         file1.addEventListener('change', async function () {

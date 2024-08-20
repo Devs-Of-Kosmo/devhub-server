@@ -27,32 +27,6 @@
                 <pre id="code-output" class="code-result"></pre>
             </div>
         </div>
-
-        <!-- 댓글 섹션 -->
-        <div id="comment-section">
-            <h2>Comments</h2>
-            <form id="comment-form">
-                <input type="text" id="username" placeholder="Your Name" class="input-field" required>
-                <textarea id="user-comment" placeholder="Your Comment" class="textarea-field" required></textarea>
-                <input type="hidden" id="page" value="tools">
-                <button type="submit" class="submit-btn">Submit</button>
-            </form>
-            <div id="comments-list">
-                {% for comment in comments %}
-                <div class="comment">
-                    <p><strong>{{ comment.username }}</strong>: {{ comment.user_comment }}</p>
-                    {% if comment.admin_response %}
-                    <p><em>Admin:</em> {{ comment.admin_response }}</p>
-                    {% elif current_user.is_authenticated and current_user.is_admin %}
-                    <form class="response-form" data-id="{{ comment.id }}">
-                        <textarea placeholder="Admin Response" class="textarea-field"></textarea>
-                        <button type="submit" class="submit-btn">Respond</button>
-                    </form>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-        </div>
     </div>
 </div>
 

@@ -1,3 +1,39 @@
+.modal {
+    display: none; /* 초기에는 모달 창을 숨깁니다 */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .cards-wrapper {
     display: flex;
     align-items: center;
@@ -56,51 +92,109 @@
 }
 
 .metadata-cards-wrapper {
-    margin-top: 20px;
-    overflow: hidden;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .metadata-cards-container {
     display: flex;
-    overflow: hidden;
+    overflow-x: auto;
+    gap: 16px;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+    cursor: grab;
     scroll-behavior: smooth;
-    width: calc(100% - 80px);
-    padding: 10px;
-    transition: transform 0.5s ease-in-out;
+}
+
+.metadata-cards-container .commit-card.selected {
+    border-color: blue;
+}
+
+.metadata-cards-container.active {
+    cursor: grabbing;
+}
+
+.commit-and-content-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.commit-cards-container {
+    width: 25%;
+    overflow-y: auto;
+    height: 400px;
+    border-right: 1px solid #ddd;
+    box-sizing: border-box;
+    overflow-x: hidden; /* 가로 스크롤바를 숨김 */
+}
+
+.file-content-section {
+    width: 50%; /* 두 섹션이 나란히 배치되도록 각각의 너비를 50%로 설정 */
+    height: 400px; /* 고정된 높이 설정 */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    /* 테두리 제거 */
+    white-space: pre-wrap; /* 줄 바꿈을 유지하면서 텍스트 표시 */
+    word-wrap: break-word; /* 긴 단어를 줄 바꿈 */
+    font-size: 1rem; /* 글자 크기 통일 */
+    font-family: 'Courier New', Courier, monospace; /* 동일한 글꼴 사용 */
+    line-height: 1.5; /* 줄 간격 통일 */
+    color: #fff; /* 글자 색상을 흰색으로 설정 */
 }
 
 .commit-card {
-    background-color: #fff;
-    padding: 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    min-width: 150px; /* 최소 너비를 기존의 절반으로 줄임 */
+    flex: 0 0 10%; /* 각 카드의 너비를 컨테이너의 50%로 설정 */
+    max-width: 50%; /* 최대 너비를 50%로 제한 */
+    box-sizing: border-box;
+    /* 나머지 스타일은 그대로 유지 */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    flex: 0 0 250px;
-    margin-right: 20px;
-    transition: transform 0.2s, all 0.3s ease-in-out;
-    position: relative;
+    border: 1px solid #fff;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #333;
+    color: white;
+    margin: 0 10px 20px 10px; /* 마진을 조정하여 카드 사이의 간격 조정 */
+    transition: transform 0.2s ease-in-out;
+}
+
+.commit-card:hover {
+    transform: none;
+}
+
+.commit-card h3,
+.commit-card p,
+.commit-card ul,
+.commit-card li {
+    color: white;
 }
 
 .commit-card.expanded {
     flex: 0 0 100%;
     position: relative;
     z-index: 10;
+    margin: 0 auto;
+    width: 90%;
+    max-width: 800px;
 }
 
-.commit-card h3 {
-    margin: 0 0 8px;
-    font-size: 1.2em;
-}
-
-.commit-card p, .commit-card ul {
+.commit-card h3,
+.commit-card p,
+.commit-card ul {
     margin: 0;
     font-size: 0.9em;
-    color: #555;
+    color: white;
+}
+
+.commit-cards-container {
+    margin-top: 20px;
 }
 
 .commit-card ul {
@@ -110,36 +204,6 @@
 
 .commit-card li {
     margin-bottom: 8px;
-}
-
-.slide-btn {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
-    transition: background-color 0.3s ease;
-}
-
-.slide-btn:hover {
-    background-color: #0056b3;
-}
-
-.left-btn {
-    left: 10px;
-}
-
-.right-btn {
-    right: 10px;
 }
 
 #directory-view {
@@ -177,4 +241,123 @@
 
 .back-btn:hover {
     background-color: #d32f2f;
+}
+
+.file-icon::before {
+    content: '\f15c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 5px;
+}
+
+.directory-icon::before {
+    content: '\f07b';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 5px;
+}
+
+.directory-open .directory-icon::before {
+    content: '\f07c';
+}
+
+.tree-node {
+    list-style: none;
+    cursor: pointer;
+    margin-left: 20px;
+    transition: all 0.3s ease-in-out;
+}
+
+.file-checkbox {
+    margin-right: 5px;
+}
+
+#file-content-display {
+    width: 75%;
+    height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px;
+    box-sizing: border-box;
+    /* 테두리 제거 */
+    color: #fff; /* 글자 색상을 흰색으로 설정 */
+}
+
+.toggle-icon {
+    margin-right: 5px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.line {
+    display: flex;
+    align-items: center;
+}
+
+.line-number {
+    width: 40px; /* 줄 번호의 넓이 조정 */
+    text-align: right; /* 오른쪽 정렬 */
+    margin-right: 10px; /* 줄 번호와 텍스트 사이의 간격 */
+    color: #999; /* 줄 번호의 색상 */
+    font-family: monospace; /* 일관된 폭의 글꼴 */
+    user-select: none; /* 줄 번호 선택 불가능 */
+}
+
+ul {
+    padding-left: 20px;
+    transition: max-height 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+ul ul {
+    padding-left: 15px;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+}
+
+/* 왼쪽 사이드바 스타일 */
+.sidebar {
+    width: 80px; /* 사이드바의 너비를 설정 */
+    background-color: #2c3e50;
+    height: 100vh; /* 화면 전체 높이 */
+    padding-top: 20px;
+    position: fixed; /* 스크롤 시에도 고정 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 0; /* 왼쪽 여백을 없애기 위해 padding-left 설정 */
+}
+
+.sidebar .nav-icons {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar .nav-icons li {
+    margin: 20px 0;
+}
+
+.sidebar .nav-icons li a {
+    color: #ecf0f1;
+    font-size: 24px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.sidebar .nav-icons li a:hover {
+    color: #1abc9c;
+}
+
+/* 메인 콘텐츠 스타일 */
+.main-content {
+    margin-left: 80px; /* 사이드바 넓이만큼 왼쪽 여백을 줍니다 */
+    padding: 20px;
+    width: calc(100% - 80px); /* 화면의 남은 넓이를 사용 */
 }

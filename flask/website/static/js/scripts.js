@@ -1,7 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
     var urlParams = new URLSearchParams(window.location.search);
     var token = urlParams.get('token');
-    var projectName = urlParams.get('projectName'); // projectId 대신 projectName을 URL에서 가져옵니다.
+    var projectId = urlParams.get('projectId');
+    var projectName = urlParams.get('projectName');
+    var description = urlParams.get('description');
+    var createdDate = urlParams.get('createdDate');
 
     // token을 localStorage에 저장
     if (token) {
@@ -10,15 +13,30 @@ document.addEventListener('DOMContentLoaded', function () {
         token = localStorage.getItem('accessToken');
     }
 
-    // projectName을 sessionStorage에 저장
+    // projectId, projectName, description, createdDate를 sessionStorage에 저장
+    if (projectId) {
+        sessionStorage.setItem('projectId', projectId);
+    } else {
+        projectId = sessionStorage.getItem('projectId');
+    }
+
     if (projectName) {
         sessionStorage.setItem('projectName', projectName);
     } else {
         projectName = sessionStorage.getItem('projectName');
     }
 
-    console.log('Token 상태:', token ? '토큰이 성공적으로 저장되었습니다.' : '토큰이 없습니다.');
-    console.log('Project Name 상태:', projectName ? '프로젝트 이름이 성공적으로 저장되었습니다.' : '프로젝트 이름이 없습니다.');
+    if (description) {
+        sessionStorage.setItem('description', description);
+    } else {
+        description = sessionStorage.getItem('description');
+    }
+
+    if (createdDate) {
+        sessionStorage.setItem('createdDate', createdDate);
+    } else {
+        createdDate = sessionStorage.getItem('createdDate');
+    }
 
     if (token) {
         // 사용자 정보를 가져와서 네비게이션 바에 표시하는 함수 호출
@@ -58,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var description = document.getElementById('description').value;
 
             if (token && projectName && description) {
-                fetch('/api/personal/repo', {
+                fetch('http://localhost:8080/api/personal/repo', {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Bearer ' + token,
@@ -73,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     console.log('Project creation response:', data);
                     if (data.personalProjectId) {
-                        // 프로젝트 생성 후 로컬 스토리지에 저장하는 코드 제거
                         window.location.reload();
                     } else {
                         console.error('Project creation failed:', data);
@@ -90,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function fetchUserInfo(token) {
-    fetch('/api/user/info', {
+    fetch('http://localhost:8080/api/user/info', {
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + token,

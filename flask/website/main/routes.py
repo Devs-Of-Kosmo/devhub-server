@@ -34,22 +34,25 @@ def index():
 @main.route('/save_token', methods=['GET'])
 def save_token():
     token = request.args.get('token')
-    project_name = request.args.get('projectName')  # projectId 대신 projectName으로 변경
+    project_id = request.args.get('projectId')
+    project_name = request.args.get('projectName')
+    description = request.args.get('description')
+    created_date = request.args.get('createdDate')
 
-    if not token or not project_name:
-        return jsonify({"error": "토큰이나 프로젝트 이름이 제공되지 않았습니다."}), 400
+    if not token or not project_id or not project_name:
+        return jsonify({"error": "토큰이나 프로젝트 정보가 제공되지 않았습니다."}), 400
 
-    # 이 부분에서 프로젝트 이름과 토큰을 처리합니다.
-    # 예를 들어, 이 정보를 클라이언트 측에서 사용하기 위해 JavaScript로 전송할 수 있습니다.
     response_script = f"""
         <script>
             localStorage.setItem('accessToken', '{token}');
-            sessionStorage.setItem('projectName', '{project_name}');  // projectId 대신 projectName을 세션 스토리지에 저장
+            sessionStorage.setItem('projectId', '{project_id}');
+            sessionStorage.setItem('projectName', '{project_name}');
+            sessionStorage.setItem('description', '{description}');
+            sessionStorage.setItem('createdDate', '{created_date}');
             window.location.href = '/';  // 리디렉션
         </script>
     """
     return response_script, 200
-
 
 @main.route('/api/personal/repo', methods=['POST'])
 @jwt_required()  # JWT 토큰이 필요함을 나타냅니다.
@@ -58,14 +61,12 @@ def create_personal_repo():
     access_token = request.headers.get('Authorization')
 
     try:
-        # 스프링부트 API로 요청 보내기
         response = requests.post(
             f'{SPRING_BOOT_API_URL}/api/personal/repo',
             json=data,
             headers={'Authorization': access_token}
         )
 
-        # 스프링부트에서 응답 처리
         response.raise_for_status()
         return jsonify(response.json()), response.status_code
 
@@ -80,21 +81,40 @@ def init_personal_project():
     commit_message = request.form.get('commitMessage')
     access_token = request.headers.get('Authorization')
 
+    # 필드 로그 출력 (디버깅용)
+    print(f"Received project_id: {project_id}")
+    print(f"Received commit_message: {commit_message}")
+    print(f"Number of files received: {len(files)}")
+    print(f"Access token: {access_token}")
+
     files_data = [('files', (file.filename, file.stream, file.content_type)) for file in files]
 
+    # 로그: 파일 정보 확인 (디버깅용)
+    for file_info in files_data:
+        print(f"File: {file_info[1][0]}, Content-Type: {file_info[1][2]}")
+
+    # 요청 보내기
     try:
         response = requests.post(
             f'{SPRING_BOOT_API_URL}/api/personal/project/init',
             data={'projectId': project_id, 'commitMessage': commit_message},
             files=files_data,
-            headers={'Authorization': access_token}
+            headers={'Authorization': f'Bearer {access_token}'}
         )
+
+        # 응답 상태 코드 확인 (디버깅용)
+        print(f"Response Status Code: {response.status_code}")
+        print(f"Response Content: {response.text}")
 
         response.raise_for_status()
         return jsonify(response.json()), response.status_code
 
     except requests.exceptions.RequestException as e:
+        print(f"Error: {str(e)}")  # 디버깅을 위해 추가
         return jsonify({'message': 'Failed to initialize project', 'error': str(e)}), 500
+
+
+
 
 @main.route('/api/personal/project/save', methods=['POST'])
 @jwt_required()  # JWT 토큰이 필요함을 나타냅니다.
@@ -104,11 +124,9 @@ def save_personal_project():
     commit_message = request.form.get('commitMessage')
     access_token = request.headers.get('Authorization')
 
-    # FormData에 포함될 파일 데이터를 준비합니다.
     files_data = [('files', (file.filename, file.stream, file.content_type)) for file in files]
 
     try:
-        # 스프링 부트 API로 요청을 보냅니다.
         response = requests.post(
             f'{SPRING_BOOT_API_URL}/api/personal/project/save',
             data={'fromCommitId': from_commit_id, 'commitMessage': commit_message},
@@ -116,29 +134,92 @@ def save_personal_project():
             headers={'Authorization': access_token}
         )
 
-        # 응답이 성공적이지 않은 경우 예외를 발생시킵니다.
         response.raise_for_status()
-        # 성공적인 응답을 JSON 형태로 반환합니다.
         return jsonify(response.json()), response.status_code
 
     except requests.exceptions.RequestException as e:
-        # 요청 중 발생한 예외를 처리합니다.
         return jsonify({'message': 'Failed to save project version', 'error': str(e)}), 500
 
 
+@main.route('/api/personal/project/download', methods=['GET'])
+@jwt_required()
+def download_project_file():
+    commit_id = request.args.get('commitId')
+    access_token = request.headers.get('Authorization')
+
+    if not commit_id:
+        return jsonify({'message': 'Missing commitId parameter'}), 400
+
+    try:
+        response = requests.get(
+            f'{SPRING_BOOT_API_URL}/api/personal/project/download',
+            headers={'Authorization': access_token},
+            params={'commitId': commit_id},
+            stream=True  # 파일 다운로드를 위해 스트리밍 모드 사용
+        )
+
+        if response.status_code == 200:
+            content_disposition = response.headers.get('Content-Disposition', '')
+            file_name = content_disposition.split('filename=')[-1].strip('"') if 'filename=' in content_disposition else 'downloaded_file.zip'
+            file_path = os.path.join(tempfile.gettempdir(), file_name)
+
+            with open(file_path, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+
+            return jsonify({'message': 'File downloaded successfully', 'filePath': file_path}), 200
+        else:
+            return jsonify({'message': 'Failed to download file', 'error': response.text}), response.status_code
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading file: {e}")  # 디버깅용 로그
+        return jsonify({'message': 'Failed to download file', 'error': str(e)}), 500
+
+
+
+@main.route('/api/personal/project/commit/<int:commit_id>', methods=['DELETE'])
+@jwt_required()
+def delete_commit(commit_id):
+    access_token = request.headers.get('Authorization')
+
+    print(f"Deleting commit with ID: {commit_id}")
+    print(f"Using accessToken: {access_token}")
+
+    try:
+        response = requests.delete(
+            f'{SPRING_BOOT_API_URL}/api/personal/project/commit/{commit_id}',
+            headers={'Authorization': access_token}
+        )
+
+        if response.status_code == 200:
+            return '', 204  # 요청이 성공했으나 응답 바디가 필요 없는 경우 204 반환
+        else:
+            print(f"Unexpected status code: {response.status_code}")
+            print(f"Response content: {response.text}")
+            return jsonify({'message': 'Failed to delete commit', 'status': response.status_code, 'errors': response.text}), response.status_code
+
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error occurred: {e.response.text}")  # 디버깅용 로그
+        return jsonify({'message': 'Failed to delete commit', 'error': e.response.text}), e.response.status_code
+    except requests.exceptions.RequestException as e:
+        print(f"Error deleting commit: {e}")  # 디버깅용 로그
+        return jsonify({'message': 'Failed to delete commit', 'error': str(e)}), 500
+
+
+
 @main.route('/api/personal/repo/list', methods=['GET'])
+@jwt_required()
 def get_selected_project():
-    token = request.headers.get('Authorization').split(' ')[1]
+    token = request.headers.get('Authorization')
     selected_project_id = request.args.get('projectId')
 
     if not token or not selected_project_id:
         return jsonify({"error": "토큰이나 프로젝트 ID가 제공되지 않았습니다."}), 400
 
-    # 스프링 부트 API로 요청 보내기
     try:
         response = requests.get(
             f'{SPRING_BOOT_API_URL}/api/personal/repo/{selected_project_id}',
-            headers={'Authorization': f'Bearer {token}'}
+            headers={'Authorization': token}
         )
         response.raise_for_status()
         project_data = response.json()
@@ -149,7 +230,7 @@ def get_selected_project():
         return jsonify({'message': 'Failed to fetch project', 'error': str(e)}), 500
 
 @main.route('/group')
-def grupt():
+def group():
     return render_template('group.html')
 
 @main.route('/upload', methods=['POST'])
@@ -210,7 +291,6 @@ def send_email_verification():
     data = request.get_json()
     email = data.get('email')
 
-    # Email verification logic here
     to_email = f"verification_code_for_{email}@example.com"
     print(f"Verification email sent to: {email}")
 
@@ -222,41 +302,28 @@ def check_email_verification():
     email = data.get('email')
     authentication_code = data.get('authenticationCode')
 
-    # Logic to check the authentication code
     verified = True
     print(f"Checked email: {email} with code: {authentication_code}")
 
     return jsonify({'verified': verified}), 200
 
 @main.route('/api/user/info', methods=['GET'])
+@jwt_required()
 def user_info():
-    # 요청 헤더에서 Authorization 토큰을 가져옵니다.
     auth_header = request.headers.get('Authorization')
     if auth_header:
-        # "Bearer " 이후의 실제 토큰을 추출합니다.
         token = auth_header.split(" ")[1]
     else:
-        token = None
-
-    # 토큰이 존재하지 않으면 403 Forbidden 응답을 반환합니다.
-    if not token:
         return jsonify({'message': 'Token is missing!'}), 403
 
     try:
-        # 스프링부트 API에 요청을 보냅니다.
         response = requests.get(f'{SPRING_BOOT_API_URL}/api/user/info', headers={'Authorization': f'Bearer {token}'})
         response.raise_for_status()
-
-        # 성공적으로 데이터를 가져왔다면, JSON 응답을 파싱합니다.
         user_info = response.json()
 
-        # JSON 응답을 클라이언트에 반환합니다.
         return jsonify(user_info), 200
     except requests.exceptions.RequestException as e:
-        # 외부 API 요청 실패 시 에러 메시지를 반환합니다.
         return jsonify({'message': 'Failed to fetch user info', 'error': str(e)}), 500
-
-
 
 @main.route('/api/personal/save', methods=['POST'])
 @jwt_required()
@@ -338,7 +405,7 @@ def compare():
         if line.startswith('- '):
             differences.append(f"<span style='background-color: #fdd;'>{line[2:]}</span>")
         elif line.startswith('+ '):
-            differences.append(f"<span style='background-color: #fdd;'>{line[2:]}</span>")
+            differences.append(f"<span style='background-color: #dfd;'>{line[2:]}</span>")
     differences_html = '<br>'.join(differences)
 
     return jsonify(differences=Markup(differences_html))
@@ -558,5 +625,4 @@ def review_files():
         review = response.choices[0].message['content'].strip()
         return jsonify(result="success", review=review)
     except Exception as e:
-        print(f"Error: {e}")
         return jsonify(result=f"Failed to get review: {e}"), 500
