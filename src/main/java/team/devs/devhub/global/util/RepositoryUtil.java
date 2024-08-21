@@ -1,7 +1,9 @@
 package team.devs.devhub.global.util;
 
+import org.eclipse.jgit.api.Git;
 import org.springframework.web.multipart.MultipartFile;
 import team.devs.devhub.domain.personal.domain.PersonalProject;
+import team.devs.devhub.domain.team.domain.project.TeamProject;
 import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.util.exception.RepositoryUtilException;
@@ -76,6 +78,20 @@ public class RepositoryUtil {
         }
     }
 
+    public static void overwriteFiles(ProjectUtilProvider project, List<MultipartFile> files, Git git) {
+        for (MultipartFile file : files) {
+            try {
+                String relativePath = file.getOriginalFilename();
+                Path filePath = Paths.get(project.getRepositoryPath(), relativePath);
+                Files.createDirectories(filePath.getParent());
+                Files.write(filePath, file.getBytes());
+            } catch (IOException e) {
+                VersionControlUtil.resetToBeforeCommit(git);
+                throw new RepositoryUtilException(ErrorCode.PROJECT_SAVE_ERROR);
+            }
+        }
+    }
+
     public static void deleteFileForCommit(PersonalProject project) {
         Path path = Paths.get(project.getRepositoryPath());
         try {
@@ -110,6 +126,13 @@ public class RepositoryUtil {
             });
         } catch (IOException e) {
             throw new RepositoryUtilException(ErrorCode.DIRECTORY_DELETE_ERROR);
+        }
+    }
+
+    public static void deleteFiles(TeamProject project, List<String> filePaths) {
+        for (String relativePath : filePaths) {
+            File file = new File(project.getRepositoryPath(), relativePath);
+            file.delete();
         }
     }
 

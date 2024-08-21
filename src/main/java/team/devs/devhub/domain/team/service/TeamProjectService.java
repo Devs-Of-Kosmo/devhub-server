@@ -146,7 +146,7 @@ public class TeamProjectService {
         TeamCommit commit = teamCommitRepository.save(
                 TeamCommit.builder()
                         .commitCode(newCommit.getName())
-                        .commitMessage(request.getCommitMessage())
+                        .commitMessage(newCommit.getFullMessage())
                         .branch(branch)
                         .createdBy(user)
                         .build()
@@ -179,6 +179,30 @@ public class TeamProjectService {
         );
 
         return TeamProjectBranchCreateResponse.of(branch, commit);
+    }
+
+    public TeamProjectSaveResponse saveWorkedProject(TeamProjectSaveRequest request, Long userId) {
+        TeamBranch branch = teamBranchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        TeamCommit parentCommit = teamCommitRepository.findById(request.getFromCommitId())
+                .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
+        validUserBranch(branch, user);
+
+        RevCommit newCommit = VersionControlUtil.saveWorkedProject(branch, request);
+
+        TeamCommit commit = teamCommitRepository.save(
+                TeamCommit.builder()
+                        .commitCode(newCommit.getName())
+                        .commitMessage(newCommit.getFullMessage())
+                        .branch(branch)
+                        .parentCommit(parentCommit)
+                        .createdBy(user)
+                        .build()
+        );
+
+        return TeamProjectSaveResponse.of(commit);
     }
 
     private long getFilesSize(List<MultipartFile> files) {
@@ -226,6 +250,12 @@ public class TeamProjectService {
     private void validExistsProjectBranch(TeamProject project) {
         if (!project.getBranches().isEmpty()) {
             throw new InitialProjectExistException(ErrorCode.INITIAL_PROJECT_ALREADY_EXIST);
+        }
+    }
+
+    private void validUserBranch(TeamBranch branch, User user) {
+        if (!(branch.getCreatedBy().getId() == user.getId())) {
+            throw new InvalidUserBranchException(ErrorCode.USER_BRANCH_MISMATCH);
         }
     }
 }

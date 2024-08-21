@@ -86,4 +86,17 @@ public class TeamProjectController {
         TeamProjectBranchCreateResponse response = teamProjectService.saveBranch(request, customUserDetails.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @PostMapping("/project/save")
+    @Operation(summary = "팀 프로젝트 다음 커밋 저장 API")
+    public ResponseEntity<TeamProjectSaveResponse> saveTeamProject(
+            @Parameter(description = "branchId : 커밋하는 브랜치의 id, fromCommitId : 저장하려는 커밋의 부모 커밋 id,  files : 파일 데이터(이름에 상대 경로 포함), " +
+                    "deleteFileNames : (노션 참고), renameFileNames : (노션참고), commitMessage : 남길 메시지")
+            @ModelAttribute TeamProjectSaveRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamProjectSaveResponse response = teamProjectService.saveWorkedProject(request, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
 }
