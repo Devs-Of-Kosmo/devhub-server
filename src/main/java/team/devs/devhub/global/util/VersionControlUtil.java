@@ -16,6 +16,8 @@ import team.devs.devhub.domain.personal.domain.PersonalProject;
 import team.devs.devhub.domain.personal.exception.FileNotFoundException;
 import team.devs.devhub.domain.team.domain.project.TeamBranch;
 import team.devs.devhub.domain.team.domain.project.TeamCommit;
+import team.devs.devhub.domain.team.domain.project.TeamProject;
+import team.devs.devhub.domain.team.dto.project.TeamProjectSaveRequest;
 import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.util.exception.VersionControlUtilException;
@@ -61,7 +63,7 @@ public class VersionControlUtil {
 
             git.close();
         } catch (IOException | GitAPIException e) {
-            throw new RuntimeException(e);
+            throw new VersionControlUtilException(ErrorCode.BRANCH_CREATION_ERROR);
         }
     }
 
@@ -130,7 +132,7 @@ public class VersionControlUtil {
             }
 
             git.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new VersionControlUtilException(ErrorCode.COMMIT_SEARCH_ERROR);
         }
 

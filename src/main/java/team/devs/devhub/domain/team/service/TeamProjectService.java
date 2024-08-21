@@ -146,7 +146,7 @@ public class TeamProjectService {
         TeamCommit commit = teamCommitRepository.save(
                 TeamCommit.builder()
                         .commitCode(newCommit.getName())
-                        .commitMessage(request.getCommitMessage())
+                        .commitMessage(newCommit.getFullMessage())
                         .branch(branch)
                         .createdBy(user)
                         .build()

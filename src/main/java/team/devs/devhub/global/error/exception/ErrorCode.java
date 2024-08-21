@@ -26,14 +26,12 @@ public enum ErrorCode {
     REPOSITORY_CREATION_ERROR(500, "P001", "레포지토리 생성 중 오류가 발생했습니다"),
     REPOSITORY_NAME_DUPLICATED(500, "P002", "레포지토리 이름이 존재합니다"),
     PERSONAL_PROJECT_NOT_FOUND(500, "P003", "개인 프로젝트를 찾을 수 없습니다"),
-    PROJECT_SAVE_ERROR(500, "P004", "프로젝트 저장 중 오류가 발생했습니다"),
     PERSONAL_PROJECT_MASTER_NOT_MATCH(500, "P005", "프로젝트 소유자가 일치하지 않습니다"),
     PERSONAL_COMMIT_NOT_FOUND(500, "P006", "해당 커밋을 찾을 수 없습니다"),
     DIRECTORY_DELETE_ERROR(500, "P007", "프로젝트 파일을 삭제하는 중 오류가 발생했습니다"),
     COMMIT_SEARCH_ERROR(500, "P008", "커밋 이름 탐색 중 오류가 발생했습니다"),
     FILE_NOT_FOUND(500, "P009", "파일을 찾지 못했습니다"),
     FILE_SEARCH_ERROR(500, "P010", "파일을 찾는 중 오류가 발생했습니다"),
-    COMMIT_RESET_ERROR(500, "P011", "커밋 삭제 중 오류가 발생했습니다"),
     ZIP_FILE_GENERATE_ERROR(500, "P012", "zip파일 생성 중 오류가 발생했습니다"),
     REPOSITORY_UPDATE_ERROR(500, "P013", "레포지토리 업데이트 중 오류가 발생했습니다"),
     REPOSITORY_DELETE_ERROR(500, "P014", "레포지토리를 삭제하는 중 오류가 발생했습니다"),
@@ -68,7 +66,11 @@ public enum ErrorCode {
 
     // VersionControlUtil
     BRANCH_SEARCH_ERROR(500, "V001", "브랜치 탐색 과정 중 오류가 발생했습니다"),
-    BRANCH_NOT_FOUND(500, "V002", "브랜치가 존재하지 않습니다");
+    BRANCH_NOT_FOUND(500, "V002", "브랜치가 존재하지 않습니다"),
+    PROJECT_SAVE_ERROR(500, "V003", "프로젝트 저장 중 오류가 발생했습니다"),
+    GIT_ROLLBACK_ERROR(500, "V004", "깃 상태 롤백 중 오류가 발생했습니다"),
+    COMMIT_RESET_ERROR(500, "V005", "커밋 삭제 중 오류가 발생했습니다"),
+    BRANCH_CREATION_ERROR(500, "V005", "브랜치 생성 중 오류가 발생했습니다");
 
     private final String code;
     private final String message;

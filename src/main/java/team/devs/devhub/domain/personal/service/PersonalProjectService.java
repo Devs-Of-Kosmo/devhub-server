@@ -99,13 +99,12 @@ public class PersonalProjectService {
     }
 
     public PersonalProjectInitResponse saveInitialProject(PersonalProjectInitRequest request, long userId) {
-        validUploadFileSize(request.getFiles());
-
         PersonalProject project = personalProjectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new PersonalProjectNotFoundException(ErrorCode.PERSONAL_PROJECT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         validMatchedProjectMaster(project, user);
+        validUploadFileSize(request.getFiles());
 
         RepositoryUtil.saveProjectFiles(project, request.getFiles());
         RepositoryUtil.createGitIgnoreFile(project);
@@ -124,14 +123,13 @@ public class PersonalProjectService {
     }
 
     public PersonalProjectSaveResponse saveWorkedProject(PersonalProjectSaveRequest request, long userId) {
-        validUploadFileSize(request.getFiles());
-
         PersonalCommit parentCommit = personalCommitRepository.findById(request.getFromCommitId())
                 .orElseThrow(() -> new PersonalCommitNotFoundException(ErrorCode.PERSONAL_COMMIT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         PersonalProject project = parentCommit.getProject();
         validMatchedProjectMaster(parentCommit.getProject(), user);
+        validUploadFileSize(request.getFiles());
 
         RepositoryUtil.deleteFileForCommit(project);
         RepositoryUtil.saveProjectFiles(project, request.getFiles());
