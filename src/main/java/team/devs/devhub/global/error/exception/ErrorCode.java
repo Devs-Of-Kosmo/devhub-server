@@ -45,10 +45,12 @@ public enum ErrorCode {
     NOT_SUB_MANAGER_OR_HIGHER(500, "T004", "SUB_MANAGER 이상의 권환이 필요합니다"),
     NOT_MANAGER_OR_HIGHER(500, "T005", "MANAGER 이상의 권환이 필요합니다"),
     TEAM_PROJECT_NAME_DUPLICATED(500, "T006", "팀 프로젝트 이름이 존재합니다"),
-    TEAM_PROJECT_NOT_FOUND(500, "T007", "팀 프로젝트가 존재하지 않습니다"),
+    TEAM_PROJECT_NOT_FOUND(500, "T007", "프로젝트가 존재하지 않습니다"),
     TEAM_PROJECT_FILE_SIZE_OVER(500, "T008", "업로드한 파일의 용량이 200MB를 초과했습니다"),
     INITIAL_PROJECT_ALREADY_EXIST(500, "T009", "최초 저장한 프로젝트가 이미 존재합니다"),
-    TEAM_COMMIT_NOT_FOUND(500, "T010", "팀 커밋이 존재하지 않습니다"),
+    TEAM_COMMIT_NOT_FOUND(500, "T010", "커밋이 존재하지 않습니다"),
+    TEAM_BRANCH_NOT_FOUND(500, "T011", "브랜치가 존재하지 않습니다"),
+    USER_BRANCH_MISMATCH(500, "T012", "해당 브랜치를 생성한 유저가 아닙니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),

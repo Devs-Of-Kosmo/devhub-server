@@ -108,6 +108,35 @@ public class VersionControlUtil {
         }
     }
 
+    public static RevCommit saveWorkedProject(TeamBranch branch, TeamProjectSaveRequest dto) {
+        TeamProject project = branch.getProject();
+        Git git = null;
+        try {
+            git = Git.open(new File(project.getRepositoryPath()));
+            git.checkout().setName(branch.getName()).call();
+
+            RepositoryUtil.deleteFiles(project, dto.getDeleteFileNameList());
+            renameOrMoveFiles(project, dto.getRenameFileNameList());
+            RepositoryUtil.overwriteFiles(project, dto.getFiles(), git);
+
+            Status status = git.status().call();
+            for (String missing : status.getMissing()) {
+                git.rm().addFilepattern(missing).call();
+            }
+
+            git.add()
+                    .addFilepattern(".")
+                    .call();
+
+            RevCommit commit = git.commit().setMessage(dto.getCommitMessage()).call();
+            git.close();
+            return commit;
+        } catch (Exception e) {
+            rollbackToBeforeChange(git);
+            throw new VersionControlUtilException(ErrorCode.PROJECT_SAVE_ERROR);
+        }
+    }
+
     public static List<String> getFileNameWithPathList(PersonalCommit personalCommit) {
         List<String> fileNameWithPathList = new ArrayList<>();
         try {
@@ -237,6 +266,61 @@ public class VersionControlUtil {
             throw new VersionControlUtilException(ErrorCode.ZIP_FILE_GENERATE_ERROR);
         }
         return byteArrayOutputStream.toByteArray();
+    }
+
+    public static void resetToBeforeCommit(Git git) {
+        try {
+            git.reset()
+                    .setMode(ResetCommand.ResetType.HARD)
+                    .setRef("HEAD^")
+                    .call();
+            git.close();
+        } catch (GitAPIException e) {
+            git.close();
+            throw new VersionControlUtilException(ErrorCode.COMMIT_RESET_ERROR);
+        }
+    }
+
+    private static void renameOrMoveFiles(TeamProject project, List<List<String>> filePaths) throws IOException, GitAPIException {
+        String repositoryPath = project.getRepositoryPath();
+
+        Git git = Git.open(new File(repositoryPath));
+
+        for (List<String> e : filePaths) {
+
+            String fromName = e.get(0);
+            String toName = e.get(1);
+
+            File from = new File(repositoryPath, fromName);
+            File to = new File(repositoryPath, toName);
+
+            to.getParentFile().mkdirs();
+
+            boolean success = from.renameTo(to);
+            if (success) {
+                git.rm().addFilepattern(fromName).call();
+                git.add().addFilepattern(toName).call();
+            }
+        }
+
+        git.commit()
+                .setMessage("move or rename file commit")
+                .call();
+
+        git.close();
+    }
+
+    private static void rollbackToBeforeChange(Git git) {
+        try {
+            ObjectId stashId = git.stashCreate().call();
+            if (stashId != null) {
+                git.stashDrop().setStashRef(0).call();
+            }
+            git.close();
+        } catch (Exception e) {
+            git.close();
+            throw new VersionControlUtilException(ErrorCode.GIT_ROLLBACK_ERROR);
+        }
     }
 
     private VersionControlUtil() {}
