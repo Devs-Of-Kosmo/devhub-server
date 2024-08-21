@@ -6,7 +6,8 @@ build/
 !**/src/test/**/build/
 
 ##flask
-flask/.env
+/flask/.env
+/flask/myenv/
 
 ### STS ###
 .apt_generated
