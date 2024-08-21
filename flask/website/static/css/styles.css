@@ -7,19 +7,20 @@ body {
     padding: 0;
 }
 
-/* 컨테이너 스타일 */
 .container1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background-color: #252526;
+    padding: 1px 30px; /* 패딩을 줄여서 높이를 더 얇게 조정 */
+    background: linear-gradient(90deg, #252526, #3c3c3c); /* 색상 그라데이션 추가 */
     border-bottom: 1px solid #3c3c3c;
     position: fixed;
     top: 0;
-    width: calc(100% - 60px); /* 사이드바 넓이를 제외한 너비 */
+    width: calc(100% - 50px); /* 사이드바 넓이를 제외한 너비 */
     z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 입체감 추가 */
 }
+
 
 /* 로고 및 타이틀 */
 .logo-title-container {
@@ -28,7 +29,7 @@ body {
 }
 
 .site-logo {
-    height: 30px;
+    height: 20px;
     margin-right: 10px;
 }
 
@@ -62,7 +63,7 @@ body {
 
 /* 사이드바 스타일 */
 .sidebar {
-    width: 60px;
+    width: 50px; /* 사이드바 너비를 줄임 */
     background-color: #333333;
     height: 100vh;
     padding-top: 60px;
@@ -72,6 +73,9 @@ body {
     flex-direction: column;
     align-items: center;
     z-index: 999;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3); /* 입체감 추가 */
+    border-right: 1px solid #3c3c3c; /* 테두리 추가 */
+    border-radius: 0 4px 4px 0; /* 왼쪽 모서리를 둥글게 */
 }
 
 .sidebar .nav-icons {
@@ -98,11 +102,56 @@ body {
     color: #9cdcfe;
 }
 
-/* 메인 콘텐츠 스타일 */
-.main-content {
-    margin-left: 60px;
-    padding: 80px 20px 20px 20px;
-    width: calc(100% - 60px);
+/* 브랜치 콘텐츠에 모달 스타일 적용 및 가운데 정렬 */
+#branchContent {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    overflow: auto;
+    background-color: #1e1e1e;
+    padding: 20px;
+    border: 1px solid #3c3c3c;
+    border-radius: 5px;
+}
+
+/* 닫기 버튼 스타일 */
+#branchContent .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #d4d4d4;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.1s ease;
+}
+
+#branchContent .close-btn:hover,
+#branchContent .close-btn:focus {
+    color: #9cdcfe;
+    text-decoration: none;
+    transform: scale(1.1);
+}
+
+/* 페이드 인 애니메이션 */
+#branchContent.show {
+    display: block;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* 페이드 인 애니메이션 정의 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 /* 모달 스타일 */
@@ -127,6 +176,9 @@ body {
     border: 1px solid #3c3c3c;
     width: 80%;
     border-radius: 5px;
+    max-height: 80vh; /* 모달 최대 높이 설정 */
+    overflow-y: auto; /* 세로 스크롤 허용 */
+    position: relative; /* position relative 설정 */
 }
 
 .close-btn {
@@ -155,7 +207,7 @@ body {
     display: flex;
     overflow: hidden;
     scroll-behavior: smooth;
-    width: 100%;
+    width: 50%;
     padding: 20px;
 }
 
@@ -202,12 +254,7 @@ body {
     background-color: #005a9e;
 }
 
-/* 메타데이터 카드 스타일 */
-.metadata-cards-wrapper {
-    position: relative;
-    padding-left: 0;
-    padding-right: 0;
-}
+
 
 .metadata-cards-container {
     display: flex;
@@ -368,7 +415,8 @@ body {
 .tree-node {
     list-style: none;
     cursor: pointer;
-    margin-left: 20px;
+    margin-left: 0;
+    padding-left: 10px; /* 약간의 패딩 추가 */
     transition: all 0.3s ease-in-out;
 }
 
@@ -385,7 +433,7 @@ body {
 /* 코드 라인 스타일 */
 .line {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .line-number {
@@ -395,6 +443,7 @@ body {
     color: #858585;
     font-family: monospace;
     user-select: none;
+    flex-shrink: 0;
 }
 
 /* 공통 버튼 스타일 */
@@ -523,8 +572,8 @@ button:active {
 /* 뒤로 가기 버튼 */
 .back-btn {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 5px;
+    left: 5px;
     background-color: #ff6f61; /* 밝은 붉은색 */
     color: #ffffff;
     border: none;
@@ -567,159 +616,147 @@ button:active {
     margin-left: 60px;
     padding: 80px 20px 20px 20px;
     width: calc(100% - 60px);
+    background-color: #0d1117; /* GitHub 다크 모드 배경 색상 */
+    color: #c9d1d9; /* GitHub 텍스트 색상 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow-y: auto; /* 스크롤 가능 */
+    box-shadow: inset 0 1px 0 #21262d; /* 내부 그림자 */
 }
 
+/* 콘텐츠 헤더 스타일 */
 h2, h3, h4 {
-    color: #9cdcfe;
+    color: #58a6ff; /* GitHub의 주요 하이라이트 색상 */
+    margin-bottom: 16px;
+    border-bottom: 1px solid #30363d; /* 하단 경계선 추가 */
+    padding-bottom: 8px;
 }
 
+/* 기본 텍스트 스타일 */
 p {
-    color: #cccccc;
+    color: #8b949e; /* GitHub의 보조 텍스트 색상 */
+    line-height: 1.5;
+    margin-bottom: 16px;
 }
 
-/* Code Converter 스타일 */
-.code-converter {
-    background-color: #252526;
-    border: 1px solid #3c3c3c;
-    border-radius: 8px;
+/* 카드 스타일 */
+.commit-cards-container, #file-content-display, #changed-file-content {
+    background-color: #161b22; /* IntelliJ 스타일의 다크 카드 배경색 */
     padding: 20px;
+    border: 1px solid #30363d;
+    border-radius: 8px; /* 모서리 둥글게 */
     margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex; /* Flexbox로 정렬 */
+    align-items: flex-start; /* 상단 정렬 */
 }
 
-.language-selection {
-    margin-bottom: 20px;
+#file-content-display pre,
+#changed-file-content pre {
+    margin: 0; /* 시작선을 맞추기 위해 margin 제거 */
 }
 
-.custom-select {
-    background-color: #1e1e1e;
-    color: #d4d4d4;
-    border: 1px solid #3c3c3c;
-    border-radius: 4px;
-    padding: 5px;
+/* 스크롤바 스타일 */
+#file-content-display::-webkit-scrollbar,
+.commit-cards-container::-webkit-scrollbar,
+#changed-file-content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-.code-textarea {
-    background-color: #1e1e1e;
-    color: #d4d4d4;
-    border: 1px solid #3c3c3c;
-    border-radius: 4px;
-    width: 100%;
-    padding: 10px;
+#file-content-display::-webkit-scrollbar-thumb,
+.commit-cards-container::-webkit-scrollbar-thumb,
+#changed-file-content::-webkit-scrollbar-thumb {
+    background-color: #484f58; /* GitHub 스크롤바 색상 */
+    border-radius: 10px;
+}
+
+#file-content-display::-webkit-scrollbar-track,
+.commit-cards-container::-webkit-scrollbar-track,
+#changed-file-content::-webkit-scrollbar-track {
+    background-color: #21262d; /* 스크롤바 트랙 색상 */
+}
+
+/* 코드 스타일 */
+pre {
+    background-color: #0d1117;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 14px;
-    resize: vertical;
-}
-
-.code-output {
-    margin-top: 20px;
-}
-
-.code-result {
-    background-color: #1e1e1e;
-    color: #d4d4d4;
-    border: 1px solid #3c3c3c;
-    border-radius: 4px;
-    padding: 10px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 14px;
     white-space: pre-wrap;
-}
-
-/* 댓글 섹션 스타일 */
-#comment-section {
-    background-color: #252526;
-    border: 1px solid #3c3c3c;
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 20px;
-}
-
-.input-field,
-.textarea-field {
-    background-color: #1e1e1e;
-    color: #d4d4d4;
-    border: 1px solid #3c3c3c;
-    border-radius: 4px;
-    padding: 10px;
-    width: 100%;
-    margin-bottom: 10px;
-    font-family: inherit;
-}
-
-.textarea-field {
-    resize: vertical;
-}
-
-.submit-btn {
-    padding: 8px 12px;
-    background-color: #007acc;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-family: inherit;
-    transition: background-color 0.3s ease, transform 0.1s ease;
-}
-
-.submit-btn:hover {
-    background-color: #005a9e;
-}
-
-.submit-btn:active {
-    background-color: #003f74;
-    transform: scale(0.98);
-}
-
-/* 댓글 스타일 */
-.comment {
-    border-bottom: 1px solid #3c3c3c;
-    padding: 10px 0;
-    margin-bottom: 10px;
-}
-
-.comment strong {
-    color: #569cd6;
-}
-
-.comment p {
-    margin: 5px 0;
-}
-
-.response-form {
-    margin-top: 10px;
-}
-
-.response-form .submit-btn {
-    margin-top: 5px;
-    display: block;
-}
-
-textarea::placeholder,
-input::placeholder {
-    color: #a8a8a8;
+    line-height: 1.5;
+    margin-bottom: 20px;
 }
 
 /* 버튼 스타일 */
 .action-btn {
-    padding: 10px 16px;
-    background-color: #569cd6;
+    background-color: #238636; /* GitHub 초록색 버튼 */
     color: #ffffff;
+    padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
-    font-family: inherit;
     transition: background-color 0.3s ease, transform 0.1s ease;
-    margin-top: 20px;
 }
 
 .action-btn:hover {
-    background-color: #417cb9;
+    background-color: #2ea043; /* 호버 시 버튼 색상 */
 }
 
 .action-btn:active {
-    background-color: #315d8c;
+    background-color: #1f6feb; /* 클릭 시 버튼 색상 */
     transform: scale(0.98);
 }
+
+/* 카드 및 메타데이터 카드 스타일 */
+.repo-card {
+    background-color: #161b22;
+    color: #c9d1d9;
+    padding: 20px;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-right: 20px;
+    display: inline-block;
+}
+
+.repo-card:hover, .metadata-cards-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* 비교 섹션 스타일 */
+.compare-section {
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 체크 표시 아이콘 */
+.check-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border: solid #28a745;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.5s ease, width 0.2s ease 0.3s, height 0.2s ease 0.3s;
+    margin-left: 10px;
+}
+
+/* 애니메이션이 성공했을 때 체크 표시가 나타남 */
+.check-icon.show {
+    width: 10px;
+    height: 20px;
+    opacity: 1;
+}
+

@@ -13,7 +13,7 @@
         <ul class="nav-icons">
             <li><a href="#" id="toggleSidebarBtn"><i class="fas fa-folder-open"></i></a></li>
             <li><a href="#"><i class="fas fa-search"></i></a></li>
-            <li><a href="#"><i class="fas fa-code-branch"></i></a></li>
+            <li><a href="#" id="branchToggleBtn"><i class="fas fa-code-branch"></i></a></li> <!-- 브랜치 토글 버튼 -->
             <li><a href="#"><i class="fas fa-cog"></i></a></li>
         </ul>
     </nav>
@@ -52,6 +52,23 @@
         </div>
     </div>
 
+    <div id="branchContent" class="branch-modal">
+        <span class="close-btn">&times;</span>
+        <div class="menu-trigger"></div>
+        <section class="cards-wrapper">
+            <div class="cards-container">
+                <!-- 동적으로 카드가 추가될 영역 -->
+            </div>
+        </section>
+
+        <!-- 메타데이터 카드 슬라이드 -->
+        <section class="metadata-cards-wrapper">
+            <div class="metadata-cards-container">
+                <!-- 메타데이터 카드가 추가될 영역 -->
+            </div>
+        </section>
+    </div>
+
     <!-- 기존 컨텐츠 -->
     <div class="main-content">
         <div id="content">
@@ -82,8 +99,6 @@
                 </div>
             </div>
         </div>
-
-
 
         <div class="compare-section">
             <button id="compare-btn" class="action-btn">코드 차이점</button>

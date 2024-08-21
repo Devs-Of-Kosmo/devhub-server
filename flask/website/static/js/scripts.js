@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     } else {
-        alert('Token is missing. Please log in.');
+
     }
 });
 
