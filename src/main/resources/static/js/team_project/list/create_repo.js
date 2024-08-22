@@ -194,7 +194,7 @@ $(document).ready(function() {
             );
         } else {
             diskIcon.on('click', function() {
-                window.location.href = `/repo/${projectId}`;
+                window.location.href = `/test_team`;
             });
             diskIcon.on('dragstart', function(event) {
                 event.originalEvent.dataTransfer.setData('text/plain', JSON.stringify({

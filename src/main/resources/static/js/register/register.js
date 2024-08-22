@@ -1,22 +1,39 @@
 $(document).ready(function () {
     let sentToEmail = '';
-    let isCodeSent = false; // 인증 코드 발송 여부 플래그
-    let isEmailVerified = false; // 이메일 인증 여부 플래그
+    let isCodeSent = false;
+    let isEmailVerified = false;
 
-    // 개별 약관 모달 동의 버튼 클릭 시 체크박스 체크
+    function checkPreVerifiedEmail() {
+        const hideEmailElement = document.getElementById('emailElement');
+        const hideNameElement = document.getElementById('nameElement');
+        const email = hideEmailElement ? hideEmailElement.getAttribute('data-email') : null;
+        const name = hideNameElement ? hideNameElement.getAttribute('data-name') : null;
+
+        if (email && name) {
+            isEmailVerified = true;
+            $('#name').val(name);
+            $('#email').val(email);
+            $('#email').prop('readonly', true);
+            $('#email').css('background-color', '#919191');
+            $('#verificationCodeSection').hide();
+            $('#emailVerifiedMessage').show();
+            $('#emailVerifyBtn').hide();
+        }
+    }
+
+    checkPreVerifiedEmail();
+
     $('.agree-btn').on('click', function() {
         var checkId = $(this).data('check');
         $('#' + checkId).prop('checked', true);
         $('.modal').modal('hide');
     });
 
-    // 전체 동의 체크박스 클릭 시 개별 체크박스 모두 선택/해제
     $('#flexCheckAll').on('change', function() {
         var isChecked = $(this).is(':checked');
         $('input[type="checkbox"]').prop('checked', isChecked);
     });
 
-    // 이메일 형식 확인 및 인증 코드 발송 버튼 클릭 시
     $('#emailVerifyBtn').on('click', function() {
         var email = $('#email').val();
         var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -24,7 +41,6 @@ $(document).ready(function () {
         if (!emailPattern.test(email)) {
             Swal.fire('유효한 이메일 주소를 입력하세요.', '', 'warning');
         } else {
-            // 이메일이 유효할 때, 서버로 인증번호 발송 요청
             $.ajax({
                 type: 'POST',
                 url: '/api/mail/public/send',
@@ -33,9 +49,9 @@ $(document).ready(function () {
                 success: function(response) {
                     if (response.toEmail) {
                         sentToEmail = response.toEmail;
-                        isCodeSent = true; // 인증 코드 발송 여부 플래그 설정
+                        isCodeSent = true;
                         $('#verifyCodeBtn').text('인증 코드 확인');
-                        $('#verifyCodeBtn').prop('disabled', false); // 인증 코드 확인 버튼 활성화
+                        $('#verifyCodeBtn').prop('disabled', false);
                         Swal.fire('인증번호가 발송되었습니다.', '이메일을 확인하세요.', 'info');
                     } else {
                         Swal.fire('인증번호 발송에 실패했습니다.', '다시 시도해주세요.', 'error');
@@ -49,7 +65,6 @@ $(document).ready(function () {
         }
     });
 
-    // 인증 코드 확인 버튼 클릭 시
     $('#verifyCodeBtn').on('click', function() {
         if (!isCodeSent) {
             Swal.fire('먼저 인증 코드를 발송해주세요.', '', 'warning');
@@ -70,7 +85,7 @@ $(document).ready(function () {
                         $('#verifyCodeBtn').text('인증 완료');
                         $('#verifyCodeBtn').css('background-color', 'green');
                         $('#verifyCodeBtn').css('border-color', 'green');
-                        isEmailVerified = true; // 이메일 인증 여부 플래그 설정
+                        isEmailVerified = true;
                     } else {
                         Swal.fire('인증번호가 일치하지 않습니다.', '', 'error');
                     }

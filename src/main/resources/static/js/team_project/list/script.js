@@ -150,7 +150,7 @@ function addRepoDiskIcon(projectId, projectName, teamId, teamName, description, 
         diskIcon.classList.add('deleted-repo');
     } else {
         diskIcon.addEventListener('click', function() {
-            window.location.href = `/repo/${projectId}`;
+            window.location.href = `/test_team`;
         });
         diskIcon.addEventListener('dragstart', function(event) {
             event.dataTransfer.setData('text/plain', JSON.stringify({
