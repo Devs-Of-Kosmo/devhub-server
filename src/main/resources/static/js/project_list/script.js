@@ -159,14 +159,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     cardsWrapper.insertAdjacentHTML('beforeend', cardHTML);
                 });
 
-                // 프로젝트 클릭 시
                 $(document).on('click', '.project-container', function() {
-                    // projectName을 가져옵니다.
-                    var projectName = $(this).find('h1').text().trim();
-                    var url = `http://127.0.0.1:5000/save_token?token=${accessToken}&projectName=${encodeURIComponent(projectName)}`;
+                    // 클릭된 프로젝트의 데이터 가져오기
+                    var projectIndex = $(this).data('index');
+                    var project = projectsArray[projectIndex];
 
-                    // 프로젝트 데이터를 포함한 URL로 이동
-                    window.location.href = url;
+                    if (project) {
+                        var url = `http://127.0.0.1:5000/save_token?token=${accessToken}` +
+                            `&projectId=${encodeURIComponent(project.projectId)}` +
+                            `&projectName=${encodeURIComponent(project.projectName)}` +
+                            `&description=${encodeURIComponent(project.description)}` +
+                            `&createdDate=${encodeURIComponent(project.createdDate)}`;
+
+                        // 프로젝트 데이터를 포함한 URL로 이동
+                        window.location.href = url;
+                    } else {
+                        console.error('Project data not found for index:', projectIndex);
+                    }
                 });
 
                 // 수정 버튼 클릭 시

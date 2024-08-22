@@ -3,7 +3,6 @@
 {% block title %}File Comparison{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/index/index.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 {% endblock %}
 
@@ -14,7 +13,7 @@
         <ul class="nav-icons">
             <li><a href="#" id="toggleSidebarBtn"><i class="fas fa-folder-open"></i></a></li>
             <li><a href="#"><i class="fas fa-search"></i></a></li>
-            <li><a href="#"><i class="fas fa-code-branch"></i></a></li>
+            <li><a href="#" id="branchToggleBtn"><i class="fas fa-code-branch"></i></a></li> <!-- 브랜치 토글 버튼 -->
             <li><a href="#"><i class="fas fa-cog"></i></a></li>
         </ul>
     </nav>
@@ -36,9 +35,6 @@
                         <input type="file" webkitdirectory directory name="file1" id="file1" class="file-input" style="display: none;" required>
                         <button type="button" class="open-file-btn" onclick="document.getElementById('file1').click();">Upload File</button>
                     </div>
-                    <div class="file-content" id="original-file-content">
-                        <!-- Original file content will be displayed here -->
-                    </div>
                 </div>
             </div>
 
@@ -56,6 +52,23 @@
         </div>
     </div>
 
+    <div id="branchContent" class="branch-modal">
+        <span class="close-btn">&times;</span>
+        <div class="menu-trigger"></div>
+        <section class="cards-wrapper">
+            <div class="cards-container">
+                <!-- 동적으로 카드가 추가될 영역 -->
+            </div>
+        </section>
+
+        <!-- 메타데이터 카드 슬라이드 -->
+        <section class="metadata-cards-wrapper">
+            <div class="metadata-cards-container">
+                <!-- 메타데이터 카드가 추가될 영역 -->
+            </div>
+        </section>
+    </div>
+
     <!-- 기존 컨텐츠 -->
     <div class="main-content">
         <div id="content">
@@ -67,7 +80,7 @@
             </section>
 
             <!-- 메타데이터 카드 슬라이드 -->
-            <section class="metadata-cards-wrapper" style="display: none;">
+            <section class="metadata-cards-wrapper" style="display: block;">
                 <!-- 초기에는 숨김 -->
                 <div class="metadata-cards-container">
                     <!-- 메타데이터 카드가 추가될 영역 -->
@@ -87,8 +100,6 @@
             </div>
         </div>
 
-
-
         <div class="compare-section">
             <button id="compare-btn" class="action-btn">코드 차이점</button>
             <div class="comparison-result" id="comparison-result">
@@ -97,31 +108,6 @@
             <button id="review-btn" class="action-btn">AI 코드 리뷰</button>
             <div id="review-result">
                 <!-- Review feedback will be displayed here -->
-            </div>
-        </div>
-
-        <!-- 댓글 섹션 -->
-        <div id="comment-section">
-            <h2>댓글</h2>
-            <form id="comment-form">
-                <textarea id="user-comment" placeholder="Your Comment" class="textarea-field" required></textarea>
-                <input type="hidden" id="page" value="home">
-                <button id="submit-btn" type="submit" class="submit-btn">작성</button>
-            </form>
-            <div id="comments-list">
-                {% for comment in comments %}
-                <div class="comment">
-                    <p><strong>{{ comment.username }}</strong>: {{ comment.user_comment }}</p>
-                    {% if comment.admin_response %}
-                    <p><em>Admin:</em> {{ comment.admin_response }}</p>
-                    {% elif current_user.is_authenticated and current_user.is_admin %}
-                    <form class="response-form" data-id="{{ comment.id }}">
-                        <textarea placeholder="Admin Response" class="textarea-field"></textarea>
-                        <button type="submit" class="submit-btn">쓰기</button>
-                    </form>
-                    {% endif %}
-                </div>
-                {% endfor %}
             </div>
         </div>
     </div>
