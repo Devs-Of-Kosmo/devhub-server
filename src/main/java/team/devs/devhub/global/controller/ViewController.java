@@ -90,4 +90,12 @@ public class ViewController {
         return "team_project/team_loading";
     }
 
-}
+    @GetMapping("/test_team")
+    public String testTeam(){
+        return "test_team/test_team";
+    }
+
+    }
+
+
+
