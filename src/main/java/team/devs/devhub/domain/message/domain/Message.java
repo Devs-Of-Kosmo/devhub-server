@@ -9,7 +9,7 @@ import team.devs.devhub.global.common.BaseTimeEntity;
 @Table(name = "messages")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
+@ToString(exclude = {"sender", "receiver"})
 public class Message extends BaseTimeEntity {
 
     @Id

@@ -149,11 +149,13 @@ public class MessageService {
     }
 
     public void sendNotification(String email, String message) {
-        // 웹소켓 메시지 발송 로직
+
         try {
             messageWebSocketHandler.sendNotification(email, message);
         } catch (Exception e) {
-            throw new RuntimeException("웹소켓 메시지 발송 중 오류 발생", e);
+            // 예외 발생 시 로그를 남기고 예외를 무시
+            System.err.println("웹소켓 메시지 발송 중 오류 발생: " + e.getMessage());
+
         }
     }
 }

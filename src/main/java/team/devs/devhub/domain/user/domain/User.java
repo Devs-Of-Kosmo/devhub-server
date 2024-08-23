@@ -22,7 +22,7 @@ import java.util.Objects;
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
+@ToString(exclude = {"senderMessages", "receiverMessages"})
 public class User extends BaseTimeEntity {
 
     @Id
