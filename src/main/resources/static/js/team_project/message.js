@@ -107,4 +107,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
         var currentDate = d.toLocaleString('ko-KR', { hour12: false });
         responsiveChatPush('.chat', '시스템', 'you', currentDate, '팀원을 초대하기 위해 이메일 주소를 입력해주세요.');
     }, 1000);
+    // 닫기 버튼 기능 추가
+    const closeButton = document.querySelector('#inviteMembers .close-button-phone');
+    if (closeButton) {
+        closeButton.addEventListener('click', function() {
+            closeWindow('inviteMembers');
+        });
+    }
 });

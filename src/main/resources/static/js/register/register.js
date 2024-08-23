@@ -13,12 +13,17 @@ $(document).ready(function () {
             isEmailVerified = true;
             $('#name').val(name);
             $('#email').val(email);
-            $('#email').prop('readonly', true);
-            $('#email').css('background-color', '#919191');
+            setEmailFieldReadOnly();
             $('#verificationCodeSection').hide();
             $('#emailVerifiedMessage').show();
             $('#emailVerifyBtn').hide();
         }
+    }
+
+    function setEmailFieldReadOnly() {
+        $('#email').prop('readonly', true);
+        $('#email').css('background-color', '#e9ecef');
+        $('#email').css('cursor', 'not-allowed');
     }
 
     checkPreVerifiedEmail();
@@ -83,9 +88,14 @@ $(document).ready(function () {
                     if (response.verified) {
                         Swal.fire('이메일 인증이 완료되었습니다.', '', 'success');
                         $('#verifyCodeBtn').text('인증 완료');
+                        $('#verifyCodeBtn').prop('disabled', true);
                         $('#verifyCodeBtn').css('background-color', 'green');
                         $('#verifyCodeBtn').css('border-color', 'green');
                         isEmailVerified = true;
+                        setEmailFieldReadOnly();
+                        $('#emailVerifiedMessage').show();
+                        $('#emailVerifyBtn').hide();
+                        $('#verificationCodeSection').hide();
                     } else {
                         Swal.fire('인증번호가 일치하지 않습니다.', '', 'error');
                     }

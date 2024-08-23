@@ -279,16 +279,17 @@ footer img:hover {
     background-color: #fff;
 }
 
+
 #inviteMembers .input-area {
     display: flex;
     padding: 10px;
-    background-color: #f2f2f2;
-    border-top: 1px solid #e0e0e0;
+    background-color: #f2f2f7;
+    border-top: 1px solid #d1d1d6;
 }
 
 #inviteMembers #userInput {
     flex-grow: 1;
-    border: 1px solid #ccc;
+    border: 1px solid #c7c7cc;
     border-radius: 20px;
     padding: 8px 15px;
     margin-right: 10px;
@@ -301,7 +302,7 @@ footer img:hover {
     color: #007aff;
     border: none;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
     transition: opacity 0.3s ease;
 }
@@ -311,93 +312,78 @@ footer img:hover {
 }
 
 #inviteMembers .message {
-    margin-bottom: 10px;
     max-width: 70%;
+    margin-bottom: 2px;
     clear: both;
 }
 
 #inviteMembers .myMessage,
 #inviteMembers .fromThem {
-    padding: 10px 15px;
-    border-radius: 20px;
-    position: relative;
+    padding: 7px 14px;
     font-size: 16px;
     line-height: 1.4;
+    margin: 1px 0;
+    border-radius: 18px;
+    position: relative;
+    color: #000;
 }
 
 #inviteMembers .myMessage {
-    background-color: #007aff;
-    color: white;
+    background-color: #21ea53;
     float: right;
-    border-bottom-right-radius: 5px;
+    margin-right: 10px;
+    left : 85px;
+    color : #FFFFFF;
 }
 
 #inviteMembers .fromThem {
     background-color: #e5e5ea;
-    color: black;
     float: left;
-    border-bottom-left-radius: 5px;
+    margin-left: 10px;
+    color : #000000;
 }
 
 #inviteMembers .message date {
     font-size: 12px;
-    color: #ccc;
+    color: #8e8e93;
     display: block;
-    margin-top: 5px;
+    text-align: center;
+    margin: 10px 0;
     clear: both;
 }
 
 #inviteMembers .myMessage date {
     text-align: right;
+    padding-right: 5px;
 }
 
 #inviteMembers .fromThem date {
     text-align: left;
+    padding-left: 5px;
+}
+#inviteMembers .message:first-child .myMessage {
+    border-top-right-radius: 18px;
 }
 
-/* 말풍선 꼬리 스타일 */
-#inviteMembers .myMessage::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: -10px;
-    width: 20px;
-    height: 25px;
-    background-color: #007aff;
-    border-bottom-left-radius: 16px 14px;
+#inviteMembers .message:first-child .fromThem {
+    border-top-left-radius: 18px;
 }
 
-#inviteMembers .myMessage::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: -11px;
-    width: 20px;
-    height: 25px;
-    background-color: #ffffff;
-    border-bottom-left-radius: 10px;
+#inviteMembers .message:last-child .myMessage {
+    border-bottom-right-radius: 18px;
 }
 
-#inviteMembers .fromThem::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: -10px;
-    width: 20px;
-    height: 25px;
-    background-color: #e5e5ea;
-    border-bottom-right-radius: 16px 14px;
+#inviteMembers .message.single .myMessage,
+#inviteMembers .message.single .fromThem {
+    border-radius: 18px;
 }
 
+/* 말풍선 꼬리 스타일 제거 */
+#inviteMembers .myMessage::after,
+#inviteMembers .myMessage::before,
+#inviteMembers .fromThem::after,
 #inviteMembers .fromThem::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: -11px;
-    width: 20px;
-    height: 25px;
-    background-color: #ffffff;
-    border-bottom-right-radius: 10px;
+    content: none;
 }
 
 /* 스크롤바 스타일 (채팅창용) */
@@ -739,4 +725,18 @@ footer img:hover {
     justify-content: center;
     align-items: center;
     line-height: 1;
+}
+
+.close-button-phone {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.close-button-phone:hover {
+    color: #ff0000;
 }

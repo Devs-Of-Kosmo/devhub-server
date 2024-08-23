@@ -147,7 +147,9 @@ $(document).ready(function() {
                     let messageHtml = message.content.replace(/\n/g, "<br>");
 
                     listItem.append(
-                        $('<div></div>').text(`보낸 사람: ${message.senderEmail}`).css('font-size', 'small'),
+                        $('<div></div>').text(
+                            messageType === 'received' ? `보낸 사람: ${message.senderEmail}` : `받는 사람: ${message.receiverEmail}`
+                        ).css('font-size', 'small'),
                         $('<div></div>').text(`팀 소개: ${messageTitle}...`).css('font-size', 'small'),
                         $('<div></div>').css({'display': 'flex', 'justify-content': 'space-between', 'align-items': 'center'}).append(
                             $('<span></span>').text(`보낸 시간: ${new Date(message.createdDate).toLocaleString()}`).css('font-size', 'small'),
@@ -180,7 +182,9 @@ $(document).ready(function() {
                                             messageList.empty();
                                             loadMessages(url, messageType);
                                         }),
-                                        $('<span></span>').text(`보낸 사람: ${message.senderEmail}`).css({'margin-left': '10px'})
+                                        $('<div></div>').text(
+                                            messageType === 'received' ? `보낸 사람: ${message.senderEmail}` : `받는 사람: ${message.receiverEmail}`
+                                        ).css({'margin-left': '10px'})
                                     ),
                                     $('<hr>').css('margin-top','3px'),
                                     $('<span></span>').html(`${messageHtml}`).css({'display': 'block', 'text-align' : 'center'}),
