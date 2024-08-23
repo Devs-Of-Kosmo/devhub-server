@@ -133,7 +133,7 @@ function fetchUserInfo(token) {
         const loginLink = document.getElementById('login-link');
 
         if (loginLink) {
-            loginLink.textContent = `${data.name}`;
+            loginLink.textContent = `${data.name}님의 `;
             loginLink.href = "/user/profile"; // 프로필 페이지로 링크를 연결합니다.
         }
     })

@@ -9,7 +9,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/plugins/line-numbers/prism-line-numbers.css" rel="stylesheet" />
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    {% block extra_css %}{% endblock %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Unbounded 폰트 추가 -->
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <header>
@@ -17,14 +20,19 @@
         <!-- 로고 이미지와 제목을 같은 div 내에 배치 -->
         <div class="logo-title-container">
             <img src="{{ url_for('static', filename='img/logo_1.jpg') }}" alt="Logo" class="site-logo">
-            <h1 class="site-title">DEVHUV</h1>
+            <!-- h1 요소를 a 태그로 감싸서 클릭 시 localhost:8080/로 이동 -->
+            <a href="http://localhost:8080/" class="site-title-link">
+                <h1 class="site-title">DEVHUV</h1>
+            </a>
         </div>
         <nav class="navbar">
             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/group">Projects</a></li>
-                <li><a href="/tools">Tools</a></li>
-                <li id="login-nav-item"><a id="login-link" class="nav-link"></a></li>
+                <li id="login-nav-item"><a id="login-link" class="nav-link">
+                    <li id="project-name" class="nav-link">프로젝트 이름</li>
+                    <li id="project-description" class="nav-description">프로젝트 설명</li>
+                </a>
+                </li>
+                </li>
             </ul>
         </nav>
     </div>
@@ -33,5 +41,6 @@
 {% endblock %}
 <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 <script src="{{ url_for('static', filename='js/files.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

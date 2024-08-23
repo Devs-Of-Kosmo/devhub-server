@@ -29,18 +29,6 @@ class User(UserMixin, db.Model):
             'deleteCondition': self.delete_condition,
         }
 
-class Comment(db.Model):
-    __tablename__ = 'comment'
-    id = db.Column(db.Integer, primary_key=True)
-    page = db.Column(db.String(50), nullable=False)
-    username = db.Column(db.String(100), nullable=False)
-    user_comment = db.Column(db.Text, nullable=False)
-    admin_response = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return f'<Comment {self.id} - {self.username}>'
-
 class SaveFile(db.Model):
     __tablename__ = 'save_file'
     id = db.Column(db.Integer, primary_key=True)

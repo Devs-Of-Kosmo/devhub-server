@@ -2,9 +2,6 @@
 
 {% block title %}File Comparison{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-{% endblock %}
 
 {% block content %}
 <div class="wrapper">
@@ -12,24 +9,57 @@
     <nav class="sidebar">
         <ul class="nav-icons">
             <li><a href="#" id="toggleSidebarBtn"><i class="fas fa-folder-open"></i></a></li>
-            <li><a href="#"><i class="fas fa-search"></i></a></li>
             <li><a href="#" id="branchToggleBtn"><i class="fas fa-code-branch"></i></a></li> <!-- 브랜치 토글 버튼 -->
-            <li><a href="#"><i class="fas fa-cog"></i></a></li>
+            <li><a href="#" id="settingsBtn"><i class="fas fa-cog"></i></a></li> <!-- 설정 버튼 -->
         </ul>
     </nav>
+
+    <!-- 설정을 위한 모달 창 -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content1">
+            <span class="close-settings-btn" style="position: absolute; top: 10px; right: 10px;">&times;</span>
+            <button id="editProjectBtn" style="background: none; border: none; cursor: pointer;">
+                <i class="fas fa-sync-alt" style="color: white;"></i> 수정하기
+            </button>
+            <button class="delete-repo-btn" style="background: none; border: none; cursor: pointer;">
+                <i class="fas fa-trash-alt" style="color: white;"></i> 삭제하기
+            </button>
+        </div>
+    </div>
+
+    <!-- 수정할 프로젝트 이름과 설명 입력을 위한 모달 창 -->
+    <div id="editProjectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-edit-modal-btn" style="position: absolute; top: 10px; right: 10px;">&times;</span>
+            <button id="backToSettingsBtn" class="back-btn" style="position: absolute; top: 10px; left: 10px;">&larr; 뒤로</button>
+            <div class="edit-form" style="margin-top: 40px;"> <!-- 프로젝트 이름과 설명 간의 여백 확보 -->
+                <div class="input-group">
+                    <label for="changedProjectName">프로젝트 이름:</label>
+                    <input type="text" id="changedProjectName" class="input-field" placeholder="변경할 프로젝트 이름 입력">
+                </div>
+                <div class="input-group">
+                    <label for="changedDescription">프로젝트 설명:</label>
+                    <textarea id="changedDescription" class="input-field" placeholder="변경할 프로젝트 설명 입력"></textarea>
+                </div>
+                <button id="saveChangesBtn" class="action-btn">저장</button>
+            </div>
+        </div>
+    </div>
+
+
 
     <!-- 사이드 콘텐츠를 위한 모달 창 -->
     <div id="sideContentModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <input type="text" id="commitMessage" placeholder="Enter commit message">
+            <h2>프로젝트 저장</h2>
+            <input type="text" id="commitMessage" placeholder="커밋 메세지를 입력하세요">
             <div id="result-message" class="result-message"></div>
             <button id="commit-button" class="action-btn">Commit</button>
-            <span id="file1-name" class="file-name"></span>
             <div class="results">
                 <div class="column content-column">
                     <div class="title-section">
-                        <h3>Commit File</h3>
+                        <h2>Commit File</h2>
                     </div>
                     <div class="upload-section">
                         <input type="file" webkitdirectory directory name="file1" id="file1" class="file-input" style="display: none;" required>
@@ -37,64 +67,49 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 변경 파일 내용 섹션 추가 -->
-            <div class="column content-column">
-                <div class="title-section">
-                    <h3>My File</h3>
-                </div>
-                <div class="upload-section">
-                    <input type="file" name="file2" id="file2" class="file-input" style="display: none;" required>
-                    <button type="button" class="open-file-btn" onclick="document.getElementById('file2').click();">Open File</button>
-                    <span id="file2-name" class="file-name"></span>
-                </div>
-            </div>
         </div>
     </div>
 
     <div id="branchContent" class="branch-modal">
         <span class="close-btn">&times;</span>
-        <div class="menu-trigger"></div>
-        <section class="cards-wrapper">
-            <div class="cards-container">
-                <!-- 동적으로 카드가 추가될 영역 -->
-            </div>
-        </section>
-
+        <h2>커밋 이력</h2>
         <!-- 메타데이터 카드 슬라이드 -->
-        <section class="metadata-cards-wrapper">
             <div class="metadata-cards-container">
                 <!-- 메타데이터 카드가 추가될 영역 -->
             </div>
-        </section>
     </div>
 
     <!-- 기존 컨텐츠 -->
     <div class="main-content">
         <div id="content">
-            <div class="menu-trigger"></div>
-            <section class="cards-wrapper">
-                <div class="cards-container">
-                    <!-- 동적으로 카드가 추가될 영역 -->
-                </div>
-            </section>
-
-            <!-- 메타데이터 카드 슬라이드 -->
-            <section class="metadata-cards-wrapper" style="display: block;">
-                <!-- 초기에는 숨김 -->
-                <div class="metadata-cards-container">
-                    <!-- 메타데이터 카드가 추가될 영역 -->
-                </div>
-            </section>
             <div class="commit-and-content-container">
                 <div class="commit-cards-container">
+                    <div class="title-section">
+                    </div>
+                    <h3>디렉토리</h3>
                     <!-- 커밋 카드가 추가될 영역 -->
-                </div>
+                    </div>
                 <!-- 파일 내용 표시 영역 -->
                 <div id="file-content-display">
+                    <div class="title-section">
+                        <h3>커밋 파일</h3>
+
+                    </div>
                     <!-- 파일 내용이 여기 표시됩니다. -->
                 </div>
                 <div class="file-content" id="changed-file-content">
+                    <!-- 변경 파일 내용 섹션 추가 -->
+                    <div class="column content-column">
+                        <h3>비교할 파일</h3>
+                        <div class="title-section">
+
+                        </div>
+                        <div class="upload-section">
+                            <input type="file" name="file2" id="file2" class="file-input" style="display: none;" required>
+                            <button type="button" class="open-file-btn1" onclick="document.getElementById('file2').click();">Open File</button>
+                            <span id="file2-name" class="file-name"></span>
+                        </div>
+                    </div>
                     <!-- Changed file content will be displayed here -->
                 </div>
             </div>
