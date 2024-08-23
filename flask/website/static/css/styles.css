@@ -19,7 +19,12 @@
             width: calc(100% - 50px);
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-family: 'Unbounded', sans-serif; /* 폰트 적용 */
+            font-size: 16px; /* 기본 폰트 크기 설정 */
+            font-weight: 400; /* 폰트 두께 설정 */
+            color: #ffffff; /* 텍스트 색상 */
         }
+
 
         /* 로고 및 타이틀 */
         .logo-title-container {
@@ -34,15 +39,16 @@
 
         /* 사이트 타이틀 스타일 */
         .site-title {
-            font-family: 'Playfair Display', serif;
             font-size: 24px;
             font-weight: 700;
-            color: #f0f6fc;
+            color: #ffffff;
             margin: 0;
             transition: color 0.3s ease;
             letter-spacing: 1px;
         }
-
+        .nav-link, .nav-description {
+            font-family: 'Unbounded', sans-serif;
+        }
         .site-title:hover {
             color: #58a6ff;
         }
@@ -63,10 +69,6 @@
         .navbar ul li span {
             text-decoration: none;
             color: #c9d1d9;
-            font-size: 24px;
-            font-weight: 400;
-            font-family: 'Dongle', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            transition: color 0.3s ease;
             letter-spacing: 0.5px;
         }
 
@@ -111,6 +113,8 @@
             border-radius: 0 4px 4px 0;
         }
 
+
+
         .sidebar .nav-icons {
             list-style-type: none;
             padding: 0;
@@ -145,7 +149,7 @@
             transform: translate(-50%, -50%);
             width: 80%;
             height: 80%;
-            overflow: auto;
+            overflow: auto; /* 이 부분을 추가하여 스크롤바를 활성화 */
             background-color: #1e1e1e;
             padding: 20px;
             border: 1px solid #3c3c3c;
@@ -208,9 +212,25 @@
             padding: 20px;
             border: 1px solid #3c3c3c;
             width: 80%;
+            max-width: 1000px; /* 모달의 최대 너비 설정 */
+            max-height: 80vh; /* 모달의 최대 높이 설정 */
+            overflow-y: auto; /* 세로 스크롤바 활성화 */
+            overflow-x: auto; /* 가로 스크롤바 활성화 */
             border-radius: 5px;
+            position: relative;
+        }
+
+        .modal-content1 {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #3c3c3c;
+            width: 15%;
             max-height: 80vh;
-            overflow-y: auto;
+            overflow-y: auto; /* 세로 스크롤바 활성화 */
+            overflow-x: auto; /* 가로 스크롤바 활성화 */
+            border-radius: 5px;
             position: relative;
         }
 
@@ -226,6 +246,15 @@
             color: #9cdcfe;
             text-decoration: none;
             cursor: pointer;
+        }
+
+        .commit-cards-container ul {
+            padding: 0;
+        }
+
+        /* 디렉토리 아이콘과 연결된 <ul> 요소의 패딩 유지 */
+        .directory-icon + ul {
+            padding-left: 40px; /* 원하는 패딩 값으로 설정하세요 */
         }
 
         /* 카드 스타일 */
@@ -287,16 +316,29 @@
             background-color: #005a9e;
         }
 
+
         .metadata-cards-container {
             display: flex;
-            overflow-x: auto;
             gap: 16px;
-            justify-content: flex-start;
-            width: 100%;
             padding: 16px;
             box-sizing: border-box;
-            cursor: grab;
-            scroll-behavior: smooth;
+            overflow-x: auto; /* 가로 스크롤바 활성화 */
+            white-space: nowrap; /* 카드가 한 줄로 나열되도록 설정 */
+            width: 100%; /* 부모 컨테이너의 너비를 설정 */
+        }
+
+        /* 가로 스크롤바 스타일링 */
+        .metadata-cards-container::-webkit-scrollbar {
+            height: 8px; /* 가로 스크롤바의 높이 설정 */
+        }
+
+        .metadata-cards-container::-webkit-scrollbar-thumb {
+            background-color: #484f58; /* 스크롤바의 색상 */
+            border-radius: 10px; /* 스크롤바 모서리 둥글게 */
+        }
+
+        .metadata-cards-container::-webkit-scrollbar-track {
+            background-color: #21262d; /* 스크롤바 트랙의 색상 */
         }
 
         /* 컨테이너 및 레이아웃 스타일 */
@@ -320,7 +362,7 @@
             max-width: 300px;
             border-right: 1px solid #3c3c3c;
             overflow-y: auto;
-            overflow-x: hidden;
+            overflow-x: auto; /* 가로 스크롤바 활성화 */
         }
 
         #file-content-display, #changed-file-content {
@@ -333,6 +375,7 @@
             white-space: pre-wrap;
             font-family: 'Courier New', Courier, monospace;
             position: relative;
+            margin-left: 0px; /* 오른쪽 마진 추가 */
         }
 
         /* 파일 내용 및 디렉토리 구조의 세로 길이를 맞추기 위해 동일한 높이 적용 */
@@ -383,8 +426,9 @@
 
         /* Commit 카드 스타일 */
         .commit-card {
-            width: 4cm;
-            height: 7cm;
+            display: inline-block; /* 카드가 가로로 나란히 정렬되도록 설정 */
+            width: 100px; /* 카드의 고정된 너비 설정 */
+            height: 250px; /* 카드의 고정된 높이 설정 */
             box-sizing: border-box;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             border: 1px solid #3c3c3c;
@@ -392,18 +436,39 @@
             padding: 8px;
             background-color: #252526;
             color: #d4d4d4;
-            margin: 0 10px 20px 10px;
+            margin: 0 10px; /* 카드 간의 간격 설정 */
             transition: transform 0.2s ease-in-out;
             overflow: hidden;
-            scrollbar-width: none;
+            max-width: 100%; /* 부모 요소의 너비를 초과하지 않도록 설정 */
         }
 
-        .commit-card h3,
+        .metadata-cards-container > .commit-card {
+            flex-shrink: 0; /* 부모 요소에 의한 크기 감소를 막음 */
+        }
+
+        /* 가로 스크롤바 스타일링 */
+        .commit-cards-container::-webkit-scrollbar {
+            height: 8px; /* 가로 스크롤바의 높이 설정 */
+        }
+
+        .commit-cards-container::-webkit-scrollbar-thumb {
+            background-color: #6a6a6a;
+            border-radius: 10px;
+        }
+
+        .commit-cards-container::-webkit-scrollbar-track {
+            background-color: #2a2a2a;
+        }
+
         .commit-card p,
         .commit-card ul,
         .commit-card li {
             color: #d4d4d4;
             font-size: 0.85em;
+            text-align: left;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
         }
 
         .commit-card.expanded {
@@ -559,10 +624,14 @@
             transform: scale(0.95);
         }
 
-        /* Commit 카드의 'View Commit' 버튼 */
+        /* Changes 버튼만 중앙 정렬 */
         .commit-card .view-commit-btn {
             background-color: #569cd6;
-            margin-top: 10px;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: fit-content; /* 버튼을 콘텐츠 크기에 맞게 조정 */
         }
 
         .commit-card .view-commit-btn:hover {
@@ -572,6 +641,15 @@
         .commit-card .view-commit-btn:active {
             background-color: #315d8c;
             transform: scale(0.98);
+        }
+
+        /* 불필요한 외각 부분 제거를 위한 모달 스타일 */
+        .modal-content {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border: none; /* 모달 외각 제거 */
+            border-radius: 8px;
         }
 
         /* 커밋 카드의 삭제 및 다운로드 버튼 */
@@ -619,7 +697,7 @@
         }
 
         /* 파일 업로드 버튼 스타일 */
-        .open-file-btn {
+        .open-file-btn1 {
             background-color: #007acc;
             color: #ffffff;
             padding: 8px 16px;
@@ -650,7 +728,7 @@
         }
 
         /* 파일 업로드 버튼 스타일 */
-        .open-file-btn {
+        .open-file-btn1 {
             padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
@@ -669,7 +747,7 @@
         }
 
         /* 버튼의 텍스트에 남색 그라데이션 효과 적용 */
-        .open-file-btn::after {
+        .open-file-btn1::after {
             background: linear-gradient(90deg, #001f3f, #0074d9);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -678,14 +756,14 @@
         }
 
         /* 호버 시 효과 */
-        .open-file-btn:hover {
+        .open-file-btn1:hover {
             background: linear-gradient(145deg, rgba(0, 0, 128, 0.3), rgba(0, 0, 128, 0.2)); /* 남색 그라데이션 강화 */
             transform: translateY(-2px);
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.2);
         }
 
         /* 활성화 상태일 때 효과 */
-        .open-file-btn:active {
+        .open-file-btn1:active {
             background: linear-gradient(145deg, rgba(0, 0, 128, 0.15), rgba(0, 0, 128, 0.05));
             transform: scale(0.98);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.05);
@@ -693,7 +771,7 @@
 
 
         /* 활성화 상태일 때 효과 */
-        .open-file-btn:active {
+        .open-file-btn1:active {
             background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
             transform: scale(0.98);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.05);
@@ -730,7 +808,9 @@
             line-height: 1.5;
             margin-bottom: 16px;
         }
-
+        .commit-cards-container{
+            margin-left: 20px;
+        }
         /* 카드 스타일 */
         .commit-cards-container, #file-content-display, #changed-file-content {
             background-color: #161b22;
@@ -738,12 +818,14 @@
             border: 1px solid #30363d;
             border-radius: 8px;
             margin-bottom: 20px;
+
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             align-items: flex-start;
             position: relative; /* h3 태그가 컨테이너 내에서 상대적으로 배치될 수 있도록 설정 */
-            padding-top: 40px; /* 컨테이너 내부 내용이 h3 태그와 겹치지 않도록 여백을 추가 */
         }
+
+
 
         #file-content-display pre,
         #changed-file-content pre {
@@ -785,6 +867,18 @@
             margin-bottom: 20px;
         }
 
+        /* commit-and-content-container 안의 h3 요소에만 적용 */
+        .commit-and-content-container h3 {
+            font-family: 'Poppins', sans-serif; /* Poppins 폰트 패밀리 설정 */
+            font-size: 1.2em; /* 폰트 크기 설정 */
+            font-weight: 500; /* 폰트 두께 설정 */
+            color: #87CEEB; /* 예쁜 하늘색 설정 (Light Sky Blue) */
+            margin: 0; /* 여백 설정 */
+            padding: 10px 0; /* 상하 여백 설정 */
+            text-align: left; /* 텍스트 정렬 설정 */
+        }
+
+
         /* 버튼 스타일 */
         .action-btn {
             background-color: #238636;
@@ -819,7 +913,7 @@
             display: inline-block;
         }
 
-        .repo-card:hover, .metadata-cards-container:hover {
+        .repo-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
         }

@@ -16,7 +16,7 @@
 
     <!-- 설정을 위한 모달 창 -->
     <div id="settingsModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content1">
             <span class="close-settings-btn" style="position: absolute; top: 10px; right: 10px;">&times;</span>
             <button id="editProjectBtn" style="background: none; border: none; cursor: pointer;">
                 <i class="fas fa-sync-alt" style="color: white;"></i> 수정하기
@@ -52,6 +52,7 @@
     <div id="sideContentModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
+            <h2>프로젝트 저장</h2>
             <input type="text" id="commitMessage" placeholder="커밋 메세지를 입력하세요">
             <div id="result-message" class="result-message"></div>
             <button id="commit-button" class="action-btn">Commit</button>
@@ -62,8 +63,7 @@
                     </div>
                     <div class="upload-section">
                         <input type="file" webkitdirectory directory name="file1" id="file1" class="file-input" style="display: none;" required>
-                        <button type="button"  onclick="document.getElementById('file1').click();">Upload File</button>
-                        <span id="file1-name" class="file-name"></span>
+                        <button type="button" class="open-file-btn" onclick="document.getElementById('file1').click();">Upload File</button>
                     </div>
                 </div>
             </div>
@@ -72,50 +72,41 @@
 
     <div id="branchContent" class="branch-modal">
         <span class="close-btn">&times;</span>
-        <div class="menu-trigger"></div>
+        <h2>커밋 이력</h2>
         <!-- 메타데이터 카드 슬라이드 -->
-        <section class="metadata-cards-wrapper">
             <div class="metadata-cards-container">
                 <!-- 메타데이터 카드가 추가될 영역 -->
             </div>
-        </section>
     </div>
 
     <!-- 기존 컨텐츠 -->
     <div class="main-content">
         <div id="content">
-            <div class="menu-trigger"></div>
-
-            <!-- 메타데이터 카드 슬라이드 -->
-            <section class="metadata-cards-wrapper" style="display: block;">
-                <!-- 초기에는 숨김 -->
-                <div class="metadata-cards-container">
-                    <!-- 메타데이터 카드가 추가될 영역 -->
-                </div>
-            </section>
             <div class="commit-and-content-container">
                 <div class="commit-cards-container">
                     <div class="title-section">
-                        <h3>디렉토리</h3>
                     </div>
+                    <h3>디렉토리</h3>
                     <!-- 커밋 카드가 추가될 영역 -->
                     </div>
                 <!-- 파일 내용 표시 영역 -->
                 <div id="file-content-display">
                     <div class="title-section">
                         <h3>커밋 파일</h3>
+
                     </div>
                     <!-- 파일 내용이 여기 표시됩니다. -->
                 </div>
                 <div class="file-content" id="changed-file-content">
                     <!-- 변경 파일 내용 섹션 추가 -->
                     <div class="column content-column">
+                        <h3>비교할 파일</h3>
                         <div class="title-section">
-                            <h3>비교할 파일</h3>
+
                         </div>
                         <div class="upload-section">
                             <input type="file" name="file2" id="file2" class="file-input" style="display: none;" required>
-                            <button type="button" class="open-file-btn" onclick="document.getElementById('file2').click();">Open File</button>
+                            <button type="button" class="open-file-btn1" onclick="document.getElementById('file2').click();">Open File</button>
                             <span id="file2-name" class="file-name"></span>
                         </div>
                     </div>

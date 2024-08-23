@@ -10,9 +10,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/plugins/line-numbers/prism-line-numbers.css" rel="stylesheet" />
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Unbounded 폰트 추가 -->
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <header>
@@ -27,10 +27,11 @@
         </div>
         <nav class="navbar">
             <ul>
-                <li id="login-nav-item"><a id="login-link" class="nav-link"></a></li>
-                <li id="project-info-nav-item">
-                    <span id="project-name" class="nav-link">프로젝트 이름</span>
-                    <span id="project-description" class="nav-description">프로젝트 설명</span>
+                <li id="login-nav-item"><a id="login-link" class="nav-link">
+                    <li id="project-name" class="nav-link">프로젝트 이름</li>
+                    <li id="project-description" class="nav-description">프로젝트 설명</li>
+                </a>
+                </li>
                 </li>
             </ul>
         </nav>
