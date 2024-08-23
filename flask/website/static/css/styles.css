@@ -809,7 +809,7 @@
             margin-bottom: 16px;
         }
         .commit-cards-container{
-            margin-left: 20px;
+            margin-left: 1px;
         }
         /* 카드 스타일 */
         .commit-cards-container, #file-content-display, #changed-file-content {

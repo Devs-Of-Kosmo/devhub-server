@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.target == sideContentModal || event.target == branchContent) {
             sideContentModal.style.display = "none";
             branchContent.style.display = "none";
+            clearCheckIconAndMessage(); // 체크 아이콘과 메시지 제거
         }
     });
 
@@ -715,6 +716,23 @@ document.addEventListener("DOMContentLoaded", function () {
     function handleFile1Change(event) {
         const files = event.target.files;
         try {
+            let totalSize = 0;
+            for (let file of files) {
+                totalSize += file.size;
+            }
+
+            // 파일 크기가 100MB를 초과하면 경고 메시지를 표시하고 리턴
+            const maxSizeInBytes = 100 * 1024 * 1024; // 100MB
+            if (totalSize > maxSizeInBytes) {
+                Swal.fire({
+                    title: '파일 크기 초과',
+                    text: '100MB 이상의 프로젝트는 업로드 할 수 없습니다.',
+                    icon: 'warning',
+                    confirmButtonText: '확인'
+                });
+                return; // 함수 종료
+            }
+
             // 폴더명 가져오기
             const folderName = files[0].webkitRelativePath.split('/')[0];
             const message = `'${folderName}' 폴더가 업로드되었습니다.`;
