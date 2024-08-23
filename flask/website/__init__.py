@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_login import LoginManager
-from website.model import db, User, SaveFile, Comment
+from website.model import db, User, SaveFile
 from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
 import os

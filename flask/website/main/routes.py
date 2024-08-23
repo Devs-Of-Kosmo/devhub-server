@@ -15,7 +15,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 from flask import Flask, render_template, request, jsonify, Blueprint, session
-from website.model import db, User, Comment, SaveFile
+from website.model import db, User, SaveFile
 from website.decorators import admin_required
 from markupsafe import Markup
 from datetime import datetime
@@ -27,8 +27,7 @@ SPRING_BOOT_API_URL = 'http://localhost:8080'
 
 @main.route('/')
 def index():
-    comments = Comment.query.filter_by(page='home').all()
-    return render_template('index.html', comments=comments)
+    return render_template('index.html')
 
 
 @main.route('/save_token', methods=['GET'])
@@ -229,10 +228,6 @@ def get_selected_project():
     except requests.exceptions.RequestException as e:
         return jsonify({'message': 'Failed to fetch project', 'error': str(e)}), 500
 
-@main.route('/group')
-def group():
-    return render_template('group.html')
-
 @main.route('/upload', methods=['POST'])
 def upload():
     file1 = request.files.get('file1')
@@ -295,6 +290,27 @@ def send_email_verification():
     print(f"Verification email sent to: {email}")
 
     return jsonify({'toEmail': to_email}), 200
+
+@main.route('/api/personal/project/metadata', methods=['GET'])
+@jwt_required()
+def get_project_metadata():
+    project_id = request.args.get('projectId')
+    access_token = request.headers.get('Authorization')
+
+    if not project_id:
+        return jsonify({'message': 'projectId가 제공되지 않았습니다.'}), 400
+
+    try:
+        response = requests.get(
+            f'{SPRING_BOOT_API_URL}/api/personal/project/metadata',
+            headers={'Authorization': f'Bearer {access_token}'},
+            params={'projectId': project_id}
+        )
+        response.raise_for_status()
+        return jsonify(response.json()), 200
+    except requests.exceptions.RequestException as e:
+        return jsonify({'message': 'Failed to fetch project metadata', 'error': str(e)}), 500
+
 
 @main.route('/api/mail/public/check', methods=['POST'])
 def check_email_verification():
@@ -410,11 +426,6 @@ def compare():
 
     return jsonify(differences=Markup(differences_html))
 
-@main.route('/tools')
-def tools():
-    comments = Comment.query.filter_by(page='tools').all()
-    return render_template('tools.html', comments=comments)
-
 @main.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
@@ -470,101 +481,8 @@ def reissue_access_token():
     new_access_token = create_access_token(identity=current_user)
     return jsonify({'accessToken': new_access_token}), 200
 
-@main.route('/add_comment', methods=['POST'])
-def add_comment():
-    data = request.get_json()
-    new_comment = Comment(page=data['page'], username=data['username'], user_comment=data['comment'])
-    db.session.add(new_comment)
-    db.session.commit()
-    return jsonify(result="Comment added successfully")
 
-@main.route('/add_response', methods=['POST'])
-@admin_required
-def add_response():
-    data = request.get_json()
-    comment_id = data['comment_id']
-    response = data.get('response')
-    comment = Comment.query.get(comment_id)
-    if comment:
-        comment.admin_response = response
-        db.session.commit()
-        return jsonify(result="Response added successfully")
-    return jsonify(result="Comment not found"), 404
 
-@main.route('/convert', methods=['POST'])
-def convert():
-    data = request.get_json()
-    language = data.get('language')
-    code = data.get('code')
-
-    converted_code = code_converter(language, code)
-
-    return jsonify(converted_code=converted_code)
-
-def code_converter(language, code):
-    if language == 'python':
-        return java_to_python(code)
-    elif language == 'java':
-        return python_to_java(code)
-    elif language == 'c':
-        return java_to_c(code)
-    else:
-        return "Unsupported language"
-
-def java_to_python(code):
-    code = re.sub(r'// (.*)', r'# \1', code)
-    code = re.sub(r'public static int (\w+)\((.*?)\) {', r'def \1(\2):', code)
-    code = re.sub(r'public static void (\w+)\((.*?)\) {', r'def \1(\2):', code)
-    code = re.sub(r'public static (\w+) (\w+)\((.*?)\) {', r'def \2(\3):', code)
-    code = re.sub(r'public int (\w+)\((.*?)\) {', r'def \1(self, \2):', code)
-    code = re.sub(r'public void (\w+)\((.*?)\) {', r'def \1(self, \2):', code)
-    code = re.sub(r'public static void main\(String\[\] args\) {', 'def main():', code)
-    code = re.sub(r'return (.*);', r'return \1', code)
-    code = re.sub(r'System.out.println\((.*?)\);', r'print(\1)', code)
-    code = code.replace('{', '').replace('}', '')
-    code = re.sub(r'(\n\s*)\{(\n\s*)', r'\1\2', code)
-    code = re.sub(r'\n\s*\}', r'\n', code)
-    code = re.sub(r';', '', code)
-    code = re.sub(r'public class (\w+) {', r'class \1:', code)
-    code = re.sub(r'if \((.*?)\) {', r'if \1:', code)
-    code = re.sub(r'else {', r'else:', code)
-    code = re.sub(r'\n\s*\n', '\n', code)
-    code = re.sub(r'\bnull\b', 'None', code)
-    return code.strip()
-
-def python_to_java(code):
-    code = re.sub(r'# (.*)', r'// \1', code)
-    code = re.sub(r'def (\w+)\((.*?)\):', r'public static int \1(\2) {', code)
-    code = re.sub(r'def main\(\):', 'public static void main(String[] args) {', code)
-    code = re.sub(r'return (.*)', r'return \1;', code)
-    code = re.sub(r'print\((.*?)\)', r'System.out.println(\1);', code)
-    code = re.sub(r'class (\w+):', r'public class \1 {', code)
-    code = re.sub(r'if (.*):', r'if (\1) {', code)
-    code = re.sub(r'else:', r'else {', code)
-    code = re.sub(r'    ', '    ', code)
-    code = re.sub(r'\n(?![^\n]*{)', r'\n}', code)
-    code = re.sub(r'\n\s*\n', '\n', code)
-    return code.strip()
-
-def java_to_c(code):
-    code = re.sub(r'//(.*)', r'/* \1 */', code)
-    code = re.sub(r'/\*\*([^*]*\*+)+[^/]*\*/', lambda m: '/*' + m.group(1).replace('*', '').strip() + ' */', code)
-    code = re.sub(r'public static int (\w+)\s*\((.*?)\)\s*\{', r'int \1(\2) {', code)
-    code = re.sub(r'public static int (\w+)\((.*?)\)\s*\{', r'int \1(\2) {', code)
-    code = re.sub(r'public static (\w+)\s+(\w+)\((.*?)\)\s*\{', r'\1 \2(\3) {', code)
-    code = re.sub(r'public static void main\(String\[\] args\)\s*\{', 'int main() {', code)
-    code = re.sub(r'System.out.println\("Error: (.*?)"\);', r'printf("Error: \1\\n");', code)
-    code = re.sub(r'System.out.println\("(.*?)"\);', r'printf("\1\\n");', code)
-    code = re.sub(r'System.out.println\((.*?)\);', r'printf("%d\\n", \1);', code)
-    code = re.sub(r'System.out.println\((.*?), (.*?)\);', r'printf("%s: %d\\n", \1, \2);', code)
-    code = re.sub(r'int (\w+) = (.*?);', r'int \1 = \2;', code)
-    code = re.sub(r'public class \w+ \{', '', code)
-    code = re.sub(r'\}\s*$', '', code)
-    code = re.sub(r'\{', '{\n', code)
-    code = re.sub(r'\}', '\n}', code)
-    code = re.sub(r'\n\s*\}\s*$', '\n    return 0;\n}', code, flags=re.MULTILINE)
-    code = '#include <stdio.h>\n\n' + code.strip()
-    return code
 
 @main.route('/get_file_content/<int:file_id>')
 def get_file_content(file_id):

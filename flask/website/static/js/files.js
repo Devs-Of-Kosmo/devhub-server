@@ -9,10 +9,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const projectName = sessionStorage.getItem('projectName');
     const projectId = sessionStorage.getItem('projectId');
     const description = sessionStorage.getItem('description');
-    const createdDate = sessionStorage.getItem('createdDate');
     const metadataWrapper = document.querySelector('.metadata-cards-wrapper');
     const commitCardsContainer = document.querySelector('.commit-cards-container');
     const metadataContainer = document.querySelector('.metadata-cards-container');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const closeSettingsBtn = document.querySelector('.close-settings-btn');
+
+    const editProjectBtn = document.getElementById('editProjectBtn');
+    const editProjectModal = document.getElementById('editProjectModal');
+    const closeEditModalBtn = document.querySelector('.close-edit-modal-btn');
+    const saveChangesBtn = document.getElementById('saveChangesBtn');
+
+    const changedProjectNameInput = document.getElementById('changedProjectName');
+    const changedDescriptionInput = document.getElementById('changedDescription');
     let selectedMetadataCard = null;
 
     const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
@@ -27,6 +37,18 @@ document.addEventListener("DOMContentLoaded", function () {
     closeBranchBtn.innerHTML = '&times;';
     branchContent.appendChild(closeBranchBtn);
 
+    // projectName과 description을 Navbar에 표시
+    const projectNameElement = document.getElementById('project-name');
+    const projectDescriptionElement = document.getElementById('project-description');
+
+    if (projectNameElement) {
+        projectNameElement.textContent = projectName || 'Project Name';
+    }
+
+    if (projectDescriptionElement) {
+        projectDescriptionElement.textContent = description || 'Project Description';
+    }
+
     // 토글 사이드바 버튼 클릭 시 sideContentModal만 표시
     toggleSidebarBtn.addEventListener('click', function (event) {
         event.preventDefault();
@@ -38,6 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
     closeModalBtn.addEventListener('click', function () {
         sideContentModal.style.display = "none";
         branchContent.style.display = "none";
+        clearCheckIconAndMessage(); // 체크 아이콘과 메시지 제거
+        clearCommitSuccessMessage(); // 커밋 성공 메시지와 체크 아이콘 제거
     });
 
     // 브랜치 콘텐츠 닫기 버튼
@@ -53,109 +77,195 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // 브랜치 버튼 클릭 시 브랜치 컨텐츠만 표시
-    branchToggleBtn.addEventListener('click', function (event) {
+    // 브랜치 버튼 클릭 시 메타데이터 카드 보여주기
+    branchToggleBtn.addEventListener('click', async function (event) {
         event.preventDefault();
         branchContent.style.display = "block";
         sideContentModal.style.display = "none";
+
+        // 메타데이터 카드 정보를 가져와서 표시
+        await fetchProjectMetadata(projectName);
         branchContent.style.zIndex = "1001";
     });
 
-    // 레포지토리 목록 가져오기
-    function fetchRepositories() {
-        fetch('http://localhost:8080/api/personal/repo/list', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Accept': '*/*'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const cardsContainer = document.querySelector('.cards-container');
-            cardsContainer.innerHTML = '';
+    // 설정 버튼 클릭 시 모달 창 열기
+    settingsBtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        settingsModal.style.display = "block";
+    });
 
-            // 가져온 레포지토리 정보를 바탕으로 카드 생성 (projectName이 일치하는 레포만 표시)
-            data.forEach(repo => {
-                if (repo.projectName === projectName) {
-                    const card = document.createElement('div');
-                    card.className = 'repo-card';
-                    card.innerHTML = `
-                        <div class="content">
-                            <h3>${repo.projectName}</h3>
-                            <p>${repo.description}</p>
-                            <div style="display: flex; justify-content: space-between;">
-                                <button class="see-more-btn" data-project-name="${repo.projectName}">Commit History</button>
-                                <button class="delete-repo-btn" data-project-name="${repo.projectName}" style="background: none; border: none; cursor: pointer;">
-                                    <i class="fas fa-trash-alt" style="color: red;"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    cardsContainer.appendChild(card);
-                }
-            });
-        })
-        .catch(error => console.error('Error fetching repositories:', error));
-    }
+    // 모달 닫기 버튼
+    closeSettingsBtn.addEventListener('click', function () {
+        settingsModal.style.display = "none";
+    });
 
-    // "더 보기" 버튼 및 삭제 버튼 클릭 이벤트 리스너 추가
-    document.querySelector('.cards-container').addEventListener('click', function (event) {
-        const target = event.target;
-
-        // 커밋 히스토리 보기 버튼 클릭
-        if (target.classList.contains('see-more-btn')) {
-            const projectName = target.getAttribute('data-project-name');
-            if (projectName) {
-                fetchProjectMetadata(projectName);
-            }
-        }
-
-        // 레포지토리 삭제 버튼 클릭
-        if (target.closest('.delete-repo-btn')) {
-            const projectName = target.closest('.delete-repo-btn').getAttribute('data-project-name');
-            if (projectName) {
-                const confirmDelete = confirm('정말로 이 레포지토리를 삭제하시겠습니까?');
-                if (confirmDelete) {
-                    deleteRepository(projectName);
-                }
-            }
+    // 외부 클릭 시 설정 모달 닫기
+    window.addEventListener('click', function (event) {
+        if (event.target == settingsModal) {
+            settingsModal.style.display = "none";
         }
     });
 
-    async function deleteRepository(projectName) {
-        console.log('Deleting project with ID:', projectId);
-        console.log('Using accessToken:', accessToken);
+    // 뒤로가기 버튼 클릭 시 설정 모달로 돌아가기
+        backToSettingsBtn.addEventListener('click', function () {
+            editProjectModal.style.display = "none";
+            settingsModal.style.display = "block";
+        });
 
-        try {
-            const response = await fetch(`http://localhost:8080/api/personal/repo/${projectId}`, {  // 수정된 부분
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
+    // 수정 버튼 클릭 시 수정 모달 창 열기
+    editProjectBtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        editProjectModal.style.display = "block";
+
+        // 기존 프로젝트 이름과 설명을 입력 필드에 표시
+        changedProjectNameInput.value = projectName || '';
+        changedDescriptionInput.value = description || '';
+
+        // 설정 모달 닫기
+        settingsModal.style.display = "none";
+    });
+
+    // 수정 모달 닫기 버튼
+    closeEditModalBtn.addEventListener('click', function () {
+        editProjectModal.style.display = "none";
+        clearCommitSuccessMessage(); // 커밋 성공 메시지와 체크 아이콘 제거
+        clearCommitMessage(); // 커밋 메시지 입력 필드 내용 제거
+    });
+
+    // 외부 클릭 시 수정 모달 닫기
+    window.addEventListener('click', function (event) {
+        if (event.target == editProjectModal) {
+            editProjectModal.style.display = "none";
+            clearCommitSuccessMessage(); // 커밋 성공 메시지와 체크 아이콘 제거
+            clearCommitMessage(); // 커밋 메시지 입력 필드 내용 제거
+        }
+    });
+
+    // 프로젝트 업데이트 시 처리
+        saveChangesBtn.addEventListener('click', async function () {
+            const changedProjectName = changedProjectNameInput.value.trim();
+            const changedDescription = changedDescriptionInput.value.trim();
+
+            if (!changedProjectName || !changedDescription) {
+                Swal.fire({
+                    title: '입력 부족',
+                    text: '프로젝트 이름과 설명을 모두 입력하세요.',
+                    icon: 'warning',
+                    confirmButtonText: '확인'
+                });
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8080/api/personal/repo', {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': '*/*'
+                    },
+                    body: JSON.stringify({
+                        projectId: projectId,
+                        changedProjectName: changedProjectName,
+                        changedDescription: changedDescription
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update project');
                 }
+
+                const responseData = await response.json();
+                console.log('프로젝트 업데이트 성공:', responseData);
+
+                sessionStorage.setItem('projectName', responseData.projectNameAfterChange);
+                sessionStorage.setItem('description', responseData.descriptionAfterChange);
+
+                projectNameElement.textContent = responseData.projectNameAfterChange;
+                projectDescriptionElement.textContent = responseData.descriptionAfterChange;
+
+                Swal.fire({
+                    title: '업데이트 완료!',
+                    text: '프로젝트 정보가 성공적으로 업데이트되었습니다.',
+                    icon: 'success',
+                    confirmButtonText: '확인'
+                }).then(() => {
+                    editProjectModal.style.display = "none";
+                });
+            } catch (error) {
+                console.error('Error updating project:', error);
+                Swal.fire({
+                    title: '업데이트 실패',
+                    text: '프로젝트 정보 업데이트에 실패했습니다.',
+                    icon: 'error',
+                    confirmButtonText: '확인'
+                });
+            }
+        });
+
+
+    // 프로젝트 삭제 함수
+        async function deleteRepository(projectName) {
+            console.log('Deleting project with ID:', projectId);
+            console.log('Using accessToken:', accessToken);
+
+            const confirmDelete = await Swal.fire({
+                title: '정말 삭제하시겠습니까?',
+                text: `이 작업은 되돌릴 수 없습니다. ${projectName} 프로젝트를 삭제하시겠습니까?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '네, 삭제합니다',
+                cancelButtonText: '아니요, 취소합니다'
             });
 
-            if (response.status === 204) {
+            if (confirmDelete.isConfirmed) {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/personal/repo/${projectId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`
+                        }
+                    });
 
-                window.location.href = 'http://localhost:8080/project_list';
-            } else {
-                const errorText = await response.text();  // 서버에서 전달하는 에러 메시지 확인
-                console.error('Failed to delete repository:', errorText);
-                throw new Error('Failed to delete repository');
+                    if (response.status === 204) {
+                        Swal.fire({
+                            title: '삭제 완료!',
+                            text: '프로젝트가 성공적으로 삭제되었습니다.',
+                            icon: 'success',
+                            confirmButtonText: '확인'
+                        }).then(() => {
+                            window.location.href = 'http://localhost:8080/project_list';
+                        });
+                    } else {
+                        const errorText = await response.text();
+                        console.error('Failed to delete repository:', errorText);
+                        Swal.fire({
+                            title: '삭제 실패',
+                            text: '프로젝트 삭제에 실패했습니다.',
+                            icon: 'error',
+                            confirmButtonText: '확인'
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error deleting repository:', error);
+                    Swal.fire({
+                        title: '오류 발생',
+                        text: '프로젝트 삭제 중 오류가 발생했습니다.',
+                        icon: 'error',
+                        confirmButtonText: '확인'
+                    });
+                }
             }
-        } catch (error) {
-            console.error('Error deleting repository:', error);
-
         }
-    }
 
     async function fetchProjectMetadata(projectName) {
         console.log('fetchProjectMetadata 호출됨, 프로젝트 이름:', projectName);
+
+        if (!projectId) {
+            console.error('projectId가 설정되지 않았습니다.');
+            return;
+        }
+
         try {
             const response = await fetch(`http://localhost:8080/api/personal/project/metadata?projectId=${projectId}`, {
                 method: 'GET',
@@ -177,9 +287,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+
     function displayProjectMetadata(metadata) {
         const { projectName, description, commitInfo } = metadata;
         const metadataContainer = document.querySelector('.metadata-cards-container');
+
+        if (!metadataContainer) {
+            console.error('.metadata-cards-container 요소를 찾을 수 없습니다.');
+            return;
+        }
+
         metadataContainer.innerHTML = ''; // 기존 내용을 지우고 새로 채우기
 
         commitInfo.forEach(commit => {
@@ -216,8 +333,9 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log('메타데이터가 제대로 표시되었습니다.');
     }
 
+
     // 이벤트 리스너를 한 번만 등록
-    metadataContainer.addEventListener('click', async function(event) {
+    metadataContainer.addEventListener('click', async function (event) {
         if (event.target.closest('.delete-icon-btn')) {
             const button = event.target.closest('.delete-icon-btn');
             const commitId = button.getAttribute('data-commit-id');
@@ -233,14 +351,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
 
                     if (response.status === 204) {
-
                         button.closest('.commit-card').remove();
                     } else {
                         throw new Error('Failed to delete commit');
                     }
                 } catch (error) {
                     console.error('Error deleting commit:', error);
-
                 }
             }
         }
@@ -277,12 +393,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 window.URL.revokeObjectURL(url);
             } catch (error) {
                 console.error('Error downloading file:', error);
-
             }
         }
     });
 
-    // 초기화 로직에서 이벤트 리스너를 한 번만 호출하도록 변경
     function initializeMetadataCarousel() {
         const metadataContainer = document.querySelector('.metadata-cards-container');
         let isMouseDown = false;
@@ -314,7 +428,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // "커밋 조회" 버튼 클릭 이벤트 리스너 추가
     document.querySelector('.metadata-cards-container').addEventListener('click', function (event) {
         if (event.target.classList.contains('view-commit-btn')) {
             const commitId = event.target.getAttribute('data-commit-id');
@@ -363,17 +476,7 @@ document.addEventListener("DOMContentLoaded", function () {
         commitCardsContainer.innerHTML = `${treeHtml}`;
         commitCardsContainer.style.display = 'block';
 
-        const backButton = document.createElement('button');
-        backButton.textContent = '돌아가기';
-        backButton.className = 'back-btn';
-        backButton.addEventListener('click', function () {
-            commitCardsContainer.innerHTML = '';
-            if (selectedMetadataCard) {
-                selectedMetadataCard.style.borderColor = '';
-            }
-            selectedMetadataCard = null;
-        });
-        commitCardsContainer.appendChild(backButton);
+
 
         addTreeToggleEvent();
         addFileSelectEvent();
@@ -480,326 +583,417 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    async function fetchImageFile(commitId, filePath) {
-        const apiUrl = `http://localhost:8080/api/personal/project/image-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}`;
+        async function fetchFileContent(commitId, filePath) {
+                    const apiUrl = `http://localhost:8080/api/personal/project/text-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}`;
 
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Accept': '*/*'
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${accessToken}`,
+                                'Accept': '*/*'
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch file content');
+                        }
+
+                        const textContent = await response.text();
+                        displayTextContent(textContent);
+                    } catch (error) {
+                        console.error('Error fetching file content:', error);
+                    }
                 }
-            });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch image file');
-            }
 
-            const blob = await response.blob();
-            displayImage(blob);
-        } catch (error) {
-            console.error('Error fetching image file:', error);
-        }
-    }
-
-    function displayImage(blob) {
-        const contentContainer = document.getElementById('file-content-display');
-        if (contentContainer) {
-            const imageUrl = URL.createObjectURL(blob);
-            contentContainer.innerHTML = `<img src="${imageUrl}" alt="Image" style="max-width: 100%; height: auto;">`;
-        }
-    }
-
-    async function fetchFileContent(commitId, filePath) {
-        const apiUrl = `http://localhost:8080/api/personal/project/text-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}`;
-
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Accept': '*/*'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch file content');
-            }
-
-            const textContent = await response.text();
-            displayTextContent(textContent);
-        } catch (error) {
-            console.error('Error fetching file content:', error);
-        }
-    }
-
-    function displayTextContent(text) {
-        const contentContainer = document.getElementById('file-content-display');
-        if (contentContainer) {
-            const lines = text.split('\n');
-            const numberedLines = lines.map((line, index) => {
-                return `<div class="line"><span class="line-number">${index + 1}</span> ${escapeHtml(line)}</div>`;
-            }).join('');
-            contentContainer.innerHTML = `<pre>${numberedLines}</pre>`;
-        }
-    }
-
-    function clearFileContent() {
-        const contentContainer = document.getElementById('file-content-display');
-        if (contentContainer) {
-            contentContainer.innerHTML = '';
-        }
-    }
-
-    function escapeHtml(unsafe) {
-        return unsafe
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-    function showCheckIcon(button) {
-        const checkIcon = document.createElement('span');
-        checkIcon.className = 'check-icon';
-        button.insertAdjacentElement('afterend', checkIcon);
-        setTimeout(() => checkIcon.classList.add('show'), 100); // Show check icon with delay
-    }
-
-    if (commitBtn) {
-        commitBtn.addEventListener('click', async function () {
-            const files = file1.files;
-            const commitMessage = commitMessageInput.value.trim();
-            const personalProjects = JSON.parse(localStorage.getItem('personal_project') || '[]');
-
-            console.log("커밋 버튼 클릭됨");
-            console.log("선택된 파일 수:", files.length);
-            console.log("입력된 커밋 메시지:", commitMessage);
-
-            if (!files.length) {
-                alert('커밋할 파일을 선택하세요.');
-                return;
-            }
-
-            if (!commitMessage) {
-                alert('커밋 메시지를 입력하세요.');
-                return;
-            }
+        async function fetchImageFile(commitId, filePath) {
+            const apiUrl = `http://localhost:8080/api/personal/project/image-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}`;
 
             try {
-                const formData = new FormData();
-                for (let file of files) {
-                    formData.append('files', file, file.webkitRelativePath);
-                }
-                formData.append('commitMessage', commitMessage);
-
-                console.log("FormData 생성 완료");
-                console.log("FormData 내용:", Array.from(formData.entries()));
-
-                let apiUrl = 'http://localhost:8080/api/personal/project/init';
-                let method = 'POST';
-
-                if (personalProjects.length > 0) {
-                    const latestProject = personalProjects[personalProjects.length - 1];
-                    formData.append('fromCommitId', latestProject.newCommitId);
-                    apiUrl = 'http://localhost:8080/api/personal/project/save';
-                } else {
-                    formData.append('projectId', projectId);
-                }
-
-                console.log("API URL:", apiUrl);
-
                 const response = await fetch(apiUrl, {
-                    method: method,
+                    method: 'GET',
                     headers: {
-                        'Authorization': 'Bearer ' + accessToken
-                    },
-                    body: formData
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Accept': '*/*'
+                    }
                 });
 
-                console.log("API 요청 완료. 응답 상태 코드:", response.status);
-                console.log("응답 Content-Type:", response.headers.get('content-type'));
-
                 if (!response.ok) {
-                    const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        const errorData = await response.json();
-                        console.log("커밋 실패 (JSON 응답):", errorData);
+                    throw new Error('Failed to fetch image file');
+                }
 
-                    } else {
-                        const errorText = await response.text();
-                        console.error('커밋 실패:', errorText);
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                displayImageContent(imageUrl);
+            } catch (error) {
+                console.error('Error fetching image file:', error);
+            }
+        }
 
-                    }
+        function displayImageContent(imageUrl) {
+            const contentContainer = document.getElementById('file-content-display');
+            if (contentContainer) {
+                contentContainer.innerHTML = `<img src="${imageUrl}" alt="Image File" style="max-width: 100%; height: auto;" />`;
+            }
+        }
+
+
+        function displayTextContent(text) {
+            const contentContainer = document.getElementById('file-content-display');
+            if (contentContainer) {
+                const lines = text.split('\n');
+                const numberedLines = lines.map((line, index) => {
+                    return `<div class="line"><span class="line-number">${index + 1}</span> ${escapeHtml(line)}</div>`;
+                }).join('');
+                contentContainer.innerHTML = `<pre>${numberedLines}</pre>`;
+            }
+        }
+
+        function clearFileContent() {
+            const contentContainer = document.getElementById('file-content-display');
+            if (contentContainer) {
+                contentContainer.innerHTML = '';
+            }
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function showCheckIcon(button, message = '') {
+            // 기존의 체크 아이콘을 제거하지 않도록 수정
+            let checkIcon = button.parentElement.querySelector('.check-icon');
+            if (!checkIcon) {
+                // 체크 아이콘이 없을 때만 새로 생성
+                checkIcon = document.createElement('span');
+                checkIcon.className = 'check-icon';
+                checkIcon.style.marginLeft = '10px'; // 버튼과의 간격을 조정
+                button.insertAdjacentElement('afterend', checkIcon);
+                setTimeout(() => checkIcon.classList.add('show'), 100); // Show check icon with delay
+            }
+
+            // 메시지도 기존의 메시지를 제거하지 않도록 수정
+            let uploadMessage = button.parentElement.querySelector('.upload-message');
+            if (!uploadMessage && message) {
+                // 메시지가 없을 때만 새로 생성
+                uploadMessage = document.createElement('span');
+                uploadMessage.className = 'upload-message';
+                uploadMessage.style.marginLeft = '10px'; // 메시지와 체크 아이콘 사이에 거리를 줍니다.
+                uploadMessage.textContent = message;
+                checkIcon.insertAdjacentElement('beforebegin', uploadMessage);
+            }
+        }
+
+        if (file1) {
+            // 이벤트 리스너를 초기화하기 전에 기존 리스너 제거 (중복 리스너 방지)
+            file1.removeEventListener('change', handleFile1Change);
+            file1.addEventListener('change', handleFile1Change);
+        }
+
+        function handleFile1Change(event) {
+            const files = event.target.files;
+            try {
+                // 폴더명 가져오기
+                const folderName = files[0].webkitRelativePath.split('/')[0];
+                const message = `'${folderName}' 폴더가 업로드되었습니다.`;
+
+                // 이미 존재하는 체크 아이콘과 메시지를 지우기
+                const previousCheckIcon = document.querySelector('.check-icon');
+                const previousMessage = document.querySelector('.upload-message');
+                if (previousCheckIcon) previousCheckIcon.remove();
+                if (previousMessage) previousMessage.remove();
+
+                // 새로운 체크 아이콘과 메시지 표시
+                showCheckIcon(document.querySelector('.open-file-btn'), message);
+            } catch (error) {
+                console.error('Error reading files:', error);
+            }
+        }
+
+        // 체크 아이콘과 메시지 제거 함수
+        function clearCheckIconAndMessage() {
+            const checkIcon = document.querySelector('.check-icon');
+            const uploadMessage = document.querySelector('.upload-message');
+            if (checkIcon) checkIcon.remove();
+            if (uploadMessage) uploadMessage.remove();
+        }
+
+        // 커밋 성공 메시지와 체크 아이콘 제거 함수
+        function clearCommitSuccessMessage() {
+            const successMessage = document.querySelector('.commit-success-message');
+            const checkIcon = document.querySelector('.check-icon');
+            if (successMessage) successMessage.remove();
+            if (checkIcon) checkIcon.remove();
+        }
+
+        // 커밋 메시지 입력 필드 내용 제거 함수
+        function clearCommitMessage() {
+            commitMessageInput.value = '';
+        }
+
+        // 모달 닫기 버튼
+        closeModalBtn.addEventListener('click', function () {
+            sideContentModal.style.display = "none";
+            branchContent.style.display = "none";
+            clearCheckIconAndMessage(); // 체크 아이콘과 메시지 제거
+            clearCommitSuccessMessage(); // 커밋 성공 메시지와 체크 아이콘 제거
+            clearCommitMessage(); // 커밋 메시지 입력 필드 내용 제거
+        });
+
+        if (commitBtn) {
+            commitBtn.addEventListener('click', async function () {
+                const files = file1.files;
+                const commitMessage = commitMessageInput.value.trim();
+                const personalProjects = JSON.parse(localStorage.getItem('personal_project') || '[]');
+
+                if (!files.length) {
+                    Swal.fire({
+                        title: '파일 선택 필요',
+                        text: '커밋할 파일을 선택하세요.',
+                        icon: 'warning',
+                        confirmButtonText: '확인'
+                    });
                     return;
                 }
 
-                const newCommitData = await response.json();
-                personalProjects.push(newCommitData);
-                localStorage.setItem('personal_project', JSON.stringify(personalProjects));
-
-
-                showCheckIcon(commitBtn); // 체크 아이콘 표시
-            } catch (error) {
-                console.error('Error committing files:', error);
-
-            }
-        });
-    }
-
-    if (file1) {
-        file1.addEventListener('change', async function () {
-            const files = this.files;
-            try {
-                const fileContents = await getFileContents(files);
-                displayFileContents(fileContents, 'original');
-                showCheckIcon(document.querySelector('.open-file-btn')); // 체크 아이콘 표시
-            } catch (error) {
-                console.error('Error reading files:', error);
-
-            }
-        });
-    }
-
-    if (file2) {
-        file2.addEventListener('change', async function () {
-            const fileName = this.files[0].name;
-            document.getElementById('file2-name').textContent = fileName;
-            await readFile(this, 'changed');
-            showCheckIcon(document.querySelector('.open-file-btn')); // 체크 아이콘 표시
-        });
-    }
-
-    if (compareBtn) {
-        compareBtn.addEventListener('click', async function () {
-            await compareFiles();
-        });
-    }
-
-    if (reviewBtn) {
-        reviewBtn.addEventListener('click', async function () {
-            await reviewFiles();
-        });
-    }
-
-    async function getFileContents(files) {
-        const fileContents = [];
-        for (let file of files) {
-            if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
-                try {
-                    const content = await readFileContent(file);
-                    fileContents.push({ name: file.webkitRelativePath, content: content });
-                } catch (error) {
-                    console.error('Error reading file:', file.name, error);
-                    throw error;
+                if (!commitMessage) {
+                    Swal.fire({
+                        title: '커밋 메시지 필요',
+                        text: '커밋 메시지를 입력하세요.',
+                        icon: 'warning',
+                        confirmButtonText: '확인'
+                    });
+                    return;
                 }
-            } else {
-                console.warn('Skipping non-text file:', file.name);
-            }
-        }
-        return fileContents;
-    }
 
-    function displayFileContents(fileContents, type) {
-        if (type === 'original') {
-            let contentHtml = '';
-            fileContents.forEach(file => {
-                contentHtml += `<h3>${file.name}</h3><pre>${escapeHtml(file.content)}</pre>`;
+                try {
+                    const formData = new FormData();
+                    for (let file of files) {
+                        formData.append('files', file, file.webkitRelativePath);
+                    }
+                    formData.append('commitMessage', commitMessage);
+
+                    let apiUrl = 'http://localhost:8080/api/personal/project/init';
+                    let method = 'POST';
+
+                    if (personalProjects.length > 0) {
+                        const latestProject = personalProjects[personalProjects.length - 1];
+                        formData.append('fromCommitId', latestProject.newCommitId);
+                        apiUrl = 'http://localhost:8080/api/personal/project/save';
+                    } else {
+                        formData.append('projectId', projectId);
+                    }
+
+                    const response = await fetch(apiUrl, {
+                        method: method,
+                        headers: {
+                            'Authorization': 'Bearer ' + accessToken
+                        },
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        const contentType = response.headers.get('content-type');
+                        if (contentType && contentType.includes('application/json')) {
+                            const errorData = await response.json();
+                            console.log("커밋 실패 (JSON 응답):", errorData);
+                        } else {
+                            const errorText = await response.text();
+                            console.error('커밋 실패:', errorText);
+                        }
+                        return;
+                    }
+
+                    const newCommitData = await response.json();
+                    personalProjects.push(newCommitData);
+                    localStorage.setItem('personal_project', JSON.stringify(personalProjects));
+
+                    // 커밋이 성공했을 때 메시지와 체크 아이콘을 표시
+                    Swal.fire({
+                        title: '커밋 성공',
+                        text: '커밋이 완료되었습니다.',
+                        icon: 'success',
+                        confirmButtonText: '확인'
+                    });
+
+                } catch (error) {
+                    console.error('Error committing files:', error);
+                    Swal.fire({
+                        title: '커밋 실패',
+                        text: '커밋 중 오류가 발생했습니다.',
+                        icon: 'error',
+                        confirmButtonText: '확인'
+                    });
+                }
             });
-            document.getElementById('original-file-content').innerHTML = contentHtml;
         }
-    }
 
-    function readFileContent(file) {
-        return new Promise((resolve, reject) => {
+
+        function showCommitSuccessMessage(button, message) {
+            // 이미 존재하는 메시지와 체크 아이콘을 지움
+            const previousMessage = button.parentElement.querySelector('.commit-success-message');
+            const previousCheckIcon = button.parentElement.querySelector('.check-icon');
+            if (previousMessage) previousMessage.remove();
+            if (previousCheckIcon) previousCheckIcon.remove();
+
+            // 커밋 완료 메시지 표시
+            const successMessage = document.createElement('span');
+            successMessage.className = 'commit-success-message';
+            successMessage.style.marginLeft = '10px'; // 버튼과의 간격 조정
+            successMessage.textContent = message;
+            button.insertAdjacentElement('afterend', successMessage);
+
+            // 체크 아이콘 표시
+            const checkIcon = document.createElement('span');
+            checkIcon.className = 'check-icon';
+            checkIcon.style.marginLeft = '10px'; // 메시지와의 간격 조정
+            checkIcon.innerHTML = '✔'; // 체크 아이콘 표시
+            successMessage.insertAdjacentElement('afterend', checkIcon);
+        }
+
+
+        if (file1) {
+            file1.addEventListener('change', async function () {
+                const files = this.files;
+                try {
+                    const fileContents = await getFileContents(files);
+                    showCheckIcon(document.querySelector('.open-file-btn')); // 체크 아이콘 표시
+                } catch (error) {
+                    console.error('Error reading files:', error);
+                }
+            });
+        }
+
+        if (file2) {
+            file2.addEventListener('change', async function () {
+                const fileName = this.files[0].name;
+                document.getElementById('file2-name').textContent = fileName;
+                await readFile(this, 'changed');
+                showCheckIcon(document.querySelector('.open-file-btn')); // 체크 아이콘 표시
+            });
+        }
+
+        if (compareBtn) {
+            compareBtn.addEventListener('click', async function () {
+                await compareFiles();
+            });
+        }
+
+        if (reviewBtn) {
+            reviewBtn.addEventListener('click', async function () {
+                await reviewFiles();
+            });
+        }
+
+        async function getFileContents(files) {
+            const fileContents = [];
+            for (let file of files) {
+                if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
+                    try {
+                        const content = await readFileContent(file);
+                        fileContents.push({ name: file.webkitRelativePath, content: content });
+                    } catch (error) {
+                        console.error('Error reading file:', file.name, error);
+                        throw error;
+                    }
+                } else {
+                    console.warn('Skipping non-text file:', file.name);
+                }
+            }
+            return fileContents;
+        }
+
+        function readFileContent(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    resolve(event.target.result);
+                };
+                reader.onerror = function (error) {
+                    reject(error);
+                }
+                reader.readAsText(file);
+            });
+        }
+
+        async function readFile(input, type) {
+            const file = input.files[0];
             const reader = new FileReader();
+
             reader.onload = function (event) {
-                resolve(event.target.result);
+                const content = event.target.result;
+                if (type === 'changed') {
+                    displayChangedFileContent(content);
+                }
             };
-            reader.onerror = function (error) {
-                reject(error);
-            }
+
             reader.readAsText(file);
-        });
-    }
+        }
 
-    async function readFile(input, type) {
-        const file = input.files[0];
-        const reader = new FileReader();
+        async function compareFiles() {
+            const originalContentElement = document.getElementById('file-content-display');
+            const changedContentElement = document.getElementById('changed-file-content');
 
-        reader.onload = function (event) {
-            const content = event.target.result;
-            if (type === 'changed') {
-                displayChangedFileContent(content);
+            if (!originalContentElement || !changedContentElement) {
+                console.error('One or both of the content elements are missing');
+                return;
             }
-        };
 
-        reader.readAsText(file);
-    }
+            const originalContent = originalContentElement.innerText;
+            const changedContent = changedContentElement.innerText;
 
-   async function compareFiles() {
-       const originalContentElement = document.getElementById('file-content-display');
-       const changedContentElement = document.getElementById('changed-file-content');
+            const originalLines = originalContent.split('\n');
+            const changedLines = changedContent.split('\n');
 
-       if (!originalContentElement || !changedContentElement) {
-           console.error('One or both of the content elements are missing');
-           return;
-       }
+            const highlightedOriginal = highlightDifferences(originalLines, changedLines, false);
+            const highlightedChanged = highlightDifferences(changedLines, originalLines, true);
 
-       const originalContent = originalContentElement.innerText;
-       const changedContent = changedContentElement.innerText;
+            originalContentElement.innerHTML = highlightedOriginal;
+            changedContentElement.innerHTML = highlightedChanged;
+        }
 
-       const originalLines = originalContent.split('\n');
-       const changedLines = changedContent.split('\n');
+        function highlightDifferences(primaryLines, secondaryLines, isChangedContent) {
+            return primaryLines.map((line, index) => {
+                const secondaryLine = secondaryLines[index] || '';
+                let backgroundColor = '';
 
-       const highlightedOriginal = highlightDifferences(originalLines, changedLines, false);
-       const highlightedChanged = highlightDifferences(changedLines, originalLines, true);
+                if (line !== secondaryLine) {
+                    if (!secondaryLine) {
+                        backgroundColor = 'rgba(144, 238, 144, 0.3)'; // 연한 초록색 with 투명도 30% (완전히 빠진 부분)
+                    } else {
+                        backgroundColor = 'rgba(173, 216, 230, 0.3)'; // 연한 남색 with 투명도 30% (변경된 부분)
+                    }
+                }
 
-       originalContentElement.innerHTML = highlightedOriginal;
-       changedContentElement.innerHTML = highlightedChanged;
-   }
+                return `<div class="line" style="background-color: ${backgroundColor};">
+                            <span class="line-number">${index + 1}</span> ${escapeHtml(line)}
+                        </div>`;
+            }).join('');
+        }
 
-   function highlightDifferences(primaryLines, secondaryLines, isChangedContent) {
-       return primaryLines.map((line, index) => {
-           const secondaryLine = secondaryLines[index] || '';
-           let backgroundColor = '';
+        function displayChangedFileContent(content) {
+            const contentContainer = document.getElementById('changed-file-content');
+            if (contentContainer) {
+                const lines = content.split('\n');
+                const numberedLines = lines.map((line, index) => {
+                    return `<div class="line"><span class="line-number">${index + 1}</span> ${escapeHtml(line)}</div>`;
+                }).join('');
+                contentContainer.innerHTML = `<pre>${numberedLines}</pre>`;
+            }
+        }
 
-           if (line !== secondaryLine) {
-               if (!secondaryLine) {
-                   backgroundColor = 'rgba(144, 238, 144, 0.3)'; // 연한 초록색 with 투명도 30% (완전히 빠진 부분)
-               } else {
-                   backgroundColor = 'rgba(173, 216, 230, 0.3)'; // 연한 남색 with 투명도 30% (변경된 부분)
-               }
-           }
-
-           return `<div class="line" style="background-color: ${backgroundColor};">
-                       <span class="line-number">${index + 1}</span> ${escapeHtml(line)}
-                   </div>`;
-       }).join('');
-   }
-
-   function displayChangedFileContent(content) {
-       const contentContainer = document.getElementById('changed-file-content');
-       if (contentContainer) {
-           const lines = content.split('\n');
-           const numberedLines = lines.map((line, index) => {
-               return `<div class="line"><span class="line-number">${index + 1}</span> ${escapeHtml(line)}</div>`;
-           }).join('');
-           contentContainer.innerHTML = `<pre>${numberedLines}</pre>`;
-       }
-   }
-
-   function escapeHtml(unsafe) {
-       return unsafe
-           .replace(/&/g, "&amp;")
-           .replace(/</g, "&lt;")
-           .replace(/>/g, "&gt;")
-           .replace(/"/g, "&quot;")
-           .replace(/'/g, "&#039;");
-   }
-
-
-    fetchRepositories();
-});
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    });
