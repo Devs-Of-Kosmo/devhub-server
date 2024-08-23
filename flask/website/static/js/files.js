@@ -31,6 +31,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const branchContent = document.getElementById('branchContent');
     const closeModalBtn = document.querySelector('.close-btn');
     const closeBranchBtn = document.createElement('span');
+    const helpBtn = document.getElementById('helpBtn');
+    const helpModal = document.getElementById('helpModal');
+    const closeHelpBtn = document.querySelector('.close-help-btn');
 
 
     // 닫기 버튼 생성
@@ -70,11 +73,23 @@ document.addEventListener("DOMContentLoaded", function () {
         branchContent.style.display = "none";
     });
 
+    // 설명서 버튼 클릭 시 모달 창 열기
+        helpBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+            helpModal.style.display = "block";
+        });
+
+        // 설명서 모달 닫기 버튼
+        closeHelpBtn.addEventListener('click', function () {
+            helpModal.style.display = "none";
+        });
+
     // 외부 클릭 시 모달 닫기
     window.addEventListener('click', function (event) {
-        if (event.target == sideContentModal || event.target == branchContent) {
+        if (event.target == sideContentModal || event.target == branchContent== helpModal) {
             sideContentModal.style.display = "none";
             branchContent.style.display = "none";
+            helpModal.style.display = "none";
             clearCheckIconAndMessage(); // 체크 아이콘과 메시지 제거
         }
     });
@@ -326,11 +341,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     </button>
                 </div>
                 <p style="text-align: center; font-weight: bold;">{${index + 1}}</p> <!-- {n} 형식으로 가운데 정렬 및 굵은 글씨 -->
-                <p>${projectName}</p>
-                <p>${description}</p>
                 <ul>
                     <li>
-                        <strong>커밋 코드:</strong> ${commit.commitCode}
+                        <strong>커밋 코드:</strong> <br> ${commit.commitCode}
                     </li>
                     <li>
                         <strong>커밋 메시지:</strong> <br> ${commit.commitMessage}
@@ -352,32 +365,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // 이벤트 리스너를 한 번만 등록
-    metadataContainer.addEventListener('click', async function (event) {
-        if (event.target.closest('.delete-icon-btn')) {
-            const button = event.target.closest('.delete-icon-btn');
-            const commitId = button.getAttribute('data-commit-id');
-            const confirmDelete = confirm('정말로 이 커밋을 삭제하시겠습니까?');
+        metadataContainer.addEventListener('click', async function (event) {
+            if (event.target.closest('.delete-icon-btn')) {
+                const button = event.target.closest('.delete-icon-btn');
+                const commitId = button.getAttribute('data-commit-id');
+                const commitCard = button.closest('.commit-card');
+                const commitIndex = Array.from(metadataContainer.children).indexOf(commitCard);
 
-            if (confirmDelete) {
-                try {
-                    const response = await fetch(`http://localhost:8080/api/personal/project/commit/${commitId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`
-                        }
+                if (commitIndex === 0) {
+                    Swal.fire({
+                        title: '삭제 불가',
+                        text: '첫 번째 커밋 카드는 삭제가 불가능합니다.',
+                        icon: 'warning',
+                        confirmButtonText: '확인'
                     });
+                    return;
+                }
 
-                    if (response.status === 204) {
-                        // 삭제 후 커밋 목록을 다시 로드하여 갱신
-                        await fetchProjectMetadata(projectName);
-                    } else {
-                        throw new Error('Failed to delete commit');
+                const confirmDelete = await Swal.fire({
+                    title: '(주의) 커밋 카드 삭제',
+                    text: '커밋 카드 삭제 버튼을 누르시면 이후에 만들어진 커밋 이력도 전부 삭제됩니다.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '네, 삭제합니다',
+                    cancelButtonText: '아니요, 취소합니다'
+                });
+
+                if (confirmDelete.isConfirmed) {
+                    try {
+                        const response = await fetch(`http://localhost:8080/api/personal/project/commit/${commitId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${accessToken}`
+                            }
+                        });
+
+                        if (response.status === 204) {
+                            // 삭제 후 커밋 목록을 다시 로드하여 갱신
+                            await fetchProjectMetadata(projectName);
+                        } else {
+                            throw new Error('Failed to delete commit');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting commit:', error);
                     }
-                } catch (error) {
-                    console.error('Error deleting commit:', error);
                 }
             }
-        }
 
         if (event.target.closest('.download-icon-btn')) {
             const button = event.target.closest('.download-icon-btn');

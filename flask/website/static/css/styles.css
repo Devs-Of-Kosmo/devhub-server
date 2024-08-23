@@ -7,6 +7,20 @@
             padding: 0;
         }
 
+        .close-help-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-help-btn:hover,
+        .close-help-btn:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
         .container1 {
             display: flex;
             justify-content: space-between;

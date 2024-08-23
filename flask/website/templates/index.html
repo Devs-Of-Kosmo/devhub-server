@@ -11,8 +11,38 @@
             <li><a href="#" id="toggleSidebarBtn"><i class="fas fa-folder-open"></i></a></li>
             <li><a href="#" id="branchToggleBtn"><i class="fas fa-code-branch"></i></a></li> <!-- 브랜치 토글 버튼 -->
             <li><a href="#" id="settingsBtn"><i class="fas fa-cog"></i></a></li> <!-- 설정 버튼 -->
+            <li><a href="#" id="helpBtn"><i class="fas fa-question-circle"></i></a></li> <!-- 설명서 버튼 -->
         </ul>
     </nav>
+
+    <!-- 설명서 모달 창 -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content" style="font-family: 'Poppins', sans-serif;">
+            <span class="close-help-btn" style="position: absolute; top: 10px; right: 10px;">&times;</span>
+            <h2 style="font-family: Arial, sans-serif;">도움말</h2> <!-- "도움말"은 다른 폰트로 설정 -->
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li style="margin-bottom: 1em;">
+                    <strong>Commits <i class="fas fa-check-circle"></i> :</strong>
+                    커밋 히스토리를 확인하고 관리합니다.
+                    <br>
+                    <em>설명:</em> 커밋은 코드 변경 사항을 저장하는 기록입니다. 이 기능을 통해 프로젝트에서 이루어진 모든 커밋의 히스토리를 확인하고, 각 커밋의 메시지, 작성자, 그리고 변경된 내용을 볼 수 있습니다. 커밋 기록은 프로젝트의 변경 내역을 추적하는 데 매우 유용합니다.
+                </li>
+                <li style="margin-bottom: 1em;">
+                    <strong>Branches <i class="fas fa-code-branch"></i> :</strong>
+                    프로젝트의 브랜치를 관리하고 볼 수 있습니다.
+                    <br>
+                    <em>설명:</em> 브랜치는 버전 관리 시스템에서 각각의 독립적인 코드 라인을 의미합니다. 이 기능을 사용하여 새로운 기능 개발이나 버그 수정을 위한 브랜치를 생성하고, 현재 활성화된 브랜치의 상태를 확인할 수 있습니다. 다양한 브랜치를 관리함으로써 여러 작업을 병렬로 진행하고 나중에 병합할 수 있습니다.
+                </li>
+                <li style="margin-bottom: 1em;">
+                    <strong>Settings <i class="fas fa-cog"></i> :</strong>
+                    프로젝트 설정을 변경하거나 프로젝트를 삭제합니다.
+                    <br>
+                    <em>설명:</em> 설정 메뉴에서는 프로젝트의 이름과 설명을 수정하고, 불필요한 프로젝트를 삭제할 수 있습니다. 이 기능을 사용하여 프로젝트의 메타데이터를 최신 상태로 유지하거나, 더 이상 필요하지 않은 프로젝트를 안전하게 제거할 수 있습니다. 프로젝트 삭제 시에는 주의가 필요하며, 삭제된 프로젝트는 복구할 수 없습니다.
+                </li>
+            </ul>
+        </div>
+    </div>
+
 
     <!-- 설정을 위한 모달 창 -->
     <div id="settingsModal" class="modal">
