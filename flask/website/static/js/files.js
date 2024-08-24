@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const compareBtn = document.getElementById('compare-btn');
     const commitBtn = document.getElementById('commit-button');
     const commitMessageInput = document.getElementById('commitMessage');
-    const reviewBtn = document.getElementById('review-btn');
     const accessToken = localStorage.getItem('accessToken');
     const projectName = sessionStorage.getItem('projectName');
     const projectId = sessionStorage.getItem('projectId');
@@ -173,12 +172,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/api/personal/repo', {
+            const timestamp = new Date().getTime(); // 캐시 방지를 위한 타임스탬프 추가
+            const response = await fetch(`http://localhost:8080/api/personal/repo?ts=${timestamp}`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
                     'Content-Type': 'application/json',
-                    'Accept': '*/*'
+                    'Accept': '*/*',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
                 },
                 body: JSON.stringify({
                     projectId: projectId,
@@ -233,10 +236,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (confirmDelete.isConfirmed) {
             try {
-                const response = await fetch(`http://localhost:8080/api/personal/repo/${projectId}`, {
+                const timestamp = new Date().getTime(); // 캐시 방지를 위한 타임스탬프 추가
+                const response = await fetch(`http://localhost:8080/api/personal/repo/${projectId}?ts=${timestamp}`, {
                     method: 'DELETE',
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
                     }
                 });
 
@@ -296,11 +303,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/personal/project/metadata?projectId=${projectId}`, {
+            const timestamp = new Date().getTime(); // 캐시 방지를 위한 타임스탬프 추가
+            const response = await fetch(`http://localhost:8080/api/personal/project/metadata?projectId=${projectId}&ts=${timestamp}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
-                    'Accept': '*/*'
+                    'Accept': '*/*',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
                 }
             });
 
@@ -331,28 +342,33 @@ document.addEventListener("DOMContentLoaded", function () {
             const commitCard = document.createElement('div');
             commitCard.className = 'commit-card';
             commitCard.innerHTML = `
-                <div class="icon-buttons">
-                    <button class="delete-icon-btn" data-commit-id="${commit.commitId}">
+               <div class="icon-buttons" style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                    <button class="delete-icon-btn" data-commit-id="${commit.commitId}" style="background: none; border: none; color: #e74c3c; font-size: 16px; margin-left: 10px; cursor: pointer;">
                         <i class="fas fa-trash-alt"></i>
                     </button>
-                    <button class="download-icon-btn" data-commit-id="${commit.commitId}">
+                    <button class="download-icon-btn" data-commit-id="${commit.commitId}" style="background: none; border: none; color: #2ecc71; font-size: 16px; margin-left: 10px; cursor: pointer;">
                         <i class="fas fa-download"></i>
                     </button>
                 </div>
-                <p style="text-align: center; font-weight: bold;">{${index + 1}}</p> <!-- {n} 형식으로 가운데 정렬 및 굵은 글씨 -->
-                <ul>
-                    <li>
-                        <strong>커밋 코드:</strong> <br> ${commit.commitCode}
+                <p style="text-align: center; font-weight: bold; font-size: 18px; margin: 0 0 20px 0; color: #0e639c;">${index + 1}</p>
+                <ul style="list-style-type: none; padding: 0; margin: 0 0 20px 0;">
+                    <!-- >
+                    <li style="margin-bottom: 15px;">
+                        <strong style="display: block; margin-bottom: 5px; color: #0e639c;">커밋 코드:</strong>
+                        <span style="word-break: break-all;">${commit.commitCode}</span>
                     </li>
-                    <li>
-                        <strong>커밋 메시지:</strong> <br> ${commit.commitMessage}
+                    <-->
+                    <li style="margin-bottom: 15px;">
+                        <strong style="display: block; margin-bottom: 5px; color: #0e639c;">커밋 메시지:</strong>
+                        <span style="word-break: break-word;">${commit.commitMessage}</span>
                     </li>
-                    <li>
-                        <strong>생성 날짜:</strong> <br> ${new Date(commit.createdDate).toLocaleString()}
+                    <li style="margin-bottom: 15px;">
+                        <strong style="display: block; margin-bottom: 5px; color: #0e639c;">생성 날짜:</strong>
+                        <span>${new Date(commit.createdDate).toLocaleString()}</span>
                     </li>
                 </ul>
-                <button class="view-commit-btn" data-commit-id="${commit.commitId}">Changes</button>
-                <div class="commit-details" style="display: none;"></div>
+                <button class="view-commit-btn" data-commit-id="${commit.commitId}" style="display: block; width: 100%; padding: 10px; background-color: #0e639c; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">선택</button>
+                <div class="commit-details" style="display: none; margin-top: 15px; border-top: 1px solid #3c3c3c; padding-top: 15px;"></div>
             `;
             metadataContainer.appendChild(commitCard);
         });
@@ -369,7 +385,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (commitIndex === 0) {
                 Swal.fire({
                     title: '삭제 불가',
-                    text: '첫 번째 커밋 카드는 삭제가 불가능합니다.',
+                    text: '첫 번째 커밋이력은 삭제가 불가능합니다.',
                     icon: 'warning',
                     confirmButtonText: '확인'
                 });
@@ -377,8 +393,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const confirmDelete = await Swal.fire({
-                title: '(주의) 커밋 카드 삭제',
-                text: '커밋 카드 삭제 버튼을 누르시면 이후에 만들어진 커밋 이력도 전부 삭제됩니다.',
+                title: '(주의) 커밋 이력 삭제',
+                text: '커밋 이력 삭제 버튼을 누르시면 이후에 만들어진 커밋 이력도 전부 삭제됩니다.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: '네, 삭제합니다',
@@ -387,10 +403,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (confirmDelete.isConfirmed) {
                 try {
-                    const response = await fetch(`http://localhost:8080/api/personal/project/commit/${commitId}`, {
+                    const timestamp = new Date().getTime(); // 캐시 방지를 위한 타임스탬프 추가
+                    const response = await fetch(`http://localhost:8080/api/personal/project/commit/${commitId}?ts=${timestamp}`, {
                         method: 'DELETE',
                         headers: {
-                            'Authorization': `Bearer ${accessToken}`
+                            'Authorization': `Bearer ${accessToken}`,
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache',
+                            'Expires': '0'
                         }
                     });
 
@@ -409,14 +429,18 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.target.closest('.download-icon-btn')) {
             const button = event.target.closest('.download-icon-btn');
             const commitId = button.getAttribute('data-commit-id');
-            const apiUrl = `http://localhost:8080/api/personal/project/download?commitId=${commitId}`;
+            const timestamp = new Date().getTime(); // 캐시 방지를 위한 타임스탬프 추가
+            const apiUrl = `http://localhost:8080/api/personal/project/download?commitId=${commitId}&ts=${timestamp}`;
 
             try {
                 const response = await fetch(apiUrl, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
-                        'Accept': '*/*'
+                        'Accept': '*/*',
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
                     }
                 });
 
@@ -464,11 +488,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function fetchCommitDetails(commitId, commitDetails) {
         try {
-            const response = await fetch(`http://localhost:8080/api/personal/project/commit?commitId=${commitId}`, {
+            const timestamp = new Date().getTime(); // 캐시 방지를 위한 타임스탬프 추가
+            const response = await fetch(`http://localhost:8080/api/personal/project/commit?commitId=${commitId}&ts=${timestamp}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
-                    'Accept': '*/*'
+                    'Accept': '*/*',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
                 }
             });
 
@@ -597,14 +625,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function fetchFileContent(commitId, filePath) {
-        const apiUrl = `http://localhost:8080/api/personal/project/text-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}`;
+        const timestamp = new Date().getTime(); // 캐시 방지를 위한 타임스탬프 추가
+        const apiUrl = `http://localhost:8080/api/personal/project/text-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}&ts=${timestamp}`;
 
         try {
             const response = await fetch(apiUrl, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
-                    'Accept': '*/*'
+                    'Accept': '*/*',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
                 }
             });
 
@@ -620,14 +652,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function fetchImageFile(commitId, filePath) {
-        const apiUrl = `http://localhost:8080/api/personal/project/image-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}`;
+        const timestamp = new Date().getTime(); // 캐시 방지를 위한 타임스탬프 추가
+        const apiUrl = `http://localhost:8080/api/personal/project/image-file?commitId=${commitId}&filePath=${encodeURIComponent(filePath)}&ts=${timestamp}`;
 
         try {
             const response = await fetch(apiUrl, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
-                    'Accept': '*/*'
+                    'Accept': '*/*',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
                 }
             });
 
@@ -765,15 +801,6 @@ document.addEventListener("DOMContentLoaded", function () {
         commitMessageInput.value = '';
     }
 
-    // 모달 닫기 버튼
-    closeModalBtn.addEventListener('click', function () {
-        sideContentModal.style.display = "none";
-        branchContent.style.display = "none";
-        clearCheckIconAndMessage(); // 체크 아이콘과 메시지 제거
-        clearCommitSuccessMessage(); // 커밋 성공 메시지와 체크 아이콘 제거
-        clearCommitMessage(); // 커밋 메시지 입력 필드 내용 제거
-    });
-
     if (commitBtn) {
         commitBtn.addEventListener('click', async function () {
             const files = file1.files;
@@ -818,10 +845,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     formData.append('projectId', projectId);
                 }
 
+                const timestamp = new Date().getTime(); // 캐시 방지를 위한 타임스탬프 추가
+                apiUrl = `${apiUrl}?ts=${timestamp}`;
+
                 const response = await fetch(apiUrl, {
                     method: method,
                     headers: {
-                        'Authorization': 'Bearer ' + accessToken
+                        'Authorization': 'Bearer ' + accessToken,
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
                     },
                     body: formData
                 });
@@ -865,28 +898,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function showCommitSuccessMessage(button, message) {
-        // 이미 존재하는 메시지와 체크 아이콘을 지움
-        const previousMessage = button.parentElement.querySelector('.commit-success-message');
-        const previousCheckIcon = button.parentElement.querySelector('.check-icon');
-        if (previousMessage) previousMessage.remove();
-        if (previousCheckIcon) previousCheckIcon.remove();
-
-        // 커밋 완료 메시지 표시
-        const successMessage = document.createElement('span');
-        successMessage.className = 'commit-success-message';
-        successMessage.style.marginLeft = '10px'; // 버튼과의 간격 조정
-        successMessage.textContent = message;
-        button.insertAdjacentElement('afterend', successMessage);
-
-        // 체크 아이콘 표시
-        const checkIcon = document.createElement('span');
-        checkIcon.className = 'check-icon';
-        checkIcon.style.marginLeft = '10px'; // 메시지와의 간격 조정
-        checkIcon.innerHTML = '✔'; // 체크 아이콘 표시
-        successMessage.insertAdjacentElement('afterend', checkIcon);
-    }
-
     if (file1) {
         file1.addEventListener('change', async function () {
             const files = this.files;
@@ -901,12 +912,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (file2) {
         file2.addEventListener('change', async function () {
-            const fileName = this.files[0].name;
-            document.getElementById('file2-name').textContent = fileName;
-            await readFile(this, 'changed');
-            showCheckIcon(document.querySelector('.open-file-btn')); // 체크 아이콘 표시
+            const fileNames = [];
+            const contentContainer = document.getElementById('file2-content-display');
+
+            for (let i = 0; i < this.files.length; i++) {
+                const file = this.files[i];
+                fileNames.push(file.name);
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    const content = event.target.result;
+                    contentContainer.innerHTML += `<pre>${escapeHtml(content)}</pre>`;
+                };
+
+                reader.readAsText(file);
+            }
+
+            document.getElementById('file2-name').textContent = fileNames.join(', '); // 파일 이름 표시
         });
     }
+
 
     if (compareBtn) {
         compareBtn.addEventListener('click', async function () {
@@ -914,11 +939,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    if (reviewBtn) {
-        reviewBtn.addEventListener('click', async function () {
-            await reviewFiles();
-        });
-    }
 
     async function getFileContents(files) {
         const fileContents = [];
@@ -1013,6 +1033,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const numberedLines = lines.map((line, index) => {
                 return `<div class="line"><span class="line-number">${index + 1}</span> ${escapeHtml(line)}</div>`;
             }).join('');
+
             contentContainer.innerHTML = `<pre>${numberedLines}</pre>`;
         }
     }
@@ -1025,4 +1046,13 @@ document.addEventListener("DOMContentLoaded", function () {
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
     }
+
+    // 파일 입력 필드를 초기화하는 함수
+    window.resetFileInput = function resetFileInput(inputId) {
+        const fileInput = document.getElementById(inputId);
+        if (fileInput) {
+            fileInput.value = ''; // 파일 입력 필드를 초기화
+            setTimeout(() => fileInput.click(), 100); // 약간의 지연을 추가하여 안정적으로 작동하게 함
+        }
+    };
 });

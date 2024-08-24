@@ -13,7 +13,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Unbounded 폰트 추가 -->
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
+    <!-- Poppins 폰트 추가 -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Jua 폰트 추가 -->
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     {% endblock %}
 </head>
 <body>
@@ -22,7 +25,7 @@
         <!-- 로고 이미지와 제목을 같은 div 내에 배치 -->
         <div class="logo-title-container">
             <img src="{{ url_for('static', filename='img/logo_1.jpg') }}" alt="Logo" class="site-logo">
-            <!-- h1 요소를 a 태그로 감싸서 클릭 시 localhost:8080/로 이동 -->
+
             <a href="http://localhost:8080/" class="site-title-link">
                 <h1 class="site-title">DEVHUV</h1>
             </a>
@@ -41,6 +44,7 @@
 </header>
 {% block content %}
 {% endblock %}
+<script src="{{ url_for('static', filename='js/openai.js') }}"></script>
 <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 <script src="{{ url_for('static', filename='js/files.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -122,6 +122,7 @@ function updateTrashModal() {
         item.innerHTML = `
             <span>${repo.projectName} (${repo.teamName})</span>
             <button onclick="deleteRepo('${repo.projectId}')">삭제</button>
+            <button onclick="location.reload();">복구</button> 
         `;
         trashItems.appendChild(item);
     });

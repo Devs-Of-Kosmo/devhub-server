@@ -9,6 +9,7 @@
     --header-height: 32px;
 }
 
+
 body, html {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background-color: var(--bg-color);
@@ -56,6 +57,7 @@ body, html {
     list-style: none;
     margin: 0;
     padding: 0;
+    font-family: 'Jua', sans-serif;
 }
 
 .navbar ul li {
@@ -69,6 +71,7 @@ button, .action-btn {
     padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
+    font-family: 'Jua', sans-serif;
     font-size: 14px;
     transition: background-color 0.3s ease;
 }
@@ -80,10 +83,11 @@ button:hover, .action-btn:hover {
 h2, h3, h4 {
     color: #58a6ff;
     margin-bottom: 16px;
+    font-family: 'Jua', sans-serif;
 }
 
 .input-field {
-    width: 100%;
+    width: 80%;
     padding: 10px;
     background-color: #252526;
     border: 1px solid var(--border-color);
@@ -107,4 +111,39 @@ h2, h3, h4 {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+/* 버튼 컨테이너 스타일 */
+.button-container {
+    display: flex !important;
+    justify-content: flex-start !important;
+    padding: 10px !important;
+    background-color: var(--bg-color) !important;
+    border-top: 2px solid var(--accent-color) !important;
+    margin-top: 20px !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 1000 !important;
+}
+
+/* 버튼 스타일 */
+.action-btn {
+    background-color: var(--accent-color) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 10px 15px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease !important;
+    margin-right: 10px !important;
+    display: inline-block !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.action-btn:hover {
+    background-color: #005a9e !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
 }

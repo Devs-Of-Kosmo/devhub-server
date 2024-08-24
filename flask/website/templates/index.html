@@ -3,75 +3,71 @@
 {% block title %}File Comparison{% endblock %}
 
 {% block styles %}
-{{ super() }} <!-- base.html에서 정의된 스타일을 유지 -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"> <!-- index.css 추가 -->
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 {% endblock %}
 
 {% block content %}
-
 <div class="wrapper">
-    <!-- 왼쪽 네비게이션 바 -->
     <nav class="sidebar">
         <ul class="nav-icons">
-            <li><a href="#" id="toggleSidebarBtn"><i class="fas fa-folder-open"></i></a></li>
-            <li><a href="#" id="branchToggleBtn"><i class="fas fa-code-branch"></i></a></li> <!-- 브랜치 토글 버튼 -->
-            <li><a href="#" id="settingsBtn"><i class="fas fa-cog"></i></a></li> <!-- 설정 버튼 -->
-            <li><a href="#" id="helpBtn"><i class="fas fa-question-circle"></i></a></li> <!-- 설명서 버튼 -->
+            <li><a href="#" id="toggleSidebarBtn" data-tooltip="Open Folder"><i class="fas fa-folder-open"></i></a></li>
+            <li><a href="#" id="branchToggleBtn" data-tooltip="Branches"><i class="fas fa-code-branch"></i></a></li>
+            <li><a href="#" id="settingsBtn" data-tooltip="Settings"><i class="fas fa-cog"></i></a></li>
+            <li><a href="#" id="helpBtn" data-tooltip="Help"><i class="fas fa-question-circle"></i></a></li>
+            <li><a href="https://mail.google.com/" target="_blank" data-tooltip="Gmail"><i class="fas fa-envelope"></i></a></li>
+            <li><a href="https://chat.openai.com/" target="_blank" data-tooltip="ChatGPT"><i class="fas fa-robot"></i></a></li>
         </ul>
     </nav>
 
-    <!-- 설명서 모달 창 -->
+    <!-- 도움말 모달 -->
     <div id="helpModal" class="modal">
-        <div class="modal-content" style="font-family: 'Poppins', sans-serif;">
-            <span class="close-help-btn" style="position: absolute; top: 10px; right: 10px;">&times;</span>
-            <h2 style="font-family: Arial, sans-serif;">도움말</h2> <!-- "도움말"은 다른 폰트로 설정 -->
-            <ul style="list-style-type: none; padding-left: 0;">
-                <li style="margin-bottom: 1em;">
+        <div class="modal-content">
+            <span class="close-help-btn">&times;</span>
+            <h2>도움말</h2>
+            <ul>
+                <li>
                     <strong>Commits <i class="fas fa-check-circle"></i> :</strong>
-                    커밋 히스토리를 확인하고 관리합니다.
-                    <br>
-                    <em>설명:</em> 커밋은 코드 변경 사항을 저장하는 기록입니다. 이 기능을 통해 프로젝트에서 이루어진 모든 커밋의 히스토리를 확인하고, 각 커밋의 메시지, 작성자, 그리고 변경된 내용을 볼 수 있습니다. 커밋 기록은 프로젝트의 변경 내역을 추적하는 데 매우 유용합니다.
+                    프로젝트의 모든 커밋 기록을 확인하고 관리합니다.
                 </li>
-                <li style="margin-bottom: 1em;">
+                <br>
+                <li>
                     <strong>Branches <i class="fas fa-code-branch"></i> :</strong>
-                    프로젝트의 브랜치를 관리하고 볼 수 있습니다.
-                    <br>
-                    <em>설명:</em> 브랜치는 버전 관리 시스템에서 각각의 독립적인 코드 라인을 의미합니다. 이 기능을 사용하여 새로운 기능 개발이나 버그 수정을 위한 브랜치를 생성하고, 현재 활성화된 브랜치의 상태를 확인할 수 있습니다. 다양한 브랜치를 관리함으로써 여러 작업을 병렬로 진행하고 나중에 병합할 수 있습니다.
+                    프로젝트의 브랜치를 생성하고 관리합니다.
                 </li>
-                <li style="margin-bottom: 1em;">
+                <br>
+                <li>
                     <strong>Settings <i class="fas fa-cog"></i> :</strong>
-                    프로젝트 설정을 변경하거나 프로젝트를 삭제합니다.
-                    <br>
-                    <em>설명:</em> 설정 메뉴에서는 프로젝트의 이름과 설명을 수정하고, 불필요한 프로젝트를 삭제할 수 있습니다. 이 기능을 사용하여 프로젝트의 메타데이터를 최신 상태로 유지하거나, 더 이상 필요하지 않은 프로젝트를 안전하게 제거할 수 있습니다. 프로젝트 삭제 시에는 주의가 필요하며, 삭제된 프로젝트는 복구할 수 없습니다.
+                    프로젝트 설정을 변경하거나 삭제합니다.
                 </li>
             </ul>
         </div>
     </div>
 
-
-    <!-- 설정을 위한 모달 창 -->
+    <!-- 설정 모달 -->
     <div id="settingsModal" class="modal">
         <div class="modal-content1">
-            <span class="close-settings-btn" style="position: absolute; top: 10px; right: 10px;">&times;</span>
-            <button id="editProjectBtn" style="background: none; border: none; cursor: pointer;">
-                <i class="fas fa-sync-alt" style="color: white;"></i> 수정하기
+            <span class="close-settings-btn">&times;</span>
+            <button id="editProjectBtn">
+                <i class="fas fa-sync-alt"></i> 수정하기
             </button>
-            <button class="delete-repo-btn" style="background: none; border: none; cursor: pointer;">
-                <i class="fas fa-trash-alt" style="color: white;"></i> 삭제하기
+            <button class="delete-repo-btn">
+                <i class="fas fa-trash-alt"></i> 삭제하기
             </button>
         </div>
     </div>
 
-    <!-- 수정할 프로젝트 이름과 설명 입력을 위한 모달 창 -->
+    <!-- 프로젝트 수정 모달 -->
     <div id="editProjectModal" class="modal">
         <div class="modal-content">
-            <span class="close-edit-modal-btn" style="position: absolute; top: 10px; right: 10px;">&times;</span>
-            <button id="backToSettingsBtn" class="back-btn" style="position: absolute; top: 10px; left: 10px;">&larr; 뒤로</button>
-            <div class="edit-form" style="margin-top: 40px;"> <!-- 프로젝트 이름과 설명 간의 여백 확보 -->
+            <span class="close-edit-modal-btn">&times;</span>
+            <button id="backToSettingsBtn" class="back-btn">&larr; 뒤로</button>
+            <div class="edit-form">
                 <div class="input-group">
                     <label for="changedProjectName">프로젝트 이름:</label>
                     <input type="text" id="changedProjectName" class="input-field" placeholder="변경할 프로젝트 이름 입력">
                 </div>
+                <br>
                 <div class="input-group">
                     <label for="changedDescription">프로젝트 설명:</label>
                     <textarea id="changedDescription" class="input-field" placeholder="변경할 프로젝트 설명 입력"></textarea>
@@ -81,15 +77,15 @@
         </div>
     </div>
 
-
-
-    <!-- 사이드 콘텐츠를 위한 모달 창 -->
+    <!-- 프로젝트 저장 모달 -->
     <div id="sideContentModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <h2>프로젝트 저장</h2>
-            <input type="text" id="commitMessage" placeholder="커밋 메세지를 입력하세요">
+            <input type="text" id="commitMessage" placeholder="커밋 메세지를 입력하세요" style="width:80%;height: 30px;">
+            <br>
             <div id="result-message" class="result-message"></div>
+            <br>
             <button id="commit-button" class="action-btn">Commit</button>
             <div class="results">
                 <div class="column content-column">
@@ -105,16 +101,31 @@
         </div>
     </div>
 
-    <div id="branchContent" class="branch-modal">
+    <!-- 커밋 이력 모달 -->
+    <div id="branchContent" class="branch-modal" style="display: none;">
         <span class="close-btn">&times;</span>
         <h2>커밋 이력</h2>
-        <!-- 메타데이터 카드 슬라이드 -->
-            <div class="metadata-cards-container">
-                <!-- 메타데이터 카드가 추가될 영역 -->
-            </div>
+        <div class="metadata-cards-container">
+            <!-- 메타데이터 카드가 추가될 영역 -->
+        </div>
     </div>
 
-    <!-- 기존 컨텐츠 -->
+    <!-- 파일 선택 숨기기 -->
+    <input type="file" id="hiddenFileInput" style="display: none;" />
+
+    <!-- AI 리뷰 모달 -->
+    <div id="reviewModal" class="modal">
+        <div class="review-modal-content">
+            <div class="review-modal-header">
+                <h2>AI 코드 리뷰 결과</h2>
+                <span class="close-review-btn">&times;</span>
+            </div>
+            <div id="review-result">
+                <!-- AI 코드 리뷰 결과가 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
     <div class="main-content">
         <div id="content">
             <div class="commit-and-content-container">
@@ -123,48 +134,42 @@
                     </div>
                     <h3>디렉토리</h3>
                     <!-- 커밋 카드가 추가될 영역 -->
-                    </div>
-                <!-- 파일 내용 표시 영역 -->
+                </div>
                 <div id="file-content-display">
                     <div class="title-section">
                         <h3>커밋 파일</h3>
-
                     </div>
                     <!-- 파일 내용이 여기 표시됩니다. -->
                 </div>
                 <div class="file-content" id="changed-file-content">
-                    <!-- 변경 파일 내용 섹션 추가 -->
                     <div class="column content-column">
                         <h3>비교할 파일</h3>
-                        <div class="title-section">
-
-                        </div>
+                        <div class="title-section"></div>
                         <div class="upload-section">
-                            <input type="file" name="file2" id="file2" class="file-input" style="display: none;" required>
+                            <input type="file" name="file2" id="file2" class="file-input" style="display: none;" multiple>
                             <button type="button" class="open-file-btn1" onclick="document.getElementById('file2').click();">Open File</button>
                             <span id="file2-name" class="file-name"></span>
                         </div>
+                        <div id="file2-content-display">
+                            <!-- 파일 내용이 여기에 표시됩니다 -->
+                        </div>
                     </div>
-                    <!-- Changed file content will be displayed here -->
                 </div>
             </div>
         </div>
 
-        <div class="compare-section">
+        <!-- 버튼 컨테이너를 main-content 섹션의 마지막 부분에 배치 -->
+        <div class="button-container" style="margin-top: 20px; text-align: center;">
             <button id="compare-btn" class="action-btn">코드 차이점</button>
+            <button id="review-btn" class="action-btn">AI 코드 리뷰</button>
+        </div>
+
+        <div class="compare-section" style="margin-top: 20px;">
             <div class="comparison-result" id="comparison-result">
                 <!-- Differences will be displayed here -->
             </div>
-            <button id="review-btn" class="action-btn">AI 코드 리뷰</button>
-            <div id="review-result">
-                <!-- Review feedback will be displayed here -->
-            </div>
         </div>
     </div>
-</div>
-
-<div class="footer">
-    <span id="selected-file">No file selected</span>
 </div>
 
 {% endblock %}

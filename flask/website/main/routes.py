@@ -19,6 +19,13 @@ from website.model import db, User, SaveFile
 from website.decorators import admin_required
 from markupsafe import Markup
 from datetime import datetime
+from dotenv import load_dotenv  # 환경 변수 로드를 위한 모듈
+
+# 환경 변수 로드 (확인 및 로드)
+load_dotenv()
+
+# OpenAI API 키 설정
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 main = Blueprint('main', __name__)
 UPLOAD_FOLDER = tempfile.mkdtemp()
@@ -113,8 +120,6 @@ def init_personal_project():
         return jsonify({'message': 'Failed to initialize project', 'error': str(e)}), 500
 
 
-
-
 @main.route('/api/personal/project/save', methods=['POST'])
 @jwt_required()  # JWT 토큰이 필요함을 나타냅니다.
 def save_personal_project():
@@ -175,7 +180,6 @@ def download_project_file():
         return jsonify({'message': 'Failed to download file', 'error': str(e)}), 500
 
 
-
 @main.route('/api/personal/project/commit/<int:commit_id>', methods=['DELETE'])
 @jwt_required()
 def delete_commit(commit_id):
@@ -203,7 +207,6 @@ def delete_commit(commit_id):
     except requests.exceptions.RequestException as e:
         print(f"Error deleting commit: {e}")  # 디버깅용 로그
         return jsonify({'message': 'Failed to delete commit', 'error': str(e)}), 500
-
 
 
 @main.route('/api/personal/repo/list', methods=['GET'])
@@ -482,8 +485,6 @@ def reissue_access_token():
     return jsonify({'accessToken': new_access_token}), 200
 
 
-
-
 @main.route('/get_file_content/<int:file_id>')
 def get_file_content(file_id):
     file = SaveFile.query.get_or_404(file_id)
@@ -514,21 +515,22 @@ def save_files(base_path, files):
         with open(file_path, 'w') as f:
             f.write(file['content'])
 
-@main.route('/review_files', methods=['POST'])
-def review_files():
+@main.route('/review-code', methods=['POST'])
+def review_code():
     data = request.get_json()
     file1_content = data.get('file1')
     file2_content = data.get('file2')
 
     if not file1_content or not file2_content:
-        return jsonify(result="Both files are required"), 400
+        return jsonify({"error": "Both file contents are required"}), 400
 
-    diff = difflib.ndiff(file1_content.splitlines(), file2_content.splitlines())
-    differences = '\n'.join(diff)
+    # 두 파일의 차이점 계산
+    diff = difflib.unified_diff(file1_content.splitlines(), file2_content.splitlines(), lineterm='')
+    diff_text = '\n'.join(diff)
 
     review_prompt = [
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": f"Review the differences between two code files and provide feedback:\n\nDifferences:\n{differences}\n\nFeedback(한글로):"}
+        {"role": "system", "content": "You are a helpful assistant skilled in code review."},
+        {"role": "user", "content": f"Please review the following code changes and provide feedback:\n\n{diff_text}\n\nFeedback (in Korean):"}
     ]
 
     try:
@@ -536,11 +538,10 @@ def review_files():
             model="gpt-3.5-turbo",
             messages=review_prompt,
             max_tokens=500,
-            n=1,
-            stop=None,
-            temperature=0.5,
+            temperature=0.7,
         )
         review = response.choices[0].message['content'].strip()
-        return jsonify(result="success", review=review)
+        return jsonify({"review": review})
     except Exception as e:
-        return jsonify(result=f"Failed to get review: {e}"), 500
+        print(f"Error: {str(e)}")
+        return jsonify({"error": f"Failed to get review: {str(e)}"}), 500

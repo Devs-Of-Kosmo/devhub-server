@@ -134,7 +134,6 @@ function fetchUserInfo(token) {
 
         if (loginLink) {
             loginLink.textContent = `${data.name}님의 `;
-            loginLink.href = "/user/profile"; // 프로필 페이지로 링크를 연결합니다.
         }
     })
     .catch(error => console.error('Error fetching user info:', error));
