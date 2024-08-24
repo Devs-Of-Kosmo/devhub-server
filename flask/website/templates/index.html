@@ -2,8 +2,13 @@
 
 {% block title %}File Comparison{% endblock %}
 
+{% block styles %}
+{{ super() }} <!-- base.html에서 정의된 스타일을 유지 -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"> <!-- index.css 추가 -->
+{% endblock %}
 
 {% block content %}
+
 <div class="wrapper">
     <!-- 왼쪽 네비게이션 바 -->
     <nav class="sidebar">
@@ -157,4 +162,9 @@
         </div>
     </div>
 </div>
+
+<div class="footer">
+    <span id="selected-file">No file selected</span>
+</div>
+
 {% endblock %}
