@@ -31,7 +31,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const branchContent = document.getElementById('branchContent');
     const closeModalBtn = document.querySelector('.close-btn');
     const closeBranchBtn = document.createElement('span');
-
+    const helpBtn = document.getElementById('helpBtn');
+    const helpModal = document.getElementById('helpModal');
+    const closeHelpBtn = document.querySelector('.close-help-btn');
 
     // 닫기 버튼 생성
     closeBranchBtn.className = 'close-btn';
@@ -70,11 +72,23 @@ document.addEventListener("DOMContentLoaded", function () {
         branchContent.style.display = "none";
     });
 
+    // 설명서 버튼 클릭 시 모달 창 열기
+    helpBtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        helpModal.style.display = "block";
+    });
+
+    // 설명서 모달 닫기 버튼
+    closeHelpBtn.addEventListener('click', function () {
+        helpModal.style.display = "none";
+    });
+
     // 외부 클릭 시 모달 닫기
     window.addEventListener('click', function (event) {
-        if (event.target == sideContentModal || event.target == branchContent) {
+        if (event.target == sideContentModal || event.target == branchContent || event.target == helpModal) {
             sideContentModal.style.display = "none";
             branchContent.style.display = "none";
+            helpModal.style.display = "none";
             clearCheckIconAndMessage(); // 체크 아이콘과 메시지 제거
         }
     });
@@ -326,11 +340,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     </button>
                 </div>
                 <p style="text-align: center; font-weight: bold;">{${index + 1}}</p> <!-- {n} 형식으로 가운데 정렬 및 굵은 글씨 -->
-                <p>${projectName}</p>
-                <p>${description}</p>
                 <ul>
                     <li>
-                        <strong>커밋 코드:</strong> ${commit.commitCode}
+                        <strong>커밋 코드:</strong> <br> ${commit.commitCode}
                     </li>
                     <li>
                         <strong>커밋 메시지:</strong> <br> ${commit.commitMessage}
@@ -346,19 +358,34 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-
-
-
-
-
     // 이벤트 리스너를 한 번만 등록
     metadataContainer.addEventListener('click', async function (event) {
         if (event.target.closest('.delete-icon-btn')) {
             const button = event.target.closest('.delete-icon-btn');
             const commitId = button.getAttribute('data-commit-id');
-            const confirmDelete = confirm('정말로 이 커밋을 삭제하시겠습니까?');
+            const commitCard = button.closest('.commit-card');
+            const commitIndex = Array.from(metadataContainer.children).indexOf(commitCard);
 
-            if (confirmDelete) {
+            if (commitIndex === 0) {
+                Swal.fire({
+                    title: '삭제 불가',
+                    text: '첫 번째 커밋 카드는 삭제가 불가능합니다.',
+                    icon: 'warning',
+                    confirmButtonText: '확인'
+                });
+                return;
+            }
+
+            const confirmDelete = await Swal.fire({
+                title: '(주의) 커밋 카드 삭제',
+                text: '커밋 카드 삭제 버튼을 누르시면 이후에 만들어진 커밋 이력도 전부 삭제됩니다.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '네, 삭제합니다',
+                cancelButtonText: '아니요, 취소합니다'
+            });
+
+            if (confirmDelete.isConfirmed) {
                 try {
                     const response = await fetch(`http://localhost:8080/api/personal/project/commit/${commitId}`, {
                         method: 'DELETE',
@@ -413,41 +440,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error('Error downloading file:', error);
             }
         }
-    });
 
-
-    function initializeMetadataCarousel() {
-        const metadataContainer = document.querySelector('.metadata-cards-container');
-        let isMouseDown = false;
-        let startX, scrollLeft;
-
-        metadataContainer.addEventListener('mousedown', (e) => {
-            isMouseDown = true;
-            metadataContainer.classList.add('active');
-            startX = e.pageX - metadataContainer.offsetLeft;
-            scrollLeft = metadataContainer.scrollLeft;
-        });
-
-        metadataContainer.addEventListener('mouseleave', () => {
-            isMouseDown = false;
-            metadataContainer.classList.remove('active');
-        });
-
-        metadataContainer.addEventListener('mouseup', () => {
-            isMouseDown = false;
-            metadataContainer.classList.remove('active');
-        });
-
-        metadataContainer.addEventListener('mousemove', (e) => {
-            if (!isMouseDown) return;
-            e.preventDefault();
-            const x = e.pageX - metadataContainer.offsetLeft;
-            const walk = (x - startX) * 3;
-            metadataContainer.scrollLeft = scrollLeft - walk;
-        });
-    }
-
-    document.querySelector('.metadata-cards-container').addEventListener('click', function (event) {
         if (event.target.classList.contains('view-commit-btn')) {
             const commitId = event.target.getAttribute('data-commit-id');
             const commitCard = event.target.closest('.commit-card');
@@ -461,7 +454,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 selectedMetadataCard = commitCard;
                 selectedMetadataCard.style.borderColor = 'blue';
 
-                fetchCommitDetails(commitId, commitDetails);
+                await fetchCommitDetails(commitId, commitDetails);
+
+                // Changes 버튼을 눌렀을 때 branchContent 모달 닫기
+                branchContent.style.display = "none";
             }
         }
     });
@@ -533,8 +529,6 @@ document.addEventListener("DOMContentLoaded", function () {
         html += '</ul>';
         return html;
     }
-
-
 
     function addTreeToggleEvent() {
         document.querySelectorAll('.tree-node > .toggle-icon').forEach(toggleIcon => {
@@ -854,6 +848,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     text: '커밋이 완료되었습니다.',
                     icon: 'success',
                     confirmButtonText: '확인'
+                }).then(() => {
+                    // Commit 버튼 클릭 시 모달 닫기
+                    sideContentModal.style.display = "none";
                 });
 
             } catch (error) {
