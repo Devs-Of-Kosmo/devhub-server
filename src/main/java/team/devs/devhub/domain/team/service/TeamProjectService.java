@@ -163,6 +163,7 @@ public class TeamProjectService {
         TeamCommit fromCommit = teamCommitRepository.findById(request.getFromCommitId())
                 .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
         TeamBranch prePersistBranch = request.toEntity(user, project);
+        valiProhibitedBranchName(prePersistBranch);
         validDuplicatedBranchName(prePersistBranch);
 
         VersionControlUtil.createBranch(prePersistBranch, fromCommit);
@@ -244,6 +245,12 @@ public class TeamProjectService {
     private void validUploadFileSize(List<MultipartFile> files) {
         if (getFilesSize(files) > uploadFileMaxSize) {
             throw new FileSizeOverException(ErrorCode.TEAM_PROJECT_FILE_SIZE_OVER);
+        }
+    }
+
+    private void valiProhibitedBranchName(TeamBranch prePersistBranch) {
+        if (prePersistBranch.getName().equals("master") || prePersistBranch.getName().equals("main")) {
+            throw new ProhibitedBranchNameException(ErrorCode.PROHIBITED_BRANCH_NAME);
         }
     }
 
