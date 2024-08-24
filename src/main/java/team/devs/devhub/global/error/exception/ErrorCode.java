@@ -51,6 +51,8 @@ public enum ErrorCode {
     TEAM_COMMIT_NOT_FOUND(500, "T010", "커밋이 존재하지 않습니다"),
     TEAM_BRANCH_NOT_FOUND(500, "T011", "브랜치가 존재하지 않습니다"),
     USER_BRANCH_MISMATCH(500, "T012", "해당 브랜치를 생성한 유저가 아닙니다"),
+    PROHIBITED_BRANCH_NAME(500, "T013", "브랜치 이름으로 'main' 또는 'master'는 불가능합니다"),
+    DEFAULT_BRANCH_NOT_ALLOWED(500, "T014", "기본 브랜치는 삭제하실 수 없습니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
@@ -72,7 +74,8 @@ public enum ErrorCode {
     PROJECT_SAVE_ERROR(500, "V003", "프로젝트 저장 중 오류가 발생했습니다"),
     GIT_ROLLBACK_ERROR(500, "V004", "깃 상태 롤백 중 오류가 발생했습니다"),
     COMMIT_RESET_ERROR(500, "V005", "커밋 삭제 중 오류가 발생했습니다"),
-    BRANCH_CREATION_ERROR(500, "V005", "브랜치 생성 중 오류가 발생했습니다");
+    BRANCH_CREATION_ERROR(500, "V005", "브랜치 생성 중 오류가 발생했습니다"),
+    BRANCH_DELETE_ERROR(500, "V006", "브랜치 삭제 중 오류가 발생했습니다");
 
     private final String code;
     private final String message;

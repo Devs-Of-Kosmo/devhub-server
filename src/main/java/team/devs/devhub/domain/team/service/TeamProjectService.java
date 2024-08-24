@@ -182,6 +182,19 @@ public class TeamProjectService {
         return TeamProjectBranchCreateResponse.of(branch, commit);
     }
 
+    public void deleteBranch(long branchId, long userId) {
+        TeamBranch branch = teamBranchRepository.findById(branchId)
+                .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validUserBranch(branch, user);
+        validDefaultBranchName(branch);
+
+        VersionControlUtil.deleteBranch(branch);
+
+        teamBranchRepository.deleteById(branch.getId());
+    }
+
     public TeamProjectSaveResponse saveWorkedProject(TeamProjectSaveRequest request, Long userId) {
         TeamBranch branch = teamBranchRepository.findById(request.getBranchId())
                 .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
@@ -265,4 +278,11 @@ public class TeamProjectService {
             throw new InvalidUserBranchException(ErrorCode.USER_BRANCH_MISMATCH);
         }
     }
+
+    private void validDefaultBranchName(TeamBranch branch) {
+        if (branch.getName().contains("refs/heads/")) {
+            throw new DefaultBranchException(ErrorCode.DEFAULT_BRANCH_NOT_ALLOWED);
+        }
+    }
+
 }

@@ -113,7 +113,10 @@ public class VersionControlUtil {
         Git git = null;
         try {
             git = Git.open(new File(project.getRepositoryPath()));
-            git.checkout().setName(branch.getName()).call();
+
+            git.checkout()
+                    .setName(branch.getName())
+                    .call();
 
             RepositoryUtil.deleteFiles(project, dto.getDeleteFileNameList());
             renameOrMoveFiles(project, dto.getRenameFileNameList());
@@ -134,6 +137,23 @@ public class VersionControlUtil {
         } catch (Exception e) {
             rollbackToBeforeChange(git);
             throw new VersionControlUtilException(ErrorCode.PROJECT_SAVE_ERROR);
+        }
+    }
+
+    public static void deleteBranch(TeamBranch branch) {
+        try {
+            Git git = Git.open(new File(branch.getProject().getRepositoryPath()));
+
+            checkoutDefaultBranch(git);
+
+            git.branchDelete()
+                    .setBranchNames(branch.getName())
+                    .setForce(true)
+                    .call();
+
+            git.close();
+        } catch (IOException | GitAPIException e) {
+            throw new VersionControlUtilException(ErrorCode.BRANCH_DELETE_ERROR);
         }
     }
 
@@ -308,6 +328,14 @@ public class VersionControlUtil {
                 .call();
 
         git.close();
+    }
+
+    private static void checkoutDefaultBranch(Git git) throws GitAPIException {
+        try {
+            git.checkout().setName("master").call();
+        } catch (Exception e) {
+            git.checkout().setName("main").call();
+        }
     }
 
     private static void rollbackToBeforeChange(Git git) {
