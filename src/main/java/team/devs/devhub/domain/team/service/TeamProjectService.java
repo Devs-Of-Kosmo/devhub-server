@@ -163,6 +163,7 @@ public class TeamProjectService {
         TeamCommit fromCommit = teamCommitRepository.findById(request.getFromCommitId())
                 .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
         TeamBranch prePersistBranch = request.toEntity(user, project);
+        valiProhibitedBranchName(prePersistBranch);
         validDuplicatedBranchName(prePersistBranch);
 
         VersionControlUtil.createBranch(prePersistBranch, fromCommit);
@@ -179,6 +180,19 @@ public class TeamProjectService {
         );
 
         return TeamProjectBranchCreateResponse.of(branch, commit);
+    }
+
+    public void deleteBranch(long branchId, long userId) {
+        TeamBranch branch = teamBranchRepository.findById(branchId)
+                .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validUserBranch(branch, user);
+        validDefaultBranchName(branch);
+
+        VersionControlUtil.deleteBranch(branch);
+
+        teamBranchRepository.deleteById(branch.getId());
     }
 
     public TeamProjectSaveResponse saveWorkedProject(TeamProjectSaveRequest request, Long userId) {
@@ -247,6 +261,12 @@ public class TeamProjectService {
         }
     }
 
+    private void valiProhibitedBranchName(TeamBranch prePersistBranch) {
+        if (prePersistBranch.getName().equals("master") || prePersistBranch.getName().equals("main")) {
+            throw new ProhibitedBranchNameException(ErrorCode.PROHIBITED_BRANCH_NAME);
+        }
+    }
+
     private void validExistsProjectBranch(TeamProject project) {
         if (!project.getBranches().isEmpty()) {
             throw new InitialProjectExistException(ErrorCode.INITIAL_PROJECT_ALREADY_EXIST);
@@ -258,4 +278,11 @@ public class TeamProjectService {
             throw new InvalidUserBranchException(ErrorCode.USER_BRANCH_MISMATCH);
         }
     }
+
+    private void validDefaultBranchName(TeamBranch branch) {
+        if (branch.getName().contains("refs/heads/")) {
+            throw new DefaultBranchException(ErrorCode.DEFAULT_BRANCH_NOT_ALLOWED);
+        }
+    }
+
 }

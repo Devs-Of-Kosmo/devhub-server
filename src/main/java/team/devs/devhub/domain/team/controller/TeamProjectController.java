@@ -58,7 +58,7 @@ public class TeamProjectController {
     @DeleteMapping("/repo/{projectId}")
     @Operation(summary = "팀 레포지토리 삭제 API")
     public ResponseEntity<Void> deleteTeamProjectRepo(
-            @Parameter(description = "삭제할 레포지토리의 projectId", example = "1")
+            @Parameter(description = "삭제할 레포지토리 id", example = "1")
             @PathVariable(name = "projectId") Long projectId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
@@ -85,6 +85,17 @@ public class TeamProjectController {
     ) {
         TeamProjectBranchCreateResponse response = teamProjectService.saveBranch(request, customUserDetails.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @DeleteMapping("/project/branch/{branchId}")
+    @Operation(summary = "팀 프로젝트 브랜치 삭제 API")
+    public ResponseEntity<Void> deleteTeamProjectBranch(
+            @Parameter(description = "삭제할 브랜치 id", example = "1")
+            @PathVariable(name = "branchId") Long branchId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        teamProjectService.deleteBranch(branchId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping("/project/save")
