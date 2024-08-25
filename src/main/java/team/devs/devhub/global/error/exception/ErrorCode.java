@@ -26,6 +26,7 @@ public enum ErrorCode {
     REPOSITORY_CREATION_ERROR(500, "P001", "레포지토리 생성 중 오류가 발생했습니다"),
     REPOSITORY_NAME_DUPLICATED(500, "P002", "레포지토리 이름이 존재합니다"),
     PERSONAL_PROJECT_NOT_FOUND(500, "P003", "개인 프로젝트를 찾을 수 없습니다"),
+    REPOSITORY_LIMIT_EXCEEDED(500, "P004", "개인 레포지토리 갯수는 최대 10개까지 생성할 수 있습니다"),
     PERSONAL_PROJECT_MASTER_NOT_MATCH(500, "P005", "프로젝트 소유자가 일치하지 않습니다"),
     PERSONAL_COMMIT_NOT_FOUND(500, "P006", "해당 커밋을 찾을 수 없습니다"),
     DIRECTORY_DELETE_ERROR(500, "P007", "프로젝트 파일을 삭제하는 중 오류가 발생했습니다"),

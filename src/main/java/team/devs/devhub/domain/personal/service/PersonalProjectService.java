@@ -42,9 +42,9 @@ public class PersonalProjectService {
     public PersonalProjectRepoCreateResponse saveProjectRepo(PersonalProjectRepoCreateRequest request, long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
-
         PersonalProject project = request.toEntity(user);
 
+        validRepositoryCount(user);
         validRepositoryName(project);
         personalProjectRepository.save(project);
         project.saveRepositoryPath(repositoryPathHead);
@@ -230,6 +230,12 @@ public class PersonalProjectService {
     }
 
     // exception
+    private void validRepositoryCount(User user) {
+        if (personalProjectRepository.countByMasterId(user.getId()) >= 10) {
+            throw new RepositoryLimitExceededException(ErrorCode.REPOSITORY_LIMIT_EXCEEDED);
+        }
+    }
+
     private void validRepositoryName(PersonalProject project) {
         if (personalProjectRepository.existsByMasterAndName(project.getMaster(), project.getName())) {
             throw new RepositoryDuplicateException(ErrorCode.REPOSITORY_NAME_DUPLICATED);
