@@ -11,6 +11,7 @@ import java.util.Optional;
 
 public interface PersonalProjectRepository extends JpaRepository<PersonalProject, Long> {
 
+    int countByMasterId(long userId);
     boolean existsByMasterAndName(User master, String name);
     List<PersonalProject> findAllByMaster(User master);
 
