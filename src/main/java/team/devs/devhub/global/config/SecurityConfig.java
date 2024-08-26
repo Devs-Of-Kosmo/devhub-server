@@ -43,8 +43,6 @@ public class SecurityConfig {
             "/boards", "/boards/new", "/boards/{id}", "/boards/edit/{id}",
       
             "/footer.html", "/templates/**", "/css/**", "/js/**", "/static/css/images/**", "images/**","/videos/**", "/fonts/**",
-      
-            "/swagger-ui/**", "/v3/api-docs/**",
     };
     private final TokenProvider tokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
