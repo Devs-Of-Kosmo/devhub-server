@@ -1,0 +1,80 @@
+:root {
+    --custom-btn-bg-color: #E07A5F;
+    --custom-btn-bg-hover-color: #F2CC8F;
+    --white-color: #ffffff;
+    --btn-font-size: 24px;
+    --border-radius-large: 15px;
+    --border-radius-small: 10px;
+    --heading-font-family: 'Unbounded', sans-serif;
+    --font-weight-bold: 700;
+}
+
+.button-container {
+    display: flex; /* Flexbox 사용 */
+    justify-content: space-between; /* 버튼 간격 조정 */
+    gap: 10px; /* 버튼 간격 */
+    margin-top: 20px;
+}
+.btn {
+    display: flex; /* Flexbox 사용 */
+    width: calc(33.33% - 10px); /* 세 버튼의 너비와 간격 계산 */
+    padding: 15px 0;
+    font-size: var(--btn-font-size) !important;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: var(--white-color) !important;
+    border: none !important;
+    border-radius: var(--border-radius-large) !important;
+    box-shadow: 0 9px #999 !important;
+    transition: all 0.3s !important;
+    align-items: center; /* 수직 중앙 정렬 */
+    justify-content: center; /* 수평 중앙 정렬 */
+}
+
+.btn:hover {
+    box-shadow: 0 5px #666 !important;
+    transform: translateY(-2px) !important;
+}
+
+.btn:active {
+    box-shadow: 0 5px #666 !important;
+    transform: translateY(4px) !important;
+}
+
+.login-btn {
+    background-color: #04AA6D !important; /* 초록 */
+}
+
+.login-btn:hover {
+    background-color: #4fc859 !important;
+}
+
+.register-btn {
+    background-color: #FFA500 !important; /* 주황 */
+}
+
+.register-btn:hover {
+    background-color: #FFB347 !important;
+}
+
+.google-login-btn {
+    background-color: #357ae8 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: var(--font-weight-bold) !important;
+    padding: 15px 0; /* 동일한 패딩 설정 */
+
+}
+
+.google-login-btn:hover {
+    background-color: #6ca7f4 !important;
+}
+
+.google-login-btn img {
+    margin-right: 10px !important;
+    height: 24px !important; /* 이미지 크기 조정 */
+    margin-left: 10px !important;
+}

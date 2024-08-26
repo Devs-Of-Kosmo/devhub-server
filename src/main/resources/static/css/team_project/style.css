@@ -1,0 +1,742 @@
+/* 전역 스타일 */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-image: url('../images/team_project/background.jpg');
+    overflow: hidden;
+    color: #ffffff;
+    font-size: 16px; /* 기본 폰트 크기 설정 */
+}
+
+/* 헤더 (메뉴바) 스타일 */
+header {
+    background: rgba(50, 50, 50, 0.8);
+    backdrop-filter: blur(10px);
+    display: block;
+    font-size: 0.9em;
+    height: 1.5em;
+    -webkit-user-select: none;
+    user-select: none;
+    padding: 0.2em 0;
+}
+header ul {
+    margin: 0 5px;
+    padding: 0 3px;
+}
+header li {
+    display: inline-block;
+    line-height: 1.5em;
+    padding: 0 0.5em;
+    position: relative;
+    cursor: default;
+}
+header .left { float: left; }
+header .right { float: right; }
+
+/* 데스크톱 아이콘 스타일 */
+#Desktop {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    height: calc(100% - 2em);
+    padding: 20px;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+#Desktop .icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 10px;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    cursor: pointer;
+}
+
+#Desktop .icon img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    transition: all 0.2s;
+    margin-bottom: 5px;
+}
+
+/* 팀 설정 아이콘 특별 스타일 */
+#Desktop .icon[data-title="editTeam"] img {
+    width: 72px;
+    height: 72px;
+}
+
+#Desktop .icon:hover img {
+    transform: scale(1.1);
+}
+
+#Desktop .icon .title {
+    font-size: 0.9em;
+    word-break: break-word;
+    text-shadow: 0px 0px 4px #000;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2em;
+    height: 2.4em; /* 두 줄 높이 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#Desktop .icon.clicked img {
+    transform: scale(0.9);
+}
+
+/* 휴지통 아이콘 스타일 */
+#trashCan img {
+    width: 64px;
+    height: 64px;
+    transition: all 0.3s ease;
+}
+
+#trashCan:hover img {
+    transform: scale(1.1);
+}
+
+#trashCan .title {
+    font-size: 12px;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+}
+
+.icon[draggable="true"]:active {
+    opacity: 0.5;
+    cursor: move;
+}
+
+/* 드래그 오버 시 휴지통 효과 */
+#trashCan.dragover img {
+    transform: scale(1.2);
+    filter: brightness(1.2);
+}
+
+/* 독(Dock) 스타일 */
+footer {
+    bottom: 10px;
+    display: inline-block;
+    height: 4.4em;
+    left: 50%;
+    width: 90%;
+    max-width: 600px;
+    padding: 0 10px;
+    perspective: 1000px;
+    position: absolute;
+    text-align: center;
+    transform: translatex(-50%);
+}
+footer:before {
+    background: rgba(50, 50, 50, 0.5);
+    backdrop-filter: blur(10px);
+    bottom: 0;
+    content: "";
+    height: 4em;
+    left: 0;
+    margin-top: 15px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: rotatex(45deg);
+    width: 100%;
+    z-index: -1;
+    border-radius: 10px;
+}
+footer ul {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin: 0 0.1em;
+    padding: 0;
+    transform-origin: bottom center !important;
+}
+footer li {
+    flex: 1;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    transform: scale(1);
+    transform-origin: bottom center;
+    transition: transform 2s;
+}
+footer img {
+    align-items: center;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    margin: 0 5px;
+    position: relative;
+    transform: scale(1);
+    transform-origin: bottom center !important;
+    transition: all 0.2s;
+    width: 4em;
+}
+footer img:hover {
+    margin: 0 10px;
+    transform: scale(1.2);
+}
+
+/* 프로젝트 창 스타일 */
+.window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    padding: 20px;
+    width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    display: none;
+    color: #ffffff;
+    background-color: #2d2d2d;
+    overflow: hidden;
+    z-index: 1000;
+}
+.window h2 {
+    margin-top: 0;
+    color: #ffffff;
+}
+.window input, .window textarea, .window select {
+    width: calc(90% - 20px);
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    background: rgb(255, 255, 255);
+    color: #000000;
+}
+.window button {
+    background: #0077ed;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+}
+.window button:hover {
+    background: #0066cc;
+}
+
+/* 아이폰 UI 스타일 */
+#inviteMembers.window {
+    width: 375px;
+    height: 667px;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.iphone {
+    width: 375px;
+    height: 667px;
+    background-image: url('http://www.adobewordpress.com/tasarim/images/iphone6.png');
+    background-size: 100% 100%;
+    position: relative;
+}
+
+.border {
+    position: absolute;
+    top: 12.3%;
+    right: 7%;
+    left: 7%;
+    bottom: 12%;
+    overflow: hidden;
+    background-color: #ffffff;
+    border-radius: 30px;
+}
+
+/* 채팅 창 스타일 개선 */
+#inviteMembers .responsive-html5-chat {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+}
+
+#inviteMembers .chat {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#inviteMembers .messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #fff;
+}
+
+
+#inviteMembers .input-area {
+    display: flex;
+    padding: 10px;
+    background-color: #f2f2f7;
+    border-top: 1px solid #d1d1d6;
+}
+
+#inviteMembers #userInput {
+    flex-grow: 1;
+    border: 1px solid #c7c7cc;
+    border-radius: 20px;
+    padding: 8px 15px;
+    margin-right: 10px;
+    font-size: 16px;
+    background-color: #fff;
+}
+
+#inviteMembers .send-button {
+    background-color: transparent;
+    color: #007aff;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+#inviteMembers .send-button:hover {
+    opacity: 0.7;
+}
+
+#inviteMembers .message {
+    max-width: 70%;
+    margin-bottom: 2px;
+    clear: both;
+}
+
+#inviteMembers .myMessage,
+#inviteMembers .fromThem {
+    padding: 7px 14px;
+    font-size: 16px;
+    line-height: 1.4;
+    margin: 1px 0;
+    border-radius: 18px;
+    position: relative;
+    color: #000;
+}
+
+#inviteMembers .myMessage {
+    background-color: #21ea53;
+    float: right;
+    margin-right: 10px;
+    left : 85px;
+    color : #FFFFFF;
+}
+
+#inviteMembers .fromThem {
+    background-color: #e5e5ea;
+    float: left;
+    margin-left: 10px;
+    color : #000000;
+}
+
+#inviteMembers .message date {
+    font-size: 12px;
+    color: #8e8e93;
+    display: block;
+    text-align: center;
+    margin: 10px 0;
+    clear: both;
+}
+
+#inviteMembers .myMessage date {
+    text-align: right;
+    padding-right: 5px;
+}
+
+#inviteMembers .fromThem date {
+    text-align: left;
+    padding-left: 5px;
+}
+#inviteMembers .message:first-child .myMessage {
+    border-top-right-radius: 18px;
+}
+
+#inviteMembers .message:first-child .fromThem {
+    border-top-left-radius: 18px;
+}
+
+#inviteMembers .message:last-child .myMessage {
+    border-bottom-right-radius: 18px;
+}
+
+#inviteMembers .message.single .myMessage,
+#inviteMembers .message.single .fromThem {
+    border-radius: 18px;
+}
+
+/* 말풍선 꼬리 스타일 제거 */
+#inviteMembers .myMessage::after,
+#inviteMembers .myMessage::before,
+#inviteMembers .fromThem::after,
+#inviteMembers .fromThem::before {
+    content: none;
+}
+
+/* 스크롤바 스타일 (채팅창용) */
+#inviteMembers .messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#inviteMembers .messages::-webkit-scrollbar-thumb {
+    background-color: #c7c7cc;
+    border-radius: 3px;
+}
+
+#inviteMembers .messages::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+#editProject.window {
+    background-color: #2d2d2d;
+    border-radius: 10px;
+    padding: 20px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+#editProject h2 {
+    color: #fff;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#editProject .form-group {
+    margin-bottom: 15px;
+}
+
+#editProject label {
+    display: block;
+    margin-bottom: 5px;
+    color: #bbb;
+}
+
+#editProject .form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #383838;
+    color: #fff;
+    font-size: 14px;
+}
+
+#editProject .form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+#editProject .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+#editProject .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#editProject .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+}
+
+#editProject .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+#editProject .btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+#editProject .btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* 휴지통 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #2d2d2d;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: #fff;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* 맥북 스타일 select 박스 */
+.select-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.select-wrapper::after {
+    content: "\25BC";
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #666;
+    pointer-events: none;
+}
+
+#selectProject {
+    width: 100%;
+    padding: 10px 30px 10px 10px;
+    font-size: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#selectProject:hover {
+    border-color: #999;
+}
+
+#selectProject:focus {
+    border-color: #0070c9;
+    box-shadow: 0 0 0 3px rgba(0, 112, 201, 0.25);
+}
+
+#selectProject option {
+    padding: 10px;
+}
+
+#trashItems {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.trash-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #444;
+}
+
+.trash-item:last-child {
+    border-bottom: none;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.modal-buttons button {
+    margin-left: 10px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-buttons button:hover {
+    background-color: #0056b3;
+}
+
+/* 휴지통 아이템 복구 버튼 */
+.trash-item button {
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s ease;
+}
+
+.trash-item button:hover {
+    background-color: #218838;
+}
+
+/* 스크롤바 스타일 (휴지통 모달용) */
+#trashItems::-webkit-scrollbar {
+    width: 5px;
+}
+
+#trashItems::-webkit-scrollbar-thumb {
+    background-color: #666;
+    border-radius: 5px;
+}
+
+#trashItems::-webkit-scrollbar-track {
+    background-color: #2d2d2d;
+}
+
+/* 휴지통으로 비워진 아이콘 스타일 */
+.icon.trashed {
+    opacity: 0.5;
+    filter: grayscale(100%);
+    position: relative;
+}
+
+.icon.trashed img {
+    position: relative;
+}
+
+.icon.trashed::after {
+    content: 'X';
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 24px;
+    color: red;
+    font-weight: bold;
+}
+
+/* 반응형 디자인 (휴지통 모달용) */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%;
+    }
+}
+
+/* 창 헤더 스타일 */
+.window-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #333;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* 닫기 버튼 스타일 */
+.close-button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ff5f56;
+    margin-right: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.close-button:before {
+    content: '×';
+    color: #4d0000;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.close-button:hover:before {
+    opacity: 1;
+}
+
+/* 창 제목 스타일 */
+.window-header h2 {
+    margin: 0;
+    padding-left: 10px;
+    color: #fff;
+}
+
+.icon.deleted {
+    opacity: 0.5;
+    position: relative;
+}
+
+.icon.deleted img {
+    filter: grayscale(100%);
+}
+
+.delete-mark {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 18px;
+    color: red;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}
+
+.close-button-phone {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.close-button-phone:hover {
+    color: #ff0000;
+}

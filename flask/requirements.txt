@@ -1,0 +1,14 @@
+Flask
+requests==2.25.1
+Flask-JWT-Extended
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Login
+Flask-JWT-Extended
+Flask-Cors
+Flask-Script
+marshmallow
+python-dotenv
+pymysql
+openai

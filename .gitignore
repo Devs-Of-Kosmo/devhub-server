@@ -5,6 +5,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+##flask
+/flask/.env
+/flask/myenv/
+
 ### STS ###
 .apt_generated
 .classpath
@@ -38,3 +42,9 @@ out/
 
 ### config file ###
 /src/main/resources/application.yml
+
+## node pure css 모듈##
+/package.json
+/package-lock.json
+/postcss.config.js
+/node_modules
