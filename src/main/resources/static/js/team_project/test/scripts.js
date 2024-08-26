@@ -85,7 +85,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var spans = document.getElementsByClassName("close");
     for (let i = 0; i < spans.length; i++) {
         spans[i].onclick = function() {
-            this.parentElement.parentElement.style.display = "none";
+            var modal = this.closest('.modal');
+            if (modal) {
+                modal.style.display = "none";
+                document.body.style.overflow = 'auto'; // 스크롤 다시 활성화
+            }
         };
     }
 
@@ -94,12 +98,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (buttons[key] && modals[key.replace("Button", "Modal")]) {
             buttons[key].onclick = function() {
                 modals[key.replace("Button", "Modal")].style.display = "block";
+                document.body.style.overflow = 'hidden'; // 스크롤 비활성화
                 if (key === 'messageButton') {
                     loadMessages('received');
                 }
             };
         }
     }
+
 
     // AI 리뷰 및 코드 차이 버튼 기능
     var aiReviewBtn = document.getElementById("aiReviewButton");
@@ -191,6 +197,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 searchResults.innerHTML = '<p>일치하는 결과가 없습니다.</p>';
             }
         };
+    }
+
+    // 검색 모달 관련 추가 코드
+    if (modals.searchModal) {
+        var searchModalCloseBtn = modals.searchModal.querySelector('.close');
+        if (searchModalCloseBtn) {
+            searchModalCloseBtn.onclick = function() {
+                modals.searchModal.style.display = "none";
+                document.body.style.overflow = 'auto';
+                // 검색 입력 필드와 결과 초기화
+                if (searchInput) searchInput.value = "";
+                if (searchResults) searchResults.innerHTML = "";
+            };
+        }
     }
 
     // 사용자 정보를 가져오는 함수

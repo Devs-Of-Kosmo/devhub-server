@@ -75,11 +75,34 @@ var questions = [
                 .then(data => {
                     console.log("Project created successfully:", data);
 
-                    // 성공적으로 생성되면 리디렉션
-                    window.location.href = 'project_list'; // 리디렉션 URL
+                    Swal.fire({
+                        icon: 'success',
+                        title: '성공!',
+                        text: '저장소가 성공적으로 생성되었습니다.',
+                        confirmButtonText: '확인'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = 'project_list'; // 리디렉션 URL
+                        }
+                    });
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    if (error.message === "Maximum number of repositories (10) reached.") {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '오류',
+                            text: '저장소는 최대 10개까지만 생성할 수 있습니다.',
+                            confirmButtonText: '확인'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '오류',
+                            text: '저장소 생성 중 오류가 발생했습니다: ' + error.message,
+                            confirmButtonText: '확인'
+                        });
+                    }
                 });
         }
 

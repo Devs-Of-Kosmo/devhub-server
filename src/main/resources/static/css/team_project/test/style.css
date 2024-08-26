@@ -173,7 +173,6 @@ body, html {
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: rgba(0,0,0,0.4);
 }
 .modal-content {
@@ -185,6 +184,9 @@ body, html {
     max-height: 80vh;
     overflow-y: auto;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+body.modal-open {
+    overflow: hidden;
 }
 .close {
     color: #aaa;
