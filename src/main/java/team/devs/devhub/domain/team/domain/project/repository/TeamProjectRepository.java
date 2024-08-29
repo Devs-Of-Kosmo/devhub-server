@@ -18,5 +18,5 @@ public interface TeamProjectRepository extends JpaRepository<TeamProject, Long> 
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select tp from TeamProject tp where tp.id = :id")
-    Optional<TeamProject> findByIdForSaveProject(@Param("id") Long id);
+    Optional<TeamProject> findByIdWithLock(@Param("id") Long id);
 }

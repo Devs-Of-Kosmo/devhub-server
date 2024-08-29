@@ -132,6 +132,9 @@ public class VersionControlUtil {
                     .call();
 
             RevCommit commit = git.commit().setMessage(dto.getCommitMessage()).call();
+
+            checkoutDefaultBranch(git);
+
             git.close();
             return commit;
         } catch (Exception e) {

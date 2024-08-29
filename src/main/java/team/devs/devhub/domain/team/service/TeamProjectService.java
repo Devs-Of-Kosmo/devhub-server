@@ -119,7 +119,7 @@ public class TeamProjectService {
     }
 
     public TeamProjectInitResponse saveInitialProject(TeamProjectInitRequest request, long userId) {
-        TeamProject project = teamProjectRepository.findByIdForSaveProject(request.getProjectId())
+        TeamProject project = teamProjectRepository.findByIdWithLock(request.getProjectId())
                 .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -156,7 +156,7 @@ public class TeamProjectService {
     }
 
     public TeamProjectBranchCreateResponse saveBranch(TeamProjectBranchCreateRequest request, Long userId) {
-        TeamProject project = teamProjectRepository.findByIdForSaveProject(request.getProjectId())
+        TeamProject project = teamProjectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -190,6 +190,8 @@ public class TeamProjectService {
         validUserBranch(branch, user);
         validDefaultBranchName(branch);
 
+        teamProjectRepository.findByIdWithLock(branch.getId())
+                .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
         VersionControlUtil.deleteBranch(branch);
 
         teamBranchRepository.deleteById(branch.getId());
@@ -204,6 +206,8 @@ public class TeamProjectService {
                 .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
         validUserBranch(branch, user);
 
+        teamProjectRepository.findByIdWithLock(branch.getId())
+                .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
         RevCommit newCommit = VersionControlUtil.saveWorkedProject(branch, request);
 
         TeamCommit commit = teamCommitRepository.save(
