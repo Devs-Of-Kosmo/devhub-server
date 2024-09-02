@@ -18,6 +18,7 @@ import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
 import team.devs.devhub.domain.user.exception.UserNotFoundException;
 import team.devs.devhub.global.common.exception.FileSizeOverException;
+import team.devs.devhub.global.common.exception.ParentCommitNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.util.RepositoryUtil;
 import team.devs.devhub.global.util.VersionControlUtil;
@@ -256,7 +257,7 @@ public class PersonalProjectService {
 
     private void validIsExistParentCommit(PersonalCommit commit) {
         if (commit.getParentCommit() == null) {
-            throw new ParentCommitNotFoundException(ErrorCode.PARENT_COMMIT_NOT_FOUND);
+            throw new ParentCommitNotFoundException(ErrorCode.PERSONAL_PARENT_COMMIT_NOT_EXIST);
         }
     }
 

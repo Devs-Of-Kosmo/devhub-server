@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import team.devs.devhub.global.common.exception.ParentCommitNotFoundException;
 import team.devs.devhub.domain.team.domain.project.TeamBranch;
 import team.devs.devhub.domain.team.domain.project.TeamCommit;
 import team.devs.devhub.domain.team.domain.project.repository.TeamBranchRepository;
@@ -155,7 +156,7 @@ public class TeamProjectService {
         return TeamProjectInitResponse.of(branch, commit);
     }
 
-    public TeamProjectBranchCreateResponse saveBranch(TeamProjectBranchCreateRequest request, Long userId) {
+    public TeamProjectBranchCreateResponse saveBranch(TeamProjectBranchCreateRequest request, long userId) {
         TeamProject project = teamProjectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
         User user = userRepository.findById(userId)
@@ -187,17 +188,17 @@ public class TeamProjectService {
                 .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
-        validUserBranch(branch, user);
         validDefaultBranchName(branch);
+        validUserBranch(branch, user);
 
-        teamProjectRepository.findByIdWithLock(branch.getId())
+        teamProjectRepository.findByIdWithLock(branch.getProject().getId())
                 .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
         VersionControlUtil.deleteBranch(branch);
 
         teamBranchRepository.deleteById(branch.getId());
     }
 
-    public TeamProjectSaveResponse saveWorkedProject(TeamProjectSaveRequest request, Long userId) {
+    public TeamProjectSaveResponse saveWorkedProject(TeamProjectSaveRequest request, long userId) {
         TeamBranch branch = teamBranchRepository.findById(request.getBranchId())
                 .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
         User user = userRepository.findById(userId)
@@ -206,7 +207,7 @@ public class TeamProjectService {
                 .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
         validUserBranch(branch, user);
 
-        teamProjectRepository.findByIdWithLock(branch.getId())
+        teamProjectRepository.findByIdWithLock(branch.getProject().getId())
                 .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
         RevCommit newCommit = VersionControlUtil.saveWorkedProject(branch, request);
 
@@ -221,6 +222,21 @@ public class TeamProjectService {
         );
 
         return TeamProjectSaveResponse.of(commit);
+    }
+
+    public void deleteCommitHistory(long commitId, long userId) {
+        TeamCommit commit = teamCommitRepository.findById(commitId)
+                .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validDefaultBranchCommit(commit);
+        validUserCommit(commit, user);
+        validIsExistParentCommit(commit);
+
+        teamProjectRepository.findByIdWithLock(commit.getBranch().getProject().getId());
+        VersionControlUtil.resetCommitHistory(commit);
+
+        teamCommitRepository.deleteById(commit.getId());
     }
 
     private long getFilesSize(List<MultipartFile> files) {
@@ -289,4 +305,21 @@ public class TeamProjectService {
         }
     }
 
+    private void validDefaultBranchCommit(TeamCommit commit) {
+        if (commit.getBranch().getName().contains("refs/heads/")) {
+            throw new DefaultBranchException(ErrorCode.DEFAULT_BRANCH_COMMIT_NOT_ALLOWED);
+        }
+    }
+
+    private void validUserCommit(TeamCommit commit, User user) {
+        if (!(commit.getCreatedBy().getId() == user.getId())) {
+            throw new InvalidUserCommitException(ErrorCode.USER_COMMIT_MISMATCH);
+        }
+    }
+
+    private void validIsExistParentCommit(TeamCommit commit) {
+        if (commit.getParentCommit() == null) {
+            throw new ParentCommitNotFoundException(ErrorCode.TEAM_PARENT_COMMIT_NOT_EXIST);
+        }
+    }
 }

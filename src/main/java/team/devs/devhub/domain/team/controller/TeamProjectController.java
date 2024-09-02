@@ -110,4 +110,15 @@ public class TeamProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @DeleteMapping("/project/commit/{commitId}")
+    @Operation(summary = "팀 프로젝트 커밋 이력 삭제 API")
+    public ResponseEntity<Void> deleteCommitHistory(
+            @Parameter(description = "삭제할 커밋 id", example = "1")
+            @PathVariable(name = "commitId") Long commitId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        teamProjectService.deleteCommitHistory(commitId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }
