@@ -36,7 +36,7 @@ public enum ErrorCode {
     ZIP_FILE_GENERATE_ERROR(500, "P012", "zip파일 생성 중 오류가 발생했습니다"),
     REPOSITORY_UPDATE_ERROR(500, "P013", "레포지토리 업데이트 중 오류가 발생했습니다"),
     REPOSITORY_DELETE_ERROR(500, "P014", "레포지토리를 삭제하는 중 오류가 발생했습니다"),
-    PARENT_COMMIT_NOT_FOUND(500, "P015", "부모 커밋이 존재하지 않습니다"),
+    PERSONAL_PARENT_COMMIT_NOT_EXIST(500, "P015", "부모 커밋이 존재하지 않습니다"),
     PERSONAL_PROJECT_FILE_SIZE_OVER(500, "P016", "업로드한 파일의 용량이 100MB를 초과했습니다"),
 
     // Team
@@ -54,6 +54,9 @@ public enum ErrorCode {
     USER_BRANCH_MISMATCH(500, "T012", "해당 브랜치를 생성한 유저가 아닙니다"),
     PROHIBITED_BRANCH_NAME(500, "T013", "브랜치 이름으로 'main' 또는 'master'는 불가능합니다"),
     DEFAULT_BRANCH_NOT_ALLOWED(500, "T014", "기본 브랜치는 삭제하실 수 없습니다"),
+    USER_COMMIT_MISMATCH(500, "T015", "해당 커밋을 생성한 유저가 아닙니다"),
+    TEAM_PARENT_COMMIT_NOT_EXIST(500, "T016", "부모 커밋이 존재하지 않습니다"),
+    DEFAULT_BRANCH_COMMIT_NOT_ALLOWED(500, "T017", "기본 브랜치의 커밋은 삭제하실 수 없습니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),

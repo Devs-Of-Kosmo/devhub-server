@@ -114,9 +114,7 @@ public class VersionControlUtil {
         try {
             git = Git.open(new File(project.getRepositoryPath()));
 
-            git.checkout()
-                    .setName(branch.getName())
-                    .call();
+            checkoutWorkingBranch(git, branch);
 
             RepositoryUtil.deleteFiles(project, dto.getDeleteFileNameList());
             renameOrMoveFiles(project, dto.getRenameFileNameList());
@@ -222,21 +220,48 @@ public class VersionControlUtil {
         return outputStream.toByteArray();
     }
 
-    public static void resetCommitHistory(PersonalCommit personalCommit) {
+    public static void resetCommitHistory(PersonalCommit commit) {
         try {
-            Git git = Git.open(new File(personalCommit.getProject().getRepositoryPath()));
+            Git git = Git.open(new File(commit.getProject().getRepositoryPath()));
             Repository repository = git.getRepository();
 
-            ObjectId objectId = ObjectId.fromString(personalCommit.getParentCommit().getCommitCode());
+            ObjectId objectId = ObjectId.fromString(commit.getParentCommit().getCommitCode());
 
             RevWalk revWalk = new RevWalk(repository);
-            RevCommit commit = revWalk.parseCommit(objectId);
+            RevCommit revCommit = revWalk.parseCommit(objectId);
             revWalk.dispose();
 
             git.reset()
                     .setMode(ResetCommand.ResetType.HARD)
-                    .setRef(commit.getName())
+                    .setRef(revCommit.getName())
                     .call();
+
+            git.close();
+        } catch (IOException | GitAPIException e) {
+            throw new VersionControlUtilException(ErrorCode.COMMIT_RESET_ERROR);
+        }
+    }
+
+    public static void resetCommitHistory(TeamCommit commit) {
+        TeamBranch branch = commit.getBranch();
+        try {
+            Git git = Git.open(new File(branch.getProject().getRepositoryPath()));
+            Repository repository = git.getRepository();
+
+            checkoutWorkingBranch(git, branch);
+
+            ObjectId objectId = ObjectId.fromString(commit.getParentCommit().getCommitCode());
+
+            RevWalk revWalk = new RevWalk(repository);
+            RevCommit revCommit = revWalk.parseCommit(objectId);
+            revWalk.dispose();
+
+            git.reset()
+                    .setMode(ResetCommand.ResetType.HARD)
+                    .setRef(revCommit.getName())
+                    .call();
+
+            checkoutDefaultBranch(git);
 
             git.close();
         } catch (IOException | GitAPIException e) {
@@ -331,6 +356,12 @@ public class VersionControlUtil {
                 .call();
 
         git.close();
+    }
+
+    private static void checkoutWorkingBranch(Git git, TeamBranch branch) throws GitAPIException {
+        git.checkout()
+                .setName(branch.getName())
+                .call();
     }
 
     private static void checkoutDefaultBranch(Git git) throws GitAPIException {
