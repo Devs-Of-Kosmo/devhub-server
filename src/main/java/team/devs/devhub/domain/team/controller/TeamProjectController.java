@@ -37,7 +37,7 @@ public class TeamProjectController {
     @GetMapping("/repo/list/{teamId}")
     @Operation(summary = "팀 레포지토리 목록 조회 API")
     public ResponseEntity<List<TeamProjectRepoReadResponse>> readTeamProjectRepo(
-            @Parameter(description = "조회할 팀 id", example = "1")
+            @Parameter(description = "조회할 팀의 id", example = "1")
             @PathVariable(name = "teamId") Long teamId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
@@ -58,12 +58,23 @@ public class TeamProjectController {
     @DeleteMapping("/repo/{projectId}")
     @Operation(summary = "팀 레포지토리 삭제 API")
     public ResponseEntity<Void> deleteTeamProjectRepo(
-            @Parameter(description = "삭제할 레포지토리 id", example = "1")
+            @Parameter(description = "삭제할 팀 레포지토리의 id", example = "1")
             @PathVariable(name = "projectId") Long projectId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         teamProjectService.deleteProjectRepo(projectId, customUserDetails.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/project/metadata")
+    @Operation(summary = "팀 프로젝트 메타데이터 조회 API")
+    public ResponseEntity<TeamProjectMetaReadResponse> readTeamProjectMetadata(
+            @Parameter(description = "조회할 팀 레포지토리의 id", example = "1")
+            @RequestParam("projectId") Long projectId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamProjectMetaReadResponse response = teamProjectService.readProjectMetadata(projectId, customUserDetails.getId());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/project/init")

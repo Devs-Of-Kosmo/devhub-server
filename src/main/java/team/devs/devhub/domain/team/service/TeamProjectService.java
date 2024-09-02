@@ -119,6 +119,19 @@ public class TeamProjectService {
         teamProjectRepository.deleteById(projectId);
     }
 
+    @Transactional(readOnly = true)
+    public TeamProjectMetaReadResponse readProjectMetadata(long projectId, long userId) {
+        TeamProject project = teamProjectRepository.findById(projectId)
+                .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        TeamBranch defaultBranch = teamBranchRepository.findFirstByProjectIdOrderByIdAsc(project.getId())
+                .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
+        validExistsUserAndTeam(user, project.getTeam());
+
+        return TeamProjectMetaReadResponse.of(project, defaultBranch);
+    }
+
     public TeamProjectInitResponse saveInitialProject(TeamProjectInitRequest request, long userId) {
         TeamProject project = teamProjectRepository.findByIdWithLock(request.getProjectId())
                 .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
