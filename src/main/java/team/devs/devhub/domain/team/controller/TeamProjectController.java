@@ -81,10 +81,19 @@ public class TeamProjectController {
     @Operation(summary = "팀 프로젝트 작업 브랜치 조회 API")
     public ResponseEntity<List<TeamProjectBranchReadResponse>> readTeamProjectBranch(
             @Parameter(description = "조회할 브랜치가 파생된 커밋 id", example = "1")
-            @RequestParam("commitId") Long commitId,
-            @AuthenticationPrincipal CustomUserDetails customUserDetails
+            @RequestParam("commitId") Long commitId
     ) {
-        List<TeamProjectBranchReadResponse> responses = teamProjectService.readBranches(commitId, customUserDetails.getId());
+        List<TeamProjectBranchReadResponse> responses = teamProjectService.readBranches(commitId);
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/project/branch/commit")
+    @Operation(summary = "팀 프로젝트 작업 브랜치 커밋 이력 조회 API")
+    public ResponseEntity<List<TeamProjectBranchCommitsReadResponse>> readBranchCommitHistory(
+            @Parameter(description = "조회할 커밋의 브랜치 id", example = "1")
+            @RequestParam("branchId") Long branchId
+    ) {
+        List<TeamProjectBranchCommitsReadResponse> responses = teamProjectService.readWorkingBranchCommitHistory(branchId);
         return ResponseEntity.ok(responses);
     }
 
