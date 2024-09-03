@@ -45,12 +45,12 @@ public class VersionControlUtil {
         }
     }
 
-    public static void createBranch(TeamBranch branch, TeamCommit fromTeamCommit) {
+    public static void createBranch(TeamBranch branch) {
         try {
             Git git = Git.open(new File(branch.getProject().getRepositoryPath()));
             Repository repository = git.getRepository();
 
-            String fromCommitHash = fromTeamCommit.getCommitCode();
+            String fromCommitHash = branch.getFromCommit().getCommitCode();
             String newBranchName = branch.getName();
 
             RevWalk walk = new RevWalk(repository);

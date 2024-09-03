@@ -77,6 +77,17 @@ public class TeamProjectController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/project/branch")
+    @Operation(summary = "팀 프로젝트 작업 브랜치 조회 API")
+    public ResponseEntity<List<TeamProjectBranchReadResponse>> readTeamProjectBranch(
+            @Parameter(description = "조회할 브랜치가 파생된 커밋 id", example = "1")
+            @RequestParam("commitId") Long commitId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        List<TeamProjectBranchReadResponse> responses = teamProjectService.readBranches(commitId, customUserDetails.getId());
+        return ResponseEntity.ok(responses);
+    }
+
     @PostMapping("/project/init")
     @Operation(summary = "팀 프로젝트 최초 저장 API")
     public ResponseEntity<TeamProjectInitResponse> initTeamProject(

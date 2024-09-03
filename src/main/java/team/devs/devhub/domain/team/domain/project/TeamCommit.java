@@ -46,6 +46,9 @@ public class TeamCommit extends BaseTimeEntity {
     @OneToMany(mappedBy = "parentCommit", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamCommit> childCommits = new ArrayList<>();
 
+    @OneToMany(mappedBy = "fromCommit", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TeamBranch> branches = new ArrayList<>();
+
     @Builder
     public TeamCommit(Long id, String commitCode, String commitMessage, TeamBranch branch, TeamCommit parentCommit, User createdBy) {
         this.id = id;
