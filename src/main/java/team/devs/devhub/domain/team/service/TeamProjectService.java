@@ -176,11 +176,11 @@ public class TeamProjectService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         TeamCommit fromCommit = teamCommitRepository.findById(request.getFromCommitId())
                 .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
-        TeamBranch prePersistBranch = request.toEntity(user, project);
+        TeamBranch prePersistBranch = request.toEntity(user, project, fromCommit);
         valiProhibitedBranchName(prePersistBranch);
         validDuplicatedBranchName(prePersistBranch);
 
-        VersionControlUtil.createBranch(prePersistBranch, fromCommit);
+        VersionControlUtil.createBranch(prePersistBranch);
 
         TeamBranch branch = teamBranchRepository.save(prePersistBranch);
 
