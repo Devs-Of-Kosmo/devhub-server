@@ -14,6 +14,7 @@ public class TeamProjectBranchReadResponse {
 
     private Long branchId;
     private String branchName;
+    private String description;
     private String creatorName;
     private LocalDateTime createdDate;
 
@@ -21,6 +22,7 @@ public class TeamProjectBranchReadResponse {
         return TeamProjectBranchReadResponse.builder()
                 .branchId(branch.getId())
                 .branchName(branch.getName())
+                .description(branch.getDescription())
                 .creatorName(branch.getCreatedBy().getName())
                 .createdDate(branch.getCreatedDate())
                 .build();
