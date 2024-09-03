@@ -85,7 +85,7 @@ public class TeamProjectService {
     }
 
      @Transactional(readOnly = true)
-    public List<TeamProjectBranchReadResponse> readBranches(long commitId, long userId) {
+    public List<TeamProjectBranchReadResponse> readBranches(long commitId) {
         TeamCommit commit = teamCommitRepository.findById(commitId)
                 .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
 
@@ -93,6 +93,18 @@ public class TeamProjectService {
 
         return branches.stream()
                 .map(e -> TeamProjectBranchReadResponse.of(e))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TeamProjectBranchCommitsReadResponse> readWorkingBranchCommitHistory(long branchId) {
+        TeamBranch branch = teamBranchRepository.findById(branchId)
+                .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
+
+        List<TeamCommit> commits = teamCommitRepository.findAllByBranchId(branch.getId());
+
+        return commits.stream()
+                .map(e -> TeamProjectBranchCommitsReadResponse.of(e))
                 .collect(Collectors.toList());
     }
 
