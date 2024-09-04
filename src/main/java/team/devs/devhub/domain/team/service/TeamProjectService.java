@@ -223,7 +223,7 @@ public class TeamProjectService {
                         .commitCode(fromCommit.getCommitCode())
                         .commitMessage(fromCommit.getCommitMessage())
                         .branch(branch)
-                        .createdBy(user)
+                        .createdBy(fromCommit.getCreatedBy())
                         .build()
         );
 
