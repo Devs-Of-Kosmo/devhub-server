@@ -97,6 +97,16 @@ public class TeamProjectController {
         return ResponseEntity.ok(responses);
     }
 
+    @GetMapping("/project/commit")
+    @Operation(summary = "팀 프로젝트 특정 커밋 조회 API")
+    public ResponseEntity<TeamProjectCommitReadResponse> readTeamProjectCommit(
+            @Parameter(description = "조회할 커밋 id", example = "1")
+            @RequestParam("commitId") Long commitId
+    ) {
+        TeamProjectCommitReadResponse response = teamProjectService.readProjectCommit(commitId);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/project/init")
     @Operation(summary = "팀 프로젝트 최초 저장 API")
     public ResponseEntity<TeamProjectInitResponse> initTeamProject(
