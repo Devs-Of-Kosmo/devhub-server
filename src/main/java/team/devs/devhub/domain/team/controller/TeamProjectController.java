@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import team.devs.devhub.domain.team.dto.project.*;
 import team.devs.devhub.domain.team.service.TeamProjectService;
 import team.devs.devhub.global.security.CustomUserDetails;
 
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -105,6 +108,21 @@ public class TeamProjectController {
     ) {
         TeamProjectCommitReadResponse response = teamProjectService.readProjectCommit(commitId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/project/text-file")
+    @Operation(summary = "팀 프로젝트 텍스트 파일 조회 API")
+    public ResponseEntity<String> readTextFile(
+            @Parameter(description = "조회할 텍스트 파일의 커밋 id", example = "1")
+            @RequestParam("commitId") Long commitId,
+            @Parameter(description = "조회할 텍스트 파일의 (경로가 포함된) 이름", example = "path/text1.txt")
+            @RequestParam("filePath") String filePath
+    ) {
+        String response = teamProjectService.readTextFileContent(commitId, filePath);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + new File(filePath).getName())
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(response);
     }
 
     @PostMapping("/project/init")

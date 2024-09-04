@@ -166,6 +166,14 @@ public class TeamProjectService {
         return TeamProjectCommitReadResponse.of(results);
     }
 
+    @Transactional(readOnly = true)
+    public String readTextFileContent(long commitId, String filePath) {
+        TeamCommit commit = teamCommitRepository.findById(commitId)
+                .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
+
+        return new String(VersionControlUtil.getFileDataFromCommit(commit, filePath));
+    }
+
     public TeamProjectInitResponse saveInitialProject(TeamProjectInitRequest request, long userId) {
         TeamProject project = teamProjectRepository.findByIdWithLock(request.getProjectId())
                 .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
