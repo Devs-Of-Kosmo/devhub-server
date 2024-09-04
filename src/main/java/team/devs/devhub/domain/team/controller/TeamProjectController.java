@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,8 @@ import team.devs.devhub.domain.team.service.TeamProjectService;
 import team.devs.devhub.global.security.CustomUserDetails;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
@@ -141,6 +144,22 @@ public class TeamProjectController {
                 .body(response);
     }
 
+    @GetMapping("/project/download")
+    @Operation(summary = "팀 프로젝트 다운로드 API", description = "다운로드 시 파일 이름을 응답 헤더에 'Content-Disposition'의 filename 값을 파싱하여 설정한다")
+    public ResponseEntity<ByteArrayResource> downloadFile(
+            @Parameter(description = "다운로드 할 시점의 커밋 id", example = "1")
+            @RequestParam("commitId") Long commitId
+    ) {
+        TeamProjectDownloadDto response = teamProjectService.provideProjectFilesAsZip(commitId);
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + getEncodedProjectName(response.getProjectName()) + ".zip\";"
+                )
+                .contentLength(response.getResource().contentLength())
+                .body(response.getResource());
+    }
+
     @PostMapping("/project/init")
     @Operation(summary = "팀 프로젝트 최초 저장 API")
     public ResponseEntity<TeamProjectInitResponse> initTeamProject(
@@ -220,6 +239,15 @@ public class TeamProjectController {
             return "";
         }
         return filePath.substring(lastIndexOfDot + 1);
+    }
+
+    private String getEncodedProjectName(String projectName) {
+        try {
+            return URLEncoder.encode(projectName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "project";
     }
 
 }

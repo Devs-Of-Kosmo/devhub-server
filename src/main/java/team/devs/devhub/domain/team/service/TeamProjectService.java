@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -185,6 +186,16 @@ public class TeamProjectService {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(fileBytes);
 
         return new InputStreamResource(inputStream);
+    }
+
+    @Transactional(readOnly = true)
+    public TeamProjectDownloadDto provideProjectFilesAsZip(long commitId) {
+        TeamCommit commit = teamCommitRepository.findById(commitId)
+                .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
+
+        ByteArrayResource resource = new ByteArrayResource(VersionControlUtil.generateProjectFilesAsZip(commit));
+
+        return TeamProjectDownloadDto.of(resource, commit);
     }
 
     public TeamProjectInitResponse saveInitialProject(TeamProjectInitRequest request, long userId) {

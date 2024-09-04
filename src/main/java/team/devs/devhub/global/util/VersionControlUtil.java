@@ -270,18 +270,18 @@ public class VersionControlUtil {
         }
     }
 
-    public static byte[] generateProjectFilesAsZip(PersonalCommit personalCommit) {
+    public static byte[] generateProjectFilesAsZip(CommitUtilProvider commit) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
-            Git git = Git.open(new File(personalCommit.getProject().getRepositoryPath()));
+            Git git = Git.open(new File(commit.getRepositoryPath()));
             Repository repository = git.getRepository();
 
-            ObjectId commit = ObjectId.fromString(personalCommit.getCommitCode());
+            ObjectId objectId = ObjectId.fromString(commit.getCommitCode());
 
             ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
 
             TreeWalk treeWalk = new TreeWalk(repository);
-            treeWalk.addTree(repository.parseCommit(commit).getTree());
+            treeWalk.addTree(repository.parseCommit(objectId).getTree());
             treeWalk.setRecursive(true);
 
             while (treeWalk.next()) {
@@ -291,14 +291,14 @@ public class VersionControlUtil {
                     continue;
                 }
 
-                ObjectId objectId = treeWalk.getObjectId(0);
+                ObjectId walkObjectId = treeWalk.getObjectId(0);
 
                 if (treeWalk.isSubtree()) {
                     zipOutputStream.putNextEntry(new ZipEntry(path + "/"));
                     zipOutputStream.closeEntry();
                 } else {
                     zipOutputStream.putNextEntry(new ZipEntry(path));
-                    InputStream inputStream = repository.open(objectId).openStream();
+                    InputStream inputStream = repository.open(walkObjectId).openStream();
                     byte[] buffer = new byte[1024];
                     int length = inputStream.read(buffer);
                     while (length != -1) {
