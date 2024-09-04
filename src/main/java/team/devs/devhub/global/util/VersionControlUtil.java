@@ -18,6 +18,7 @@ import team.devs.devhub.domain.team.domain.project.TeamBranch;
 import team.devs.devhub.domain.team.domain.project.TeamCommit;
 import team.devs.devhub.domain.team.domain.project.TeamProject;
 import team.devs.devhub.domain.team.dto.project.TeamProjectSaveRequest;
+import team.devs.devhub.global.common.CommitUtilProvider;
 import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.util.exception.VersionControlUtilException;
@@ -158,19 +159,19 @@ public class VersionControlUtil {
         }
     }
 
-    public static List<String> getFileNameWithPathList(PersonalCommit personalCommit) {
+    public static List<String> getFileNameWithPathList(CommitUtilProvider commit) {
         List<String> fileNameWithPathList = new ArrayList<>();
         try {
-            Git git = Git.open(new File(personalCommit.getProject().getRepositoryPath()));
+            Git git = Git.open(new File(commit.getRepositoryPath()));
             Repository repository = git.getRepository();
 
-            ObjectId objectId = ObjectId.fromString(personalCommit.getCommitCode());
+            ObjectId objectId = ObjectId.fromString(commit.getCommitCode());
 
             RevWalk revWalk = new RevWalk(repository);
-            RevCommit commit = revWalk.parseCommit(objectId);
+            RevCommit revCommit = revWalk.parseCommit(objectId);
 
             TreeWalk treeWalk = new TreeWalk(repository);
-            treeWalk.addTree(commit.getTree());
+            treeWalk.addTree(revCommit.getTree());
             treeWalk.setRecursive(true);
 
             while (treeWalk.next()) {
