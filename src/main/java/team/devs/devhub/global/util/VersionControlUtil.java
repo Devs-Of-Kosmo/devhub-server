@@ -190,19 +190,19 @@ public class VersionControlUtil {
         return fileNameWithPathList;
     }
 
-    public static byte[] getFileDataFromCommit(PersonalCommit personalCommit, String filePath) {
+    public static byte[] getFileDataFromCommit(CommitUtilProvider commit, String filePath) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
-            Git git = Git.open(new File(personalCommit.getProject().getRepositoryPath()));
+            Git git = Git.open(new File(commit.getRepositoryPath()));
             Repository repository = git.getRepository();
 
-            ObjectId objectId = ObjectId.fromString(personalCommit.getCommitCode());
+            ObjectId objectId = ObjectId.fromString(commit.getCommitCode());
 
             RevWalk revWalk = new RevWalk(repository);
-            RevCommit commit = revWalk.parseCommit(objectId);
+            RevCommit revCommit = revWalk.parseCommit(objectId);
 
             TreeWalk treeWalk = new TreeWalk(repository);
-            treeWalk.addTree(commit.getTree());
+            treeWalk.addTree(revCommit.getTree());
             treeWalk.setRecursive(true);
             treeWalk.setFilter(PathFilter.create(filePath));
 

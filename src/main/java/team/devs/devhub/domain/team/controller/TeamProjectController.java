@@ -5,7 +5,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +16,7 @@ import team.devs.devhub.domain.team.dto.project.*;
 import team.devs.devhub.domain.team.service.TeamProjectService;
 import team.devs.devhub.global.security.CustomUserDetails;
 
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -107,6 +111,36 @@ public class TeamProjectController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/project/text-file")
+    @Operation(summary = "팀 프로젝트 텍스트 파일 조회 API")
+    public ResponseEntity<String> readTextFile(
+            @Parameter(description = "조회할 텍스트 파일의 커밋 id", example = "1")
+            @RequestParam("commitId") Long commitId,
+            @Parameter(description = "조회할 텍스트 파일의 (경로가 포함된) 이름", example = "path/text1.txt")
+            @RequestParam("filePath") String filePath
+    ) {
+        String response = teamProjectService.readTextFileContent(commitId, filePath);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + new File(filePath).getName())
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(response);
+    }
+
+    @GetMapping("/project/image-file")
+    @Operation(summary = "팀 프로젝트 이미지 파일 조회 API")
+    public ResponseEntity<InputStreamResource> readImageFile(
+            @Parameter(description = "조회할 이미지 파일의 커밋 id", example = "1")
+            @RequestParam("commitId") Long commitId,
+            @Parameter(description = "조회할 이미지 파일의 (경로가 포함된) 이름", example = "path/image1.jpg")
+            @RequestParam("filePath") String filePath
+    ) {
+        InputStreamResource response = teamProjectService.readImageFileContent(commitId, filePath);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + new File(filePath).getName())
+                .contentType(getMediaTypeForImage(filePath))
+                .body(response);
+    }
+
     @PostMapping("/project/init")
     @Operation(summary = "팀 프로젝트 최초 저장 API")
     public ResponseEntity<TeamProjectInitResponse> initTeamProject(
@@ -160,6 +194,32 @@ public class TeamProjectController {
     ) {
         teamProjectService.deleteCommitHistory(commitId, customUserDetails.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    private MediaType getMediaTypeForImage(String filePath) {
+        String fileExtension = getFileExtension(filePath).toLowerCase();
+
+        switch (fileExtension) {
+            case "jpg":
+            case "jpeg":
+                return MediaType.IMAGE_JPEG;
+            case "png":
+                return MediaType.IMAGE_PNG;
+            case "gif":
+                return MediaType.IMAGE_GIF;
+            case "bmp":
+                return MediaType.valueOf("image/bmp");
+            default:
+                return MediaType.APPLICATION_OCTET_STREAM;
+        }
+    }
+
+    private String getFileExtension(String filePath) {
+        int lastIndexOfDot = filePath.lastIndexOf('.');
+        if (lastIndexOfDot == -1) {
+            return "";
+        }
+        return filePath.substring(lastIndexOfDot + 1);
     }
 
 }

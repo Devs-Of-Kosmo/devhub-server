@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,7 @@ import team.devs.devhub.global.util.RepositoryUtil;
 import team.devs.devhub.global.util.VersionControlUtil;
 import team.devs.devhub.global.util.exception.BranchNotFoundException;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -164,6 +166,25 @@ public class TeamProjectService {
         List<String> results = VersionControlUtil.getFileNameWithPathList(commit);
 
         return TeamProjectCommitReadResponse.of(results);
+    }
+
+    @Transactional(readOnly = true)
+    public String readTextFileContent(long commitId, String filePath) {
+        TeamCommit commit = teamCommitRepository.findById(commitId)
+                .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
+
+        return new String(VersionControlUtil.getFileDataFromCommit(commit, filePath));
+    }
+
+    @Transactional(readOnly = true)
+    public InputStreamResource readImageFileContent(long commitId, String filePath) {
+        TeamCommit commit = teamCommitRepository.findById(commitId)
+                .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
+
+        byte[] fileBytes = VersionControlUtil.getFileDataFromCommit(commit, filePath);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(fileBytes);
+
+        return new InputStreamResource(inputStream);
     }
 
     public TeamProjectInitResponse saveInitialProject(TeamProjectInitRequest request, long userId) {
