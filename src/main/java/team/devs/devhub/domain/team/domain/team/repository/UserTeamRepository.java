@@ -13,10 +13,10 @@ import java.util.Optional;
 public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
 
     @Query("select ut from UserTeam ut join fetch ut.team where ut.user = :user")
-    List<UserTeam> findAllByUser(@Param("user") User user);
+    List<UserTeam> findAllByUserFetchJoinTeam(@Param("user") User user);
 
     @Query("select ut from UserTeam ut join fetch ut.user join fetch ut.team where ut.team = :team")
-    List<UserTeam> findAllByTeam(@Param("team") Team team);
+    List<UserTeam> findAllByTeamFetchJoinUserAndTeam(@Param("team") Team team);
 
     boolean existsByUserAndTeam(User user, Team team);
 
