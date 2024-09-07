@@ -20,5 +20,9 @@ public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
 
     boolean existsByUserAndTeam(User user, Team team);
 
+    @Query("select case when count(ut) > 0 then true else false end " +
+            "from UserTeam ut join ut.user u where ut.team = :team and u.email = :email")
+    boolean existsEmailByTeamJoinUser(@Param("team") Team team, @Param("email") String email);
+
     Optional<UserTeam> findByUserAndTeam(User user, Team team);
 }
