@@ -3,7 +3,6 @@ package team.devs.devhub.domain.user.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,7 +16,8 @@ import team.devs.devhub.domain.user.dto.MailSendResponse;
 import team.devs.devhub.domain.user.exception.AuthenticationCodeException;
 import team.devs.devhub.domain.user.exception.MailSendException;
 import team.devs.devhub.global.error.exception.ErrorCode;
-import team.devs.devhub.global.policy.MailAuthenticationPolicy;
+import team.devs.devhub.global.policy.MailPolicy;
+import team.devs.devhub.global.policy.RedisPolicy;
 import team.devs.devhub.global.redis.RedisUtil;
 import team.devs.devhub.global.util.EmailVeificationCodeUtil;
 
@@ -25,18 +25,15 @@ import java.io.UnsupportedEncodingException;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class MailService {
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
     @Value("${spring.mail.verification.sender}")
     private String senderEmail;
-    @Value("${spring.mail.verification.expiration-second}")
-    private long expirationSecond;
 
     public MailSendResponse sendEmail(String toEmail){
-        if (redisUtil.existData(toEmail)) {
-            redisUtil.deleteData(toEmail);
+        if (redisUtil.existData(RedisPolicy.MAIL_AUTH_KEY + toEmail)) {
+            redisUtil.deleteData(RedisPolicy.MAIL_AUTH_KEY + toEmail);
         }
 
         try {
@@ -50,7 +47,7 @@ public class MailService {
     }
 
     public EmailAuthenticationResponse checkEmailCode(String toEmail, String requestCode) {
-        String savedCode = redisUtil.getData(toEmail);
+        String savedCode = redisUtil.getData(RedisPolicy.MAIL_AUTH_KEY + toEmail);
 
         verifyExistAuthenticationCode(savedCode);
         verifyMatchedAuthenticationCode(savedCode, requestCode);
@@ -65,11 +62,11 @@ public class MailService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
         helper.setTo(email);
-        helper.setSubject(MailAuthenticationPolicy.TITLE.getValue());
-        helper.setFrom(senderEmail, MailAuthenticationPolicy.SENDER_NAME.getValue());
+        helper.setSubject(MailPolicy.MAIL_AUTH_TITLE);
+        helper.setFrom(senderEmail, MailPolicy.MAIL_AUTH_SENDER_NAME);
         helper.setText(setContext(authCode), true);
 
-        redisUtil.setDataExpire(email, authCode, expirationSecond);
+        redisUtil.setDataExpire(RedisPolicy.MAIL_AUTH_KEY + email, authCode, RedisPolicy.MAIL_AUTH_TTL);
 
         return message;
     }

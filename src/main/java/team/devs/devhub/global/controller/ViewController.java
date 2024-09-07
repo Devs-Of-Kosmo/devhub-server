@@ -74,7 +74,13 @@ public class ViewController {
     }
 
     @GetMapping("/team_project")
-    public String teamProject() {
+    public String teamProject(
+            @RequestParam(value = "code", required = false) String code,
+            @RequestParam(value = "redirectPath", required = false) String redirectPath,
+            Model model
+    ) {
+        model.addAttribute("code", code);
+        model.addAttribute("redirectPath", redirectPath);
         return "team_project/team_project";
     }
 

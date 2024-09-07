@@ -53,7 +53,7 @@ public class TeamService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        List<TeamGroupReadResponse> results = userTeamRepository.findAllByUser(user).stream()
+        List<TeamGroupReadResponse> results = userTeamRepository.findAllByUserFetchJoinTeam(user).stream()
                 .map(e -> TeamGroupReadResponse.of(e.getTeam()))
                 .collect(Collectors.toList());
 
@@ -68,7 +68,7 @@ public class TeamService {
                 .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
         validExistsUserAndTeam(user, team);
 
-        List<UserTeam> userTeamList = userTeamRepository.findAllByTeam(team);
+        List<UserTeam> userTeamList = userTeamRepository.findAllByTeamFetchJoinUserAndTeam(team);
 
         return TeamDetailsReadResponse.of(userTeamList);
     }

@@ -57,6 +57,10 @@ public enum ErrorCode {
     USER_COMMIT_MISMATCH(500, "T015", "해당 커밋을 생성한 유저가 아닙니다"),
     TEAM_PARENT_COMMIT_NOT_EXIST(500, "T016", "부모 커밋이 존재하지 않습니다"),
     DEFAULT_BRANCH_COMMIT_NOT_ALLOWED(500, "T017", "기본 브랜치의 커밋은 삭제하실 수 없습니다"),
+    INVITE_MAIL_ALREADY_EXISTS(500, "T018", "이미 초대 메일을 보낸 유저입니다"),
+    USER_ALREADY_IN_TEAM(500, "T019", "팀에 속해 있는 유저입니다"),
+    INVITE_EMAIL_MISMATCH(500, "T020", "팀에 초대된 유저가 아닙니다"),
+    INVITE_MAIL_EXPIRED(500, "T021", "초대 유효기간이 지났습니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
@@ -79,7 +83,12 @@ public enum ErrorCode {
     GIT_ROLLBACK_ERROR(500, "V004", "깃 상태 롤백 중 오류가 발생했습니다"),
     COMMIT_RESET_ERROR(500, "V005", "커밋 삭제 중 오류가 발생했습니다"),
     BRANCH_CREATION_ERROR(500, "V005", "브랜치 생성 중 오류가 발생했습니다"),
-    BRANCH_DELETE_ERROR(500, "V006", "브랜치 삭제 중 오류가 발생했습니다");
+    BRANCH_DELETE_ERROR(500, "V006", "브랜치 삭제 중 오류가 발생했습니다"),
+
+    // Util
+    DESERIALIZE_ERROR(500, "Ut001", "데이터 역직렬화 과정 중 오류가 발생했습니다"),
+    ENCODING_ERROR(500, "Ut002", "초대정보 암호화 중 오류가 발생했습니다"),
+    DECODING_ERROR(500, "Ut003", "초대코드 복호화 중 오류가 발생했습니다");
 
     private final String code;
     private final String message;
