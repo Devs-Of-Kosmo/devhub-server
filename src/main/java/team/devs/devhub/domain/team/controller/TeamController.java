@@ -111,11 +111,21 @@ public class TeamController {
 
     @PatchMapping("/role/promotion")
     @Operation(summary = "팀원 역할 부여 (진급) API")
-    public ResponseEntity<TeamRolePromotionResponse> promoteMemberRole(
-            @RequestBody @Valid TeamRolePromotionRequest request,
+    public ResponseEntity<TeamRoleUpdateResponse> promoteMemberRole(
+            @RequestBody @Valid TeamRoleUpdateRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        TeamRolePromotionResponse response = teamService.updateAffiliatedUserRole(request, customUserDetails.getId());
+        TeamRoleUpdateResponse response = teamService.promoteAffiliatedUserRole(request, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/role/relegation")
+    @Operation(summary = "팀원 역할 부여 (강등) API")
+    public ResponseEntity<TeamRoleUpdateResponse> relegateMemberRole(
+            @RequestBody @Valid TeamRoleUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamRoleUpdateResponse response = teamService.relegateAffiliatedUserRole(request, customUserDetails.getId());
         return ResponseEntity.ok(response);
     }
 

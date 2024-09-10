@@ -9,13 +9,13 @@ import team.devs.devhub.domain.team.domain.team.UserTeam;
 @Getter
 @Builder
 @AllArgsConstructor
-public class TeamRolePromotionResponse {
+public class TeamRoleUpdateResponse {
 
     private Long targetUserId;
     private TeamRole currentRole;
 
-    public static TeamRolePromotionResponse of(UserTeam userTeam) {
-        return TeamRolePromotionResponse.builder()
+    public static TeamRoleUpdateResponse of(UserTeam userTeam) {
+        return TeamRoleUpdateResponse.builder()
                 .targetUserId(userTeam.getUser().getId())
                 .currentRole(userTeam.getRole())
                 .build();

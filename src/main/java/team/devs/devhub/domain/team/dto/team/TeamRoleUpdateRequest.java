@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
-public class TeamRolePromotionRequest {
+public class TeamRoleUpdateRequest {
 
     @NotNull
     @Schema(description = "팀 id", example = "1")
