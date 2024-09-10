@@ -61,6 +61,7 @@ public enum ErrorCode {
     USER_ALREADY_IN_TEAM(500, "T019", "팀에 속해 있는 유저입니다"),
     INVITE_EMAIL_MISMATCH(500, "T020", "팀에 초대된 유저가 아닙니다"),
     INVITE_MAIL_EXPIRED(500, "T021", "초대 유효기간이 지났습니다"),
+    MANAGER_ACTION_NOT_ALLOWED(500, "T022", "MANAGER 권환은 불가능합니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
