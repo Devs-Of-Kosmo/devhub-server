@@ -166,6 +166,24 @@ public class TeamService {
         }
     }
 
+    public TeamRolePromotionResponse updateAffiliatedUserRole(TeamRolePromotionRequest request, long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        User targetUser = userRepository.findById(request.getTargetUserId())
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        Team team = teamRepository.findById(request.getTeamId())
+                .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
+        UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+        validSubManagerOrHigher(userTeam);
+
+        userTeamRepository.updateRoleByUserAndTeam(TeamRole.SUB_MANAGER, targetUser.getId(), team.getId());
+        UserTeam targetUserTeam = userTeamRepository.findByUserAndTeam(targetUser, team)
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+
+        return TeamRolePromotionResponse.of(targetUserTeam);
+    }
+
     private MimeMessage createEmailForm(Team team, String email) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");

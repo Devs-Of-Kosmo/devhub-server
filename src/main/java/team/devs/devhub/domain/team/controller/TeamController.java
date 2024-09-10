@@ -109,4 +109,14 @@ public class TeamController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PatchMapping("/role/promotion")
+    @Operation(summary = "팀원 역할 부여 (진급) API")
+    public ResponseEntity<TeamRolePromotionResponse> promoteMemberRole(
+            @RequestBody @Valid TeamRolePromotionRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamRolePromotionResponse response = teamService.updateAffiliatedUserRole(request, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
 }
