@@ -96,4 +96,17 @@ public class TeamController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @DeleteMapping("/group/kick/{teamId}")
+    @Operation(summary = "팀원 퇴출 API")
+    public ResponseEntity<Void> kickMember(
+            @Parameter(description = "팀의 id", example = "1")
+            @PathVariable(name = "teamId") Long teamId,
+            @Parameter(description = "퇴출할 팀원의 id", example = "1")
+            @RequestParam(name = "kickUserId") Long kickUserId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        teamService.deleteAffiliatedUserByKickOut(teamId, kickUserId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }
