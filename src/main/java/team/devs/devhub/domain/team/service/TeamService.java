@@ -113,6 +113,18 @@ public class TeamService {
         team.cancelSoftDelete();
     }
 
+    public void deleteAffiliatedUser(long teamId, long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
+        UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+        validIsManager(userTeam);
+
+        userTeamRepository.deleteByUserIdAndTeamId(user.getId(), team.getId());
+    }
+
     // exception
     private void validExistsUserAndTeam(User user, Team team) {
         if (!userTeamRepository.existsByUserAndTeam(user, team)) {
@@ -130,6 +142,12 @@ public class TeamService {
         if (!(userTeam.getRole() == TeamRole.MANAGER
                 || userTeam.getRole() == TeamRole.SUB_MANAGER)) {
             throw new TeamRoleUnauthorizedException(ErrorCode.NOT_SUB_MANAGER_OR_HIGHER);
+        }
+    }
+
+    private void validIsManager(UserTeam userTeam) {
+        if (userTeam.getRole() == TeamRole.MANAGER) {
+            throw new TeamRoleUnauthorizedException(ErrorCode.MANAGER_ACTION_NOT_ALLOWED);
         }
     }
 }

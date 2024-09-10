@@ -85,4 +85,15 @@ public class TeamController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @DeleteMapping("/group/leave/{teamId}")
+    @Operation(summary = "팀 나가기 API")
+    public ResponseEntity<Void> leaveTeamGroup(
+            @Parameter(description = "나갈 팀의 id", example = "1")
+            @PathVariable(name = "teamId") Long teamId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        teamService.deleteAffiliatedUser(teamId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }

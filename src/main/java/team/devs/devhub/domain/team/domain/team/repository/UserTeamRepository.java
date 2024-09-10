@@ -25,4 +25,6 @@ public interface UserTeamRepository extends JpaRepository<UserTeam, Long> {
     boolean existsEmailByTeamJoinUser(@Param("team") Team team, @Param("email") String email);
 
     Optional<UserTeam> findByUserAndTeam(User user, Team team);
+
+    void deleteByUserIdAndTeamId(Long userId, Long teamId);
 }
