@@ -31,7 +31,6 @@ import team.devs.devhub.global.policy.MailPolicy;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -166,7 +165,7 @@ public class TeamService {
         }
     }
 
-    public TeamRolePromotionResponse updateAffiliatedUserRole(TeamRolePromotionRequest request, long userId) {
+    public TeamRoleUpdateResponse promoteAffiliatedUserRole(TeamRoleUpdateRequest request, long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         User targetUser = userRepository.findById(request.getTargetUserId())
@@ -181,7 +180,25 @@ public class TeamService {
         UserTeam targetUserTeam = userTeamRepository.findByUserAndTeam(targetUser, team)
                 .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
 
-        return TeamRolePromotionResponse.of(targetUserTeam);
+        return TeamRoleUpdateResponse.of(targetUserTeam);
+    }
+
+    public TeamRoleUpdateResponse relegateAffiliatedUserRole(TeamRoleUpdateRequest request, long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        User targetUser = userRepository.findById(request.getTargetUserId())
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        Team team = teamRepository.findById(request.getTeamId())
+                .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
+        UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, team)
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+        validManagerOrHigher(userTeam);
+
+        userTeamRepository.updateRoleByUserAndTeam(TeamRole.MEMBER, targetUser.getId(), team.getId());
+        UserTeam targetUserTeam = userTeamRepository.findByUserAndTeam(targetUser, team)
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+
+        return TeamRoleUpdateResponse.of(targetUserTeam);
     }
 
     private MimeMessage createEmailForm(Team team, String email) throws MessagingException, UnsupportedEncodingException {
