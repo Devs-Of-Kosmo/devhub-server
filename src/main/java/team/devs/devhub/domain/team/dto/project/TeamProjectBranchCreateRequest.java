@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import team.devs.devhub.domain.team.domain.project.MergeCondition;
 import team.devs.devhub.domain.team.domain.project.TeamBranch;
 import team.devs.devhub.domain.team.domain.project.TeamCommit;
 import team.devs.devhub.domain.team.domain.project.TeamProject;
@@ -29,6 +30,7 @@ public class TeamProjectBranchCreateRequest {
         return TeamBranch.builder()
                 .name(branchName)
                 .description(description)
+                .condition(MergeCondition.BEFORE_REQUEST)
                 .project(project)
                 .fromCommit(fromCommit)
                 .createdBy(user)
