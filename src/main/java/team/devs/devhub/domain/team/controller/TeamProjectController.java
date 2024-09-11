@@ -215,6 +215,16 @@ public class TeamProjectController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PostMapping("/project/branch/merge-request")
+    @Operation(summary = "팀 프로젝트 브랜치 병합 요청 API")
+    public ResponseEntity<TeamProjectBranchMergeSuggestResponse> suggestBranchMerge(
+            @RequestBody @Valid TeamProjectBranchMergeSuggestRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamProjectBranchMergeSuggestResponse response = teamProjectService.updateMergeConditiontoRequested(request, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
     private MediaType getMediaTypeForImage(String filePath) {
         String fileExtension = getFileExtension(filePath).toLowerCase();
 
