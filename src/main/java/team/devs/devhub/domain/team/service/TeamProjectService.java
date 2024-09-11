@@ -334,8 +334,8 @@ public class TeamProjectService {
     }
 
     public List<TeamProjectSuggestedBranchMergeResponse> readSuggestedBranchMerge(long projectId) {
-        List<TeamBranch> branches =
-                teamBranchRepository.findAllByProjectIdAndCondition(projectId, MergeCondition.REQUESTED);
+        List<TeamBranch> branches = teamBranchRepository
+                        .findAllByProjectIdAndConditionOrderByLastModifiedDateDesc(projectId, MergeCondition.REQUESTED);
 
         List<TeamProjectSuggestedBranchMergeResponse> results = branches.stream()
                 .map(e -> TeamProjectSuggestedBranchMergeResponse.of(e))
