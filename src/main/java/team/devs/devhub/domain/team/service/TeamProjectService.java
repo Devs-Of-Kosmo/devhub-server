@@ -318,6 +318,20 @@ public class TeamProjectService {
         teamCommitRepository.deleteById(commit.getId());
     }
 
+    public TeamProjectBranchMergeSuggestResponse updateMergeConditiontoRequested(
+            TeamProjectBranchMergeSuggestRequest request, long userId
+    ) {
+        TeamBranch branch = teamBranchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        validUserBranch(branch, user);
+
+        branch.updateConditionToRequested();
+
+        return TeamProjectBranchMergeSuggestResponse.of(branch);
+    }
+
     private long getFilesSize(List<MultipartFile> files) {
         return files.stream()
                 .mapToLong(MultipartFile::getSize)

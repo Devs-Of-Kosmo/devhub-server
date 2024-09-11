@@ -59,4 +59,7 @@ public class TeamBranch extends BaseTimeEntity {
         this.createdBy = createdBy;
     }
 
+    public void updateConditionToRequested() {
+        this.condition = MergeCondition.REQUESTED;
+    }
 }
