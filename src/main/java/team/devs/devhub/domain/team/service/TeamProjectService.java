@@ -319,8 +319,9 @@ public class TeamProjectService {
         teamCommitRepository.deleteById(commit.getId());
     }
 
-    public TeamProjectBranchMergeSuggestResponse updateMergeConditionRequested(
-            TeamProjectBranchMergeSuggestRequest request, long userId
+    public TeamProjectBranchMergeSuggestResponse updateMergeConditionToRequested(
+            TeamProjectBranchMergeSuggestRequest request,
+            long userId
     ) {
         TeamBranch branch = teamBranchRepository.findById(request.getBranchId())
                 .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
@@ -333,6 +334,7 @@ public class TeamProjectService {
         return TeamProjectBranchMergeSuggestResponse.of(branch);
     }
 
+    @Transactional(readOnly = true)
     public List<TeamProjectSuggestedBranchMergeResponse> readSuggestedBranchMerge(long projectId) {
         List<TeamBranch> branches = teamBranchRepository
                         .findAllByProjectIdAndConditionOrderByLastModifiedDateDesc(projectId, MergeCondition.REQUESTED);
@@ -342,6 +344,23 @@ public class TeamProjectService {
                 .collect(Collectors.toList());
 
         return results;
+    }
+
+    public TeamProjectBranchMergeSuggestResponse updateMergeConditionToBeforeRequest(
+            TeamProjectBranchMergeSuggestRequest request,
+            long userId
+    ) {
+        TeamBranch branch = teamBranchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, branch.getProject().getTeam())
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+        validCancelMergeSuggestionAuthority(branch, userTeam);
+
+        branch.updateConditionToBeforeRequest();
+
+        return TeamProjectBranchMergeSuggestResponse.of(branch);
     }
 
     private long getFilesSize(List<MultipartFile> files) {
@@ -425,6 +444,13 @@ public class TeamProjectService {
     private void validIsExistParentCommit(TeamCommit commit) {
         if (commit.getParentCommit() == null) {
             throw new ParentCommitNotFoundException(ErrorCode.TEAM_PARENT_COMMIT_NOT_EXIST);
+        }
+    }
+
+    private void validCancelMergeSuggestionAuthority(TeamBranch branch, UserTeam userTeam) {
+        if (branch.getCreatedBy().getId() != userTeam.getUser().getId()
+                && userTeam.getRole() == TeamRole.MEMBER) {
+            throw new CancelSuggestionAuthorizationException(ErrorCode.UNAUTHORIZED_CANCEL_SUGGESTION);
         }
     }
 }

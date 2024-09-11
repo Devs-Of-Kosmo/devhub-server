@@ -63,6 +63,7 @@ public enum ErrorCode {
     INVITE_MAIL_EXPIRED(500, "T021", "초대 유효기간이 지났습니다"),
     MANAGER_ACTION_NOT_ALLOWED(500, "T022", "MANAGER 권환은 불가능합니다"),
     CANNOT_KICK_MANAGER(500, "T022", "MANAGER 권한의 팀원은 퇴출이 불가능합니다"),
+    UNAUTHORIZED_CANCEL_SUGGESTION(500, "T023", "병합 요청 취소가 불가능한 권한입니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
