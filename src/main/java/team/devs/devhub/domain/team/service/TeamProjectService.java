@@ -9,6 +9,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import team.devs.devhub.domain.team.domain.project.MergeCondition;
 import team.devs.devhub.global.common.exception.ParentCommitNotFoundException;
 import team.devs.devhub.domain.team.domain.project.TeamBranch;
 import team.devs.devhub.domain.team.domain.project.TeamCommit;
@@ -318,7 +319,7 @@ public class TeamProjectService {
         teamCommitRepository.deleteById(commit.getId());
     }
 
-    public TeamProjectBranchMergeSuggestResponse updateMergeConditiontoRequested(
+    public TeamProjectBranchMergeSuggestResponse updateMergeConditionRequested(
             TeamProjectBranchMergeSuggestRequest request, long userId
     ) {
         TeamBranch branch = teamBranchRepository.findById(request.getBranchId())
@@ -330,6 +331,17 @@ public class TeamProjectService {
         branch.updateConditionToRequested();
 
         return TeamProjectBranchMergeSuggestResponse.of(branch);
+    }
+
+    public List<TeamProjectSuggestedBranchMergeResponse> readSuggestedBranchMerge(long projectId) {
+        List<TeamBranch> branches =
+                teamBranchRepository.findAllByProjectIdAndCondition(projectId, MergeCondition.REQUESTED);
+
+        List<TeamProjectSuggestedBranchMergeResponse> results = branches.stream()
+                .map(e -> TeamProjectSuggestedBranchMergeResponse.of(e))
+                .collect(Collectors.toList());
+
+        return results;
     }
 
     private long getFilesSize(List<MultipartFile> files) {

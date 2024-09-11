@@ -221,8 +221,18 @@ public class TeamProjectController {
             @RequestBody @Valid TeamProjectBranchMergeSuggestRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        TeamProjectBranchMergeSuggestResponse response = teamProjectService.updateMergeConditiontoRequested(request, customUserDetails.getId());
+        TeamProjectBranchMergeSuggestResponse response = teamProjectService.updateMergeConditionRequested(request, customUserDetails.getId());
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/project/branch/merge")
+    @Operation(summary = "팀 프로젝트 브랜치 병합 요청 목록 조회 API")
+    public ResponseEntity<List<TeamProjectSuggestedBranchMergeResponse>> readSuggestedBranchMerge(
+            @Parameter(description = "조회할 병합 요청 목록의 프로젝트 id", example = "1")
+            @RequestParam("projectId") Long projectId
+    ) {
+        List<TeamProjectSuggestedBranchMergeResponse> responses = teamProjectService.readSuggestedBranchMerge(projectId);
+        return ResponseEntity.ok(responses);
     }
 
     private MediaType getMediaTypeForImage(String filePath) {
