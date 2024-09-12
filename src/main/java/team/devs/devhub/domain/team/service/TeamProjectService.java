@@ -346,6 +346,39 @@ public class TeamProjectService {
         return results;
     }
 
+    public TeamProjectBranchMergeResponse mergeBranch(TeamProjectBranchMergeRequest request, long userId) {
+        TeamBranch branch = teamBranchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
+        TeamBranch defaultBranch = teamBranchRepository.findById(request.getMergeBranchId())
+                .orElseThrow(() -> new TeamBranchNotFoundException(ErrorCode.TEAM_BRANCH_NOT_FOUND));
+        TeamCommit defaultBranchLastCommit = teamCommitRepository.findById(request.getMergeBranchLastCommitId())
+                .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        UserTeam userTeam = userTeamRepository.findByUserAndTeam(user, branch.getProject().getTeam())
+                .orElseThrow(() -> new UserTeamNotFoundException(ErrorCode.USER_TEAM_NOT_FOUND));
+
+        teamProjectRepository.findByIdWithLock(branch.getProject().getId());
+        validSubManagerOrHigher(userTeam);
+        validIsConditionRequested(branch);
+
+        RevCommit newCommit = VersionControlUtil.mergeToDefaultBranch(branch, user);
+
+        branch.updateConditionToMerged();
+
+        TeamCommit commit = teamCommitRepository.save(
+                TeamCommit.builder()
+                        .commitCode(newCommit.getName())
+                        .commitMessage(newCommit.getFullMessage())
+                        .branch(defaultBranch)
+                        .parentCommit(defaultBranchLastCommit)
+                        .createdBy(user)
+                        .build()
+        );
+
+        return TeamProjectBranchMergeResponse.of(commit);
+    }
+
     public TeamProjectBranchMergeSuggestResponse updateMergeConditionToBeforeRequest(
             TeamProjectBranchMergeSuggestRequest request,
             long userId

@@ -62,8 +62,9 @@ public enum ErrorCode {
     INVITE_EMAIL_MISMATCH(500, "T020", "팀에 초대된 유저가 아닙니다"),
     INVITE_MAIL_EXPIRED(500, "T021", "초대 유효기간이 지났습니다"),
     MANAGER_ACTION_NOT_ALLOWED(500, "T022", "MANAGER 권환은 불가능합니다"),
-    CANNOT_KICK_MANAGER(500, "T022", "MANAGER 권한의 팀원은 퇴출이 불가능합니다"),
-    UNAUTHORIZED_CANCEL_SUGGESTION(500, "T023", "병합 요청 취소가 불가능한 권한입니다"),
+    CANNOT_KICK_MANAGER(500, "T023", "MANAGER 권한의 팀원은 퇴출이 불가능합니다"),
+    UNAUTHORIZED_CANCEL_SUGGESTION(500, "T024", "병합 요청 취소가 불가능한 권한입니다"),
+    MERGE_CONDITION_NOT_REQUESTED(500, "T025", "병합 요청된 상태가 아닙니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
@@ -91,7 +92,10 @@ public enum ErrorCode {
     // Util
     DESERIALIZE_ERROR(500, "Ut001", "데이터 역직렬화 과정 중 오류가 발생했습니다"),
     ENCODING_ERROR(500, "Ut002", "초대정보 암호화 중 오류가 발생했습니다"),
-    DECODING_ERROR(500, "Ut003", "초대코드 복호화 중 오류가 발생했습니다");
+    DECODING_ERROR(500, "Ut003", "초대코드 복호화 중 오류가 발생했습니다"),
+    ALREADY_UP_TO_DATE(500, "Ut004", "두 브랜치의 상태가 동일합니다"),
+    MERGE_FAILED_ERROR(500, "Ut004", "예기치 못한 이유로 병합에 실패했습니다"),
+    MERGE_PROCESS_ERROR(500, "Ut004", "병합 처리 중 오류가 발생했습니다");
 
     private final String code;
     private final String message;
