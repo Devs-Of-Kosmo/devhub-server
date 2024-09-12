@@ -8,7 +8,7 @@ import lombok.Getter;
 public class TeamProjectBranchMergeSuggestRequest {
 
     @NotNull
-    @Schema(description = "병합을 요청 브랜치의 id", example = "1")
+    @Schema(description = "병합 요청 브랜치 id", example = "1")
     private Long branchId;
 
 }

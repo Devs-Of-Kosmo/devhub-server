@@ -41,6 +41,7 @@ public class TeamProjectMetaReadResponse {
         private Long commitId;
         private String commitCode;
         private String commitMessage;
+        private Long parentCommitId;
         private String createdBy;
         private LocalDateTime createdDate;
 
@@ -49,6 +50,9 @@ public class TeamProjectMetaReadResponse {
                     .commitId(commit.getId())
                     .commitCode(commit.getCommitCode())
                     .commitMessage(commit.getCommitMessage())
+                    .parentCommitId(
+                            commit.getParentCommit() == null ? 0 : commit.getParentCommit().getId()
+                    )
                     .createdBy(commit.getCreatedBy().getName())
                     .createdDate(commit.getCreatedDate())
                     .build();

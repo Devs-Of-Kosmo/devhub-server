@@ -66,4 +66,8 @@ public class TeamBranch extends BaseTimeEntity {
     public void updateConditionToBeforeRequest() {
         this.condition = MergeCondition.BEFORE_REQUEST;
     }
+
+    public void updateConditionToMerged() {
+        this.condition = MergeCondition.MERGED;
+    }
 }

@@ -235,6 +235,16 @@ public class TeamProjectController {
         return ResponseEntity.ok(responses);
     }
 
+    @PostMapping("/project/branch/merge")
+    @Operation(summary = "팀 프로젝트 브랜치 병합 요청 수락 API")
+    public ResponseEntity<TeamProjectBranchMergeResponse> acceptBranchMergeSuggestion(
+            @RequestBody @Valid TeamProjectBranchMergeRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamProjectBranchMergeResponse response = teamProjectService.mergeBranch(request, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/project/branch/merge/request-cancel")
     @Operation(summary = "팀 프로젝트 브랜치 병합 요청 취소 API")
     public ResponseEntity<TeamProjectBranchMergeSuggestResponse> cancelBranchMergeSuggestion(
