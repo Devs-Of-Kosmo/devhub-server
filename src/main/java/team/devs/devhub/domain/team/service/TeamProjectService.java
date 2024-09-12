@@ -337,7 +337,7 @@ public class TeamProjectService {
     @Transactional(readOnly = true)
     public List<TeamProjectSuggestedBranchMergeResponse> readSuggestedBranchMerge(long projectId) {
         List<TeamBranch> branches = teamBranchRepository
-                        .findAllByProjectIdAndConditionOrderByLastModifiedDateDesc(projectId, MergeCondition.REQUESTED);
+                        .findAllByProjectIdAndCondition(projectId, MergeCondition.REQUESTED);
 
         List<TeamProjectSuggestedBranchMergeResponse> results = branches.stream()
                 .map(e -> TeamProjectSuggestedBranchMergeResponse.of(e))
@@ -451,6 +451,12 @@ public class TeamProjectService {
         if (branch.getCreatedBy().getId() != userTeam.getUser().getId()
                 && userTeam.getRole() == TeamRole.MEMBER) {
             throw new CancelSuggestionAuthorizationException(ErrorCode.UNAUTHORIZED_CANCEL_SUGGESTION);
+        }
+    }
+
+    private void validIsConditionRequested(TeamBranch branch) {
+        if (branch.getCondition() != MergeCondition.REQUESTED) {
+            throw new InvalidMergeConditionException(ErrorCode.MERGE_CONDITION_NOT_REQUESTED);
         }
     }
 }

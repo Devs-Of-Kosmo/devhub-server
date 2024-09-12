@@ -18,7 +18,7 @@ public class TeamProjectSuggestedBranchMergeResponse {
     private String description;
     private MergeCondition mergeCondition;
     private String creatorName;
-    private LocalDateTime createdDate;
+    private LocalDateTime requestDate;
 
     public static TeamProjectSuggestedBranchMergeResponse of(TeamBranch branch) {
         return TeamProjectSuggestedBranchMergeResponse.builder()
@@ -27,7 +27,7 @@ public class TeamProjectSuggestedBranchMergeResponse {
                 .description(branch.getDescription())
                 .mergeCondition(branch.getCondition())
                 .creatorName(branch.getCreatedBy().getName())
-                .createdDate(branch.getCreatedDate())
+                .requestDate(branch.getLastModifiedDate())
                 .build();
     }
 }

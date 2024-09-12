@@ -12,5 +12,5 @@ public interface TeamBranchRepository extends JpaRepository<TeamBranch, Long> {
     Optional<TeamBranch> findFirstByProjectIdOrderByIdAsc(long projectId);
     List<TeamBranch> findAllByFromCommitId(long fromCommitId);
     boolean existsByProjectIdAndName(long projectId, String name);
-    List<TeamBranch> findAllByProjectIdAndConditionOrderByLastModifiedDateDesc(long projectId, MergeCondition Condition);
+    List<TeamBranch> findAllByProjectIdAndCondition(long projectId, MergeCondition Condition);
 }
