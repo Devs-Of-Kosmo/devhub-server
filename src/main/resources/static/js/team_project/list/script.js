@@ -1,13 +1,11 @@
 // script.js
-
-// 전역 변수 및 상수
 const MIN_WIDTH = 50;
 const MAX_WIDTH = MIN_WIDTH * 2;
 const STEP = (MAX_WIDTH - MIN_WIDTH) * 0.05;
 let aniID = null;
 const dock = document.querySelector(".dock");
+let currentTeamId = localStorage.getItem('selectedTeamId') || null;
 
-// 토큰 가져오기 함수
 function getToken() {
     const token = localStorage.getItem('accessToken');
     if (!token) {
@@ -18,7 +16,6 @@ function getToken() {
     return token;
 }
 
-// 사용자 정보 조회 함수
 function getUserInfo(callback) {
     const token = getToken();
     if (!token) return;
@@ -37,7 +34,6 @@ function getUserInfo(callback) {
     });
 }
 
-// 팀 목록 조회 함수
 function loadTeams(callback) {
     const token = getToken();
     if (!token) return;
@@ -50,11 +46,9 @@ function loadTeams(callback) {
             const repoTeamSelect = document.getElementById('repoTeamId');
             const editTeamSelect = document.getElementById('editTeamSelect');
 
-            // 팀 목록 초기화
             repoTeamSelect.innerHTML = '<option value="">팀 선택</option>';
             editTeamSelect.innerHTML = '<option value="">팀 선택</option>';
 
-            // 팀 목록 추가
             teams.forEach(team => {
                 const optionRepo = document.createElement('option');
                 optionRepo.value = team.teamId;
@@ -67,7 +61,21 @@ function loadTeams(callback) {
                 editTeamSelect.appendChild(optionEdit);
             });
 
-            if (teams.length > 0 && callback) {
+            // 저장된 팀 ID가 있으면 선택
+            if (currentTeamId) {
+                repoTeamSelect.value = currentTeamId;
+                editTeamSelect.value = currentTeamId;
+            } else if (teams.length > 0) {
+                currentTeamId = teams[0].teamId;
+                repoTeamSelect.value = currentTeamId;
+                editTeamSelect.value = currentTeamId;
+            }
+
+            if (currentTeamId) {
+                loadRepositories(currentTeamId);
+            }
+
+            if (callback) {
                 callback(teams);
             }
         },
@@ -77,7 +85,7 @@ function loadTeams(callback) {
     });
 }
 
-// 레포지토리 목록 조회 함수 (수정)
+
 function loadRepositories(teamId) {
     const token = getToken();
     if (!token) return;
@@ -91,20 +99,9 @@ function loadRepositories(teamId) {
                 console.error('Repos is not an array or is undefined:', repos);
                 return;
             }
-            console.log('Loaded repositories:', repos); // 디버깅을 위한 로그 추가
+            console.log('Loaded repositories for team', teamId, ':', repos);
             updateDesktopIcons(repos, teamId);
-            // 레포지토리 선택 섹션 활성화
-            const editRepoSelect = document.getElementById('editRepoSelect');
-            editRepoSelect.innerHTML = '<option value="">레포지토리 선택</option>';
-            repos.forEach(function(repo) {
-                const option = document.createElement('option');
-                option.value = repo.projectId;
-                option.textContent = repo.projectName;
-                option.setAttribute('data-description', repo.description);
-                option.setAttribute('data-deleted', repo.deleteCondition); // deleteCondition 정보 저장
-                editRepoSelect.appendChild(option);
-            });
-            editRepoSelect.disabled = false;
+            updateEditRepoSelect(repos);
         },
         error: function(xhr, status, error) {
             console.error('Error loading repositories:', error);
@@ -113,10 +110,10 @@ function loadRepositories(teamId) {
     });
 }
 
-// 데스크톱 아이콘 업데이트 함수 (수정)
 function updateDesktopIcons(repos, teamId) {
     const desktop = document.getElementById('desktop');
-    desktop.querySelectorAll('.disk-icon:not(#create-repo-disk)').forEach(el => el.remove());
+
+    desktop.querySelectorAll('.disk-icon:not(#create-repo-disk):not([data-title="teamInfo"]):not([data-title="inviteMembers"])').forEach(el => el.remove());
 
     repos.forEach(repo => {
         addRepoDiskIcon(
@@ -125,12 +122,62 @@ function updateDesktopIcons(repos, teamId) {
             teamId,
             document.getElementById('repoTeamId').options[document.getElementById('repoTeamId').selectedIndex].text,
             repo.description,
-            repo.deleteCondition // 여기서 deleteCondition을 isDeleted 매개변수로 전달
+            repo.deleteCondition
         );
     });
+
+    if (!desktop.querySelector('[data-title="teamInfo"]')) {
+        addTeamInfoIcon();
+    }
+    if (!desktop.querySelector('[data-title="inviteMembers"]')) {
+        addInviteMembersIcon();
+    }
 }
 
-// 레포지토리 디스크 아이콘 추가 함수 (수정)
+function addTeamInfoIcon() {
+    const desktop = document.getElementById('desktop');
+    if (!desktop.querySelector('[data-title="teamInfo"]')) {
+        const teamInfoIcon = document.createElement('div');
+        teamInfoIcon.className = 'disk-icon';
+        teamInfoIcon.setAttribute('data-title', 'teamInfo');
+        teamInfoIcon.innerHTML = `
+            <img src="/css/images/team_project/team_info.png" alt="팀 정보">
+            <p>팀 정보</p>
+        `;
+        teamInfoIcon.onclick = function() { handleIconClick(this, 'teamInfo'); };
+        desktop.appendChild(teamInfoIcon);
+    }
+}
+
+function addInviteMembersIcon() {
+    const desktop = document.getElementById('desktop');
+    if (!desktop.querySelector('[data-title="inviteMembers"]')) {
+        const inviteMembersIcon = document.createElement('div');
+        inviteMembersIcon.className = 'disk-icon';
+        inviteMembersIcon.setAttribute('data-title', 'inviteMembers');
+        inviteMembersIcon.innerHTML = `
+            <img src="/css/images/team_project/invite.png" alt="팀원 초대">
+            <p>팀원 초대</p>
+        `;
+        inviteMembersIcon.onclick = function() { handleIconClick(this, 'inviteMembers'); };
+        desktop.appendChild(inviteMembersIcon);
+    }
+}
+
+function updateEditRepoSelect(repos) {
+    const editRepoSelect = document.getElementById('editRepoSelect');
+    editRepoSelect.innerHTML = '<option value="">레포지토리 선택</option>';
+    repos.forEach(function(repo) {
+        const option = document.createElement('option');
+        option.value = repo.projectId;
+        option.textContent = repo.projectName;
+        option.setAttribute('data-description', repo.description);
+        option.setAttribute('data-deleted', repo.deleteCondition);
+        editRepoSelect.appendChild(option);
+    });
+    editRepoSelect.disabled = false;
+}
+
 function addRepoDiskIcon(projectId, projectName, teamId, teamName, description, isDeleted = false) {
     const desktop = document.getElementById('desktop');
     const diskIcon = document.createElement('div');
@@ -142,11 +189,10 @@ function addRepoDiskIcon(projectId, projectName, teamId, teamName, description, 
         <p>${projectName}</p>
     `;
 
-    console.log('Adding repo icon:', projectName, 'isDeleted:', isDeleted); // 디버깅을 위한 로그 추가
+    console.log('Adding repo icon:', projectName, 'isDeleted:', isDeleted);
 
     if (isDeleted) {
         diskIcon.setAttribute('data-deleted', 'true');
-        // CSS 클래스를 사용하여 스타일 적용
         diskIcon.classList.add('deleted-repo');
     } else {
         diskIcon.addEventListener('click', function() {
@@ -166,21 +212,18 @@ function addRepoDiskIcon(projectId, projectName, teamId, teamName, description, 
     desktop.appendChild(diskIcon);
 }
 
-// 수정 모달 열기 함수
 function openEditRepoModal() {
     loadTeams();
     $('#editRepoModal').show();
     resetEditForm();
 }
 
-// 리셋 폼 함수
 function resetEditForm() {
     $('#editRepoSelect').empty().append('<option value="">레포지토리 선택</option>').prop('disabled', true);
     $('#editProjectName, #editDescription').val('').prop('disabled', true);
     $('#editRepoButton, #deleteRepoButton').prop('disabled', true);
 }
 
-// 도크 애니메이션 함수
 const updateWidth = function (nextWidths) {
     window.cancelAnimationFrame(aniID);
     aniID = null;
@@ -210,19 +253,16 @@ const updateWidth = function (nextWidths) {
     }
 };
 
-// 이벤트 리스너 설정
 document.addEventListener('DOMContentLoaded', function() {
-    // 도크 아이템 클릭 이벤트 처리
     document.querySelectorAll(".dock .item").forEach(item => {
         item.addEventListener("click", function (event) {
             event.preventDefault();
             const folderName = item.getAttribute("data-folder");
 
             if (folderName === 'settings') {
-                loadRepositoriesForEdit();
-                document.getElementById('editRepoModal').style.display = "block";
+                openEditRepoModal();
             } else if (folderName === 'codepen') {
-                openTrash(); // openTrash 함수는 delete_repo.js에 정의되어 있음
+                openTrash();
             } else if (folderName === 'google' || folderName === 'git' || folderName === 'postman') {
                 let url;
                 switch (folderName) {
@@ -241,26 +281,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 삭제 버튼 이벤트 리스너 수정
     document.getElementById('deleteRepoButton').addEventListener('click', function() {
         const projectId = document.getElementById('editRepoSelect').value;
         if (projectId) {
             moveToTrash({
                 id: projectId,
                 name: document.getElementById('editProjectName').value,
-                teamId: document.getElementById('repoTeamId').value,
-                teamName: document.getElementById('repoTeamId').options[document.getElementById('repoTeamId').selectedIndex].text,
+                teamId: document.getElementById('editTeamSelect').value,
+                teamName: document.getElementById('editTeamSelect').options[document.getElementById('editTeamSelect').selectedIndex].text,
                 description: document.getElementById('editDescription').value
             });
             document.getElementById('editRepoModal').style.display = "none";
-            // 레포지토리 목록 새로고침
-            loadRepositories(document.getElementById('repoTeamId').value);
+            loadRepositories(document.getElementById('editTeamSelect').value);
         } else {
             Swal.fire('오류', '삭제할 레포지토리를 선택해주세요.', 'error');
         }
     });
 
-    // 도크 마우스 이벤트
     dock.addEventListener("mousemove", function (e) {
         const dockTop = e.target.getBoundingClientRect().top;
         const y = e.clientY - dockTop;
@@ -277,22 +314,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateWidth(nextWidths);
     });
 
-
-    // 설정 버튼 클릭 이벤트
-    document.querySelector('[data-folder="settings"]').addEventListener('click', function(event) {
-        event.preventDefault();
-        // edit_repo.js에 정의된 함수 호출
-        openEditRepoModal();
-    });
-
-    // 팀 선택 변경 이벤트 추가
-    document.getElementById('repoTeamId').addEventListener('change', function() {
-        const teamId = this.value;
-        if (teamId) {
-            loadRepositories(teamId);
-        }
-    });
-
     dock.addEventListener("mouseleave", function () {
         const items = document.querySelectorAll(".item");
         const nextWidths = [];
@@ -302,7 +323,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateWidth(nextWidths);
     });
 
-    // 모달 관련 이벤트 리스너
     document.getElementById('create-repo-disk').onclick = function() {
         loadTeams();
         document.getElementById('createRepoModal').style.display = "block";
@@ -320,11 +340,63 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 초기화
+    document.getElementById('repoTeamId').addEventListener('change', function() {
+        const teamId = this.value;
+        if (teamId) {
+            currentTeamId = teamId;
+            localStorage.setItem('selectedTeamId', currentTeamId);
+            loadRepositories(teamId);
+        } else {
+            const desktop = document.getElementById('desktop');
+            desktop.querySelectorAll('.disk-icon:not(#create-repo-disk):not([data-title="teamInfo"]):not([data-title="inviteMembers"])').forEach(el => el.remove());
+        }
+    });
+
     getUserInfo();
     const token = getToken();
     if (token) {
-        loadTeams();
+        loadTeams(function(teams) {
+            if (currentTeamId) {
+                loadRepositories(currentTeamId);
+            } else if (teams.length > 0) {
+                currentTeamId = teams[0].teamId;
+                document.getElementById('repoTeamId').value = currentTeamId;
+                loadRepositories(currentTeamId);
+            }
+        });
     }
-    initializeTrash();  // 휴지통 초기화 함수 호출 (delete_repo.js에 정의)
+
+    addTeamInfoIcon();
+    addInviteMembersIcon();
+
+    initializeTrash();
 });
+
+window.handleIconClick = function(icon, windowId) {
+    $('.disk-icon').removeClass('clicked');
+    $(icon).addClass('clicked');
+    setTimeout(function() {
+        if (windowId === 'teamInfo') {
+            window.handleTeamInfo();
+        } else if (windowId === 'inviteMembers') {
+            $('#inviteMembersModal').show();
+            getCurrentTeamInfo();
+        } else if (windowId === 'editTeam') {
+            window.populateEditProjectModal().then(function() {
+                $('#editRepoModal').show();
+            });
+        } else {
+            $(`#${windowId}Modal`).show();
+        }
+        $(icon).removeClass('clicked');
+    }, 300);
+};
+
+function showAlert(title, text, icon) {
+    return Swal.fire({
+        title: title,
+        text: text,
+        icon: icon,
+        confirmButtonText: '확인'
+    });
+}

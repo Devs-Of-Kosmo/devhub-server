@@ -217,3 +217,39 @@ body {
     background-color: #e0e0e0;
     color: #333;
 }
+#teamSelect {
+    margin-bottom: 20px;
+}
+
+.team-info-container {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.current-team-indicator {
+    background-color: #e6f7ff;
+    border-left: 4px solid #1890ff;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+#teamMembers {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#teamMembers li {
+    margin-bottom: 10px;
+    padding: 5px;
+    background-color: #f9f9f9;
+    border-radius: 3px;
+}
+
+#teamMembers li.current-user {
+    background-color: #e6f7ff;
+    font-weight: bold;
+}
