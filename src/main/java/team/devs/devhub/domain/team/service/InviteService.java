@@ -148,7 +148,7 @@ public class InviteService {
 
         templateEngine.setTemplateResolver(templateResolver);
 
-        return templateEngine.process("mailform/team-invitation-email", context);
+        return templateEngine.process("mailform/team-invitation.js-email", context);
     }
 
     private void setContextVariable(Context context, String name, String value) {

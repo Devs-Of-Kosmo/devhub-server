@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevHub 인증 번호</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: 'Noto Sans KR', Arial, sans-serif;">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+    <tr>
+        <td align="center" style="padding: 40px 0; background-color: #1e1a3e;">
+            <h1 style="color: #ffffff; font-size: 28px; margin: 0; font-weight: 700;">DevHub</h1>
+        </td>
+    </tr>
+    <tr>
+        <td align="center" style="padding: 40px 20px;">
+            <h2 style="color: #333333; font-size: 24px; margin: 0 0 20px 0; font-weight: 700;">초대 링크</h2>
+            <p style="color: #555555; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                아래 초대 확인하기 버튼을 클릭하여 팀 가입을 진행해 주세요.
+            </p>
+            <div style="background-color: #1e1a3e; border: 1px solid #dddddd; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <a th:href="@{http://localhost:8080/team_project(code=${code},redirectPath=${redirectPath})}"
+                   style="background-color: #4295f2; color: white; padding: 8px 18px; font-size: 14px; font-weight: 900; border: 1px solid rgba(0,0,0,0.21); border-bottom-color: rgba(0,0,0,0.34); text-shadow: 0 1px 0 rgba(0,0,0,0.15); box-shadow: 0 1px 0 rgba(255,255,255,0.34) inset, 0 2px 0 -1px rgba(0,0,0,0.13), 0 3px 0 -1px rgba(0,0,0,0.08), 0 3px 13px -1px rgba(0,0,0,0.21); text-decoration: none;">
+                    초대 확인하기
+                </a>
+            </div>
+            <p style="color: #666666; font-size: 14px; line-height: 1.5; margin: 0;">
+                이 초대는 3일 동안 유효합니다.
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 20px; background-color: #f4f4f4; text-align: center;">
+            <p style="color: #999999; font-size: 12px; margin: 0;">
+                © 2023 DevHub. All rights reserved.
+            </p>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
