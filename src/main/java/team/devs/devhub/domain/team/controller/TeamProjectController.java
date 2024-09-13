@@ -215,6 +215,46 @@ public class TeamProjectController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PostMapping("/project/branch/merge/request")
+    @Operation(summary = "팀 프로젝트 브랜치 병합 요청 API")
+    public ResponseEntity<TeamProjectBranchMergeSuggestResponse> suggestBranchMerge(
+            @RequestBody @Valid TeamProjectBranchMergeSuggestRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamProjectBranchMergeSuggestResponse response = teamProjectService.updateMergeConditionToRequested(request, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/project/branch/merge")
+    @Operation(summary = "팀 프로젝트 브랜치 병합 요청 목록 조회 API")
+    public ResponseEntity<List<TeamProjectSuggestedBranchMergeResponse>> readSuggestedBranchMerge(
+            @Parameter(description = "조회할 병합 요청 목록의 프로젝트 id", example = "1")
+            @RequestParam("projectId") Long projectId
+    ) {
+        List<TeamProjectSuggestedBranchMergeResponse> responses = teamProjectService.readSuggestedBranchMerge(projectId);
+        return ResponseEntity.ok(responses);
+    }
+
+    @PostMapping("/project/branch/merge")
+    @Operation(summary = "팀 프로젝트 브랜치 병합 요청 수락 API")
+    public ResponseEntity<TeamProjectBranchMergeResponse> acceptBranchMergeSuggestion(
+            @RequestBody @Valid TeamProjectBranchMergeRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamProjectBranchMergeResponse response = teamProjectService.mergeBranch(request, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/project/branch/merge/request-cancel")
+    @Operation(summary = "팀 프로젝트 브랜치 병합 요청 취소 API")
+    public ResponseEntity<TeamProjectBranchMergeSuggestResponse> cancelBranchMergeSuggestion(
+            @RequestBody @Valid TeamProjectBranchMergeSuggestRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamProjectBranchMergeSuggestResponse response = teamProjectService.updateMergeConditionToBeforeRequest(request, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
     private MediaType getMediaTypeForImage(String filePath) {
         String fileExtension = getFileExtension(filePath).toLowerCase();
 

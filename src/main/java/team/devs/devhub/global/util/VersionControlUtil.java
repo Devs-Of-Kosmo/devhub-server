@@ -1,10 +1,12 @@
 package team.devs.devhub.global.util;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.MergeResult;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.*;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -18,6 +20,7 @@ import team.devs.devhub.domain.team.domain.project.TeamBranch;
 import team.devs.devhub.domain.team.domain.project.TeamCommit;
 import team.devs.devhub.domain.team.domain.project.TeamProject;
 import team.devs.devhub.domain.team.dto.project.TeamProjectSaveRequest;
+import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.common.CommitUtilProvider;
 import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
@@ -267,6 +270,96 @@ public class VersionControlUtil {
             git.close();
         } catch (IOException | GitAPIException e) {
             throw new VersionControlUtilException(ErrorCode.COMMIT_RESET_ERROR);
+        }
+    }
+
+    public static RevCommit mergeToDefaultBranch(TeamBranch branch, User agent) {
+        try {
+            Git git = Git.open(new File(branch.getProject().getRepositoryPath()));
+
+            checkoutDefaultBranch(git);
+
+            Ref featureBranchRef = git.getRepository().exactRef("refs/heads/" + branch.getName());
+
+            MergeResult mergeResult = git.merge()
+                    .include(featureBranchRef)
+                    .call();
+
+            RevCommit commit;
+            switch (mergeResult.getMergeStatus()) {
+                case CONFLICTING:
+                    handleConflicts(git, branch, mergeResult);
+                    commit = createCommitWhenConflict(git, agent, branch);
+                    break;
+
+                case FAST_FORWARD:
+                case MERGED:
+                    commit = createCommit(git, agent, branch);
+                    break;
+
+                case ALREADY_UP_TO_DATE:
+                    throw new VersionControlUtilException(ErrorCode.ALREADY_UP_TO_DATE);
+
+                case ABORTED:
+                case FAILED:
+                case NOT_SUPPORTED:
+                default:
+                    throw new VersionControlUtilException(ErrorCode.MERGE_FAILED_ERROR);
+            }
+
+            git.close();
+            return commit;
+        } catch (IOException | GitAPIException e) {
+            e.printStackTrace();
+            throw new VersionControlUtilException(ErrorCode.MERGE_PROCESS_ERROR);
+        }
+    }
+
+    private static RevCommit createCommitWhenConflict(Git git, User agent, TeamBranch branch) throws GitAPIException {
+        return git.commit()
+                .setMessage(createCommitMessage(agent, branch) + " (충돌 파일 존재)")
+                .call();
+    }
+
+    private static RevCommit createCommit(Git git, User agent, TeamBranch branch) throws GitAPIException {
+        return git.commit()
+                .setMessage(createCommitMessage(agent, branch))
+                .call();
+    }
+
+    private static String createCommitMessage(User agent, TeamBranch branch) {
+        return "\"" + agent.getName() + "\"님께서 \"" + branch.getCreatedBy().getName() + "\"님의 \""
+                + branch.getName() + "\" 브랜치를 병합 하셨습니다.";
+    }
+
+    private static void handleConflicts(Git git, TeamBranch branch, MergeResult mergeResult) throws GitAPIException, IOException {
+        for (String conflictFilePath : mergeResult.getConflicts().keySet()) {
+            overwriteWithFeatureBranch(git, branch.getName(), conflictFilePath);
+        }
+        git.add().addFilepattern(".").call();
+    }
+
+    private static void overwriteWithFeatureBranch(Git git, String featureBranchName, String conflictFilePath) throws IOException, GitAPIException {
+        ObjectId featureBranchTreeId = git.getRepository().resolve(featureBranchName + "^{tree}");
+
+        try (TreeWalk treeWalk = new TreeWalk(git.getRepository())) {
+            treeWalk.addTree(featureBranchTreeId);
+            treeWalk.setRecursive(true);
+
+            while (treeWalk.next()) {
+                if (treeWalk.getPathString().equals(conflictFilePath)) {
+                    ObjectId objectId = treeWalk.getObjectId(0);
+
+                    File file = new File(git.getRepository().getWorkTree(), conflictFilePath);
+                    try (OutputStream outputStream = new FileOutputStream(file)) {
+                        ObjectLoader loader = git.getRepository().open(objectId);
+                        outputStream.write(loader.getBytes());
+                    }
+
+                    git.add().addFilepattern(conflictFilePath).call();
+                    break;
+                }
+            }
         }
     }
 
