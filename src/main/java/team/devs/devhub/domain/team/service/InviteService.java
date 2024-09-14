@@ -103,8 +103,8 @@ public class InviteService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamNotFoundException(ErrorCode.TEAM_NOT_FOUND));
-        validEmailInTeam(team, invitedEmail);
         validInviteEmailMatch(user, invitedEmail);
+        validEmailInTeam(team, invitedEmail);
         validInviteMailExpired(request.getCode());
 
         UserTeam userTeam = userTeamRepository.save(

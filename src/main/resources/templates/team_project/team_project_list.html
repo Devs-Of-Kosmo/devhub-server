@@ -15,6 +15,14 @@
         <img src="/css/images/team_project/repo.png" alt="Create New Repository">
         <p>새 레포 만들기</p>
     </div>
+    <div class="disk-icon" data-title="teamInfo" onclick="handleIconClick(this, 'teamInfo')">
+        <img src="/css/images/team_project/team_info.png" alt="팀 정보">
+        <p>팀 정보</p>
+    </div>
+    <div class="disk-icon" data-title="inviteMembers" onclick="handleIconClick(this, 'inviteMembers')">
+        <img src="/css/images/team_project/invite.png" alt="팀원 초대">
+        <p>팀원 초대</p>
+    </div>
     <!-- 생성된 레포지토리 디스크 아이콘들이 여기에 추가됩니다 -->
 </div>
 
@@ -32,6 +40,24 @@
             <input type="text" id="repoProjectName" placeholder="프로젝트 이름">
             <textarea id="repoDescription" placeholder="설명 (선택사항)"></textarea>
             <button id="createRepoButton">레포 생성</button>
+        </div>
+    </div>
+</div>
+
+<!-- 팀 정보 모달 -->
+<div id="teamInfoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>팀 정보</h2>
+            <div class="close-button"></div>
+        </div>
+        <div class="modal-body">
+            <select id="teamSelect"></select>
+            <h3 id="projectName"></h3>
+            <p id="projectDescription"></p>
+            <p id="currentUser"></p>
+            <h4>팀 멤버</h4>
+            <ul id="teamMembers"></ul>
         </div>
     </div>
 </div>
@@ -94,6 +120,23 @@
     </a>
 </nav>
 
+<!-- 팀원 초대 모달 -->
+<div id="inviteMembersModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>팀원 초대</h2>
+            <div class="close-button"></div>
+        </div>
+        <div class="modal-body">
+            <p>현재 팀: <span id="currentTeamName"></span></p>
+            <input type="email" id="inviteEmail" placeholder="초대할 이메일 주소">
+            <button id="sendInviteButton">초대 보내기</button>
+            <div id="inviteMessages"></div>
+        </div>
+    </div>
+</div>
+
+
 <!-- 휴지통 모달 -->
 <div id="trashModal" class="modal">
     <div class="modal-content">
@@ -112,10 +155,13 @@
     </div>
 </div>
 
+<script src="/js/team_project/list/script.js"></script>
+<script src="/js/team_project/list/invitation.js"></script>
 <script src="/js/team_project/list/create_repo.js"></script>
 <script src="/js/team_project/list/edit_repo.js"></script>
 <script src="/js/team_project/list/delete_repo.js"></script>
-<script src="/js/team_project/list/script.js"></script>
+<script src="/js/team_project/list/teamInfo.js"></script>
+
 
 </body>
 </html>

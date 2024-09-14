@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    const currentTeamId = window.getCurrentTeamId();
+
     // 토큰 가져오기 함수
     function getToken() {
         const token = localStorage.getItem('accessToken');
@@ -25,8 +27,14 @@ $(document).ready(function() {
                         text: team.teamName
                     }));
                 });
+
+                // 현재 팀 ID가 있으면 선택
+                if (currentTeamId) {
+                    teamSelect.val(currentTeamId);
+                }
+
                 // 팀 목록을 로드한 후 레포지토리 목록 로드
-                loadAllRepositories();
+                loadRepositories(currentTeamId);
             },
             error: function(xhr, status, error) {
                 console.error('팀 목록 로드 실패:', error);
@@ -62,20 +70,6 @@ $(document).ready(function() {
                     if (result.isConfirmed) {
                         // 페이지 새로고침
                         location.reload();
-
-                        // 페이지 로드 완료 후 실행될 함수
-                        $(document).ready(function() {
-                            Swal.fire({
-                                title: '알림',
-                                text: '레포지토리가 생성되었습니다. 조회하겠습니다.',
-                                icon: 'info',
-                                confirmButtonText: '확인'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    loadAllRepositories();
-                                }
-                            });
-                        });
                     }
                 });
             },
@@ -86,37 +80,34 @@ $(document).ready(function() {
         });
     }
 
-    // 모든 레포지토리 로드
-    function loadAllRepositories() {
+    // 레포지토리 로드
+    function loadRepositories(teamId) {
+        if (!teamId) {
+            console.error('Team ID is required to load repositories');
+            return;
+        }
+
         $.ajax({
-            url: '/api/team/group/list',
+            url: `/api/team/repo/list/${teamId}`,
             type: 'GET',
-            headers: { 'Authorization': 'Bearer ' + getToken() },
-            success: function(teams) {
-                teams.forEach(function(team) {
-                    loadRepositoriesForTeam(team.teamId, team.teamName);
-                });
+            headers: { 'Authorization': `Bearer ${getToken()}` },
+            success: function(repos) {
+                updateDesktopIcons(repos, teamId);
             },
             error: function(xhr, status, error) {
-                console.error('팀 목록 로드 실패:', error);
+                console.error('Error loading repositories:', error);
+                Swal.fire('오류', '레포지토리 목록을 불러오는데 실패했습니다.', 'error');
             }
         });
     }
 
-    // 특정 팀의 레포지토리 로드
-    function loadRepositoriesForTeam(teamId, teamName) {
-        $.ajax({
-            url: '/api/team/repo/list/' + teamId,
-            type: 'GET',
-            headers: { 'Authorization': 'Bearer ' + getToken() },
-            success: function(repos) {
-                repos.forEach(function(repo) {
-                    addRepoDiskIcon(repo.projectId, repo.projectName, teamId, teamName, repo.description, repo.deleteCondition);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('팀 ' + teamName + '의 레포지토리 로드 실패:', error);
-            }
+    // 레포지토리 아이콘 업데이트
+    function updateDesktopIcons(repos, teamId) {
+        const desktop = $('#desktop');
+        desktop.find('.disk-icon:not(#create-repo-disk):not([data-title="teamInfo"]):not([data-title="inviteMembers"])').remove();
+
+        repos.forEach(function(repo) {
+            addRepoDiskIcon(repo.projectId, repo.projectName, teamId, $('#repoTeamId option:selected').text(), repo.description, repo.deleteCondition);
         });
     }
 
@@ -140,7 +131,7 @@ $(document).ready(function() {
                 height: '100px',
                 textAlign: 'center',
                 cursor: 'pointer',
-                position: 'relative'  // 추가: 상대 위치 설정
+                position: 'relative'
             }
         }).append(
             $('<img>', {
@@ -222,6 +213,17 @@ $(document).ready(function() {
         }
 
         createRepository(teamId, projectName, description);
+    });
+
+    $('#repoTeamId').on('change', function() {
+        const selectedTeamId = $(this).val();
+        if (selectedTeamId) {
+            loadRepositories(selectedTeamId);
+        } else {
+            // 팀이 선택되지 않았을 때 레포지토리 목록 초기화
+            const desktop = $('#desktop');
+            desktop.find('.disk-icon:not(#create-repo-disk):not([data-title="teamInfo"]):not([data-title="inviteMembers"])').remove();
+        }
     });
 
     $('#create-repo-disk').on('click', function() {
