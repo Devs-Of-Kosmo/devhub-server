@@ -68,7 +68,8 @@ public class TeamProjectService {
         teamProjectRepository.save(project);
         project.saveRepositoryPath(repositoryPathHead);
 
-        RepositoryUtil.createRepository(project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.createRepository();
 
         return TeamProjectRepoCreateResponse.of(project);
     }
@@ -98,15 +99,14 @@ public class TeamProjectService {
         validSubManagerOrHigher(userTeam);
 
         TeamProject target = request.toEntity();
-
         validDuplicatedProjectName(project.getTeam(), target);
 
         String oldRepoNamePath = project.getRepositoryPath();
-
         project.update(target);
         project.saveRepositoryPath(repositoryPathHead);
 
-        RepositoryUtil.changeRepositoryName(oldRepoNamePath, project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.changeRepositoryName(oldRepoNamePath);
 
         return TeamProjectRepoUpdateResponse.of(project);
     }
@@ -210,8 +210,9 @@ public class TeamProjectService {
         validExistsProjectBranch(project);
         validUploadFileSize(request.getFiles());
 
-        RepositoryUtil.saveProjectFiles(project, request.getFiles());
-        RepositoryUtil.createGitIgnoreFile(project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.saveProjectFiles(request.getFiles());
+        repositoryUtil.createGitIgnoreFile();
         RevCommit newCommit = VersionControlUtil.initializeProject(project, request.getCommitMessage());
         Ref newBranch = VersionControlUtil.getBranch(project, newCommit)
                 .orElseThrow(() -> new BranchNotFoundException(ErrorCode.BRANCH_NOT_FOUND));

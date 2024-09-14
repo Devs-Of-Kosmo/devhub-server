@@ -120,9 +120,10 @@ public class VersionControlUtil {
 
             checkoutWorkingBranch(git, branch);
 
-            RepositoryUtil.deleteFiles(project, dto.getDeleteFileNameList());
+            RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+            repositoryUtil.deleteFiles(project, dto.getDeleteFileNameList());
             renameOrMoveFiles(project, dto.getRenameFileNameList());
-            RepositoryUtil.overwriteFiles(project, dto.getFiles(), git);
+            repositoryUtil.overwriteFiles(dto.getFiles(), git);
 
             Status status = git.status().call();
             for (String missing : status.getMissing()) {

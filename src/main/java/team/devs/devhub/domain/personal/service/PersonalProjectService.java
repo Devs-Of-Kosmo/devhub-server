@@ -50,7 +50,8 @@ public class PersonalProjectService {
         personalProjectRepository.save(project);
         project.saveRepositoryPath(repositoryPathHead);
 
-        RepositoryUtil.createRepository(project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.createRepository();
 
         return PersonalProjectRepoCreateResponse.of(project);
     }
@@ -73,16 +74,15 @@ public class PersonalProjectService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         PersonalProject target = request.toEntity();
-
         validMatchedProjectMaster(project, user);
         validRepositoryName(target);
 
         String oldRepoNamePath = project.getRepositoryPath();
-
         project.update(target);
         project.saveRepositoryPath(repositoryPathHead);
 
-        RepositoryUtil.changeRepositoryName(oldRepoNamePath, project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.changeRepositoryName(oldRepoNamePath);
 
         return PersonalProjectRepoUpdateResponse.of(project);
     }
@@ -94,7 +94,8 @@ public class PersonalProjectService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         validMatchedProjectMaster(project, user);
 
-        RepositoryUtil.deleteRepository(project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.deleteRepository();
 
         personalProjectRepository.deleteById(project.getId());
     }
@@ -107,8 +108,9 @@ public class PersonalProjectService {
         validMatchedProjectMaster(project, user);
         validUploadFileSize(request.getFiles());
 
-        RepositoryUtil.saveProjectFiles(project, request.getFiles());
-        RepositoryUtil.createGitIgnoreFile(project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.saveProjectFiles(request.getFiles());
+        repositoryUtil.createGitIgnoreFile();
         RevCommit newCommit = VersionControlUtil.initializeProject(project, request.getCommitMessage());
 
         PersonalCommit commit = personalCommitRepository.save(
@@ -132,8 +134,9 @@ public class PersonalProjectService {
         validMatchedProjectMaster(parentCommit.getProject(), user);
         validUploadFileSize(request.getFiles());
 
-        RepositoryUtil.deleteFileForCommit(project);
-        RepositoryUtil.saveProjectFiles(project, request.getFiles());
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.deleteFileForCommit();
+        repositoryUtil.saveProjectFiles(request.getFiles());
         RevCommit newCommit = VersionControlUtil.saveWorkedProject(project, request.getCommitMessage());
 
         PersonalCommit commit = personalCommitRepository.save(
