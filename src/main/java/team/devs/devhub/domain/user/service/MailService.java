@@ -63,7 +63,7 @@ public class MailService {
 
         helper.setTo(email);
         helper.setSubject(MailPolicy.MAIL_AUTH_TITLE);
-        helper.setFrom(senderEmail, MailPolicy.MAIL_AUTH_SENDER_NAME);
+        helper.setFrom(senderEmail, MailPolicy.DEFAULT_SENDER_NAME);
         helper.setText(setContext(authCode), true);
 
         redisUtil.setDataExpire(RedisPolicy.MAIL_AUTH_KEY + email, authCode, RedisPolicy.MAIL_AUTH_TTL);

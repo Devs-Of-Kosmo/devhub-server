@@ -11,24 +11,23 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @AllArgsConstructor
-public class TeamProjectBranchReadResponse {
+public class TeamProjectSuggestedBranchMergeResponse {
 
     private Long branchId;
     private String branchName;
     private String description;
     private MergeCondition mergeCondition;
     private String creatorName;
-    private LocalDateTime createdDate;
+    private LocalDateTime requestDate;
 
-    public static TeamProjectBranchReadResponse of(TeamBranch branch) {
-        return TeamProjectBranchReadResponse.builder()
+    public static TeamProjectSuggestedBranchMergeResponse of(TeamBranch branch) {
+        return TeamProjectSuggestedBranchMergeResponse.builder()
                 .branchId(branch.getId())
                 .branchName(branch.getName())
                 .description(branch.getDescription())
                 .mergeCondition(branch.getCondition())
                 .creatorName(branch.getCreatedBy().getName())
-                .createdDate(branch.getCreatedDate())
+                .requestDate(branch.getLastModifiedDate())
                 .build();
     }
-
 }

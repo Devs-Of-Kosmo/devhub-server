@@ -85,4 +85,48 @@ public class TeamController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @DeleteMapping("/group/leave/{teamId}")
+    @Operation(summary = "팀 나가기 API")
+    public ResponseEntity<Void> leaveTeamGroup(
+            @Parameter(description = "나갈 팀의 id", example = "1")
+            @PathVariable(name = "teamId") Long teamId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        teamService.deleteAffiliatedUser(teamId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/group/kick/{teamId}")
+    @Operation(summary = "팀원 퇴출 API")
+    public ResponseEntity<Void> kickMember(
+            @Parameter(description = "팀의 id", example = "1")
+            @PathVariable(name = "teamId") Long teamId,
+            @Parameter(description = "퇴출할 팀원의 id", example = "1")
+            @RequestParam(name = "kickUserId") Long kickUserId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        teamService.deleteAffiliatedUserByKickOut(teamId, kickUserId, customUserDetails.getId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PatchMapping("/role/promotion")
+    @Operation(summary = "팀원 역할 부여 (진급) API")
+    public ResponseEntity<TeamRoleUpdateResponse> promoteMemberRole(
+            @RequestBody @Valid TeamRoleUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamRoleUpdateResponse response = teamService.promoteAffiliatedUserRole(request, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/role/relegation")
+    @Operation(summary = "팀원 역할 부여 (강등) API")
+    public ResponseEntity<TeamRoleUpdateResponse> relegateMemberRole(
+            @RequestBody @Valid TeamRoleUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        TeamRoleUpdateResponse response = teamService.relegateAffiliatedUserRole(request, customUserDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
 }
