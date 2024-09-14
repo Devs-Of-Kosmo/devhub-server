@@ -84,8 +84,8 @@ public class SecurityConfig {
                         logout
                                 .logoutUrl("/api/auth/logout")
                                 .logoutSuccessUrl("/")
-                                .invalidateHttpSession(true) // 세션 무효화
-                                .deleteCookies("refreshToken", "JSESSIONID") // refreshToken 쿠키 삭제
+                                .invalidateHttpSession(true)
+                                .deleteCookies("refreshToken", "JSESSIONID")
                                 .clearAuthentication(true)
                 );
 

@@ -15,7 +15,6 @@ import java.util.Base64;
 public class TeamInviteCodeUtil {
     private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final int IV_SIZE = 16;
-
     @Value("${business.team.invite.secret}")
     private String secret;
 
