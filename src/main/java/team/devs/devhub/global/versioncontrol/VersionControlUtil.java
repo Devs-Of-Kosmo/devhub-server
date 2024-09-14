@@ -1,4 +1,4 @@
-package team.devs.devhub.global.util;
+package team.devs.devhub.global.versioncontrol;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeResult;
@@ -24,7 +24,7 @@ import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.common.CommitUtilProvider;
 import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
-import team.devs.devhub.global.util.exception.VersionControlUtilException;
+import team.devs.devhub.global.versioncontrol.exception.VersionControlUtilException;
 
 import java.io.*;
 import java.util.ArrayList;

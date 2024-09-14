@@ -29,9 +29,9 @@ import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
 import team.devs.devhub.domain.user.exception.UserNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
-import team.devs.devhub.global.util.RepositoryUtil;
-import team.devs.devhub.global.util.VersionControlUtil;
-import team.devs.devhub.global.util.exception.BranchNotFoundException;
+import team.devs.devhub.global.versioncontrol.RepositoryUtil;
+import team.devs.devhub.global.versioncontrol.VersionControlUtil;
+import team.devs.devhub.global.versioncontrol.exception.BranchNotFoundException;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;

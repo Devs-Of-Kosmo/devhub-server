@@ -20,8 +20,8 @@ import team.devs.devhub.domain.user.exception.UserNotFoundException;
 import team.devs.devhub.global.common.exception.FileSizeOverException;
 import team.devs.devhub.global.common.exception.ParentCommitNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
-import team.devs.devhub.global.util.RepositoryUtil;
-import team.devs.devhub.global.util.VersionControlUtil;
+import team.devs.devhub.global.versioncontrol.RepositoryUtil;
+import team.devs.devhub.global.versioncontrol.VersionControlUtil;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;

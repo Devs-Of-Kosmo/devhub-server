@@ -1,4 +1,4 @@
-package team.devs.devhub.global.util;
+package team.devs.devhub.global.versioncontrol;
 
 import org.eclipse.jgit.api.Git;
 import org.springframework.web.multipart.MultipartFile;
@@ -6,7 +6,7 @@ import team.devs.devhub.domain.personal.domain.PersonalProject;
 import team.devs.devhub.domain.team.domain.project.TeamProject;
 import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
-import team.devs.devhub.global.util.exception.RepositoryUtilException;
+import team.devs.devhub.global.versioncontrol.exception.RepositoryUtilException;
 
 import java.io.File;
 import java.io.FileWriter;
