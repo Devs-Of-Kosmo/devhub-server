@@ -19,9 +19,9 @@ import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.policy.MailPolicy;
 import team.devs.devhub.global.policy.RedisPolicy;
 import team.devs.devhub.global.redis.RedisUtil;
-import team.devs.devhub.global.util.EmailVeificationCodeUtil;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +56,7 @@ public class MailService {
     }
 
     private MimeMessage createEmailForm(String email) throws MessagingException, UnsupportedEncodingException {
-        String authCode = EmailVeificationCodeUtil.createCode();
+        String authCode = createCode();
 
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -86,6 +86,19 @@ public class MailService {
         templateEngine.setTemplateResolver(templateResolver);
 
         return templateEngine.process("mailform/mail", context);
+    }
+
+    private String createCode() {
+        int leftLimit = 48;
+        int rightLimit = 122;
+        int targetStringLength = 6;
+        Random random = new Random();
+
+        return random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 | i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
     private void verifyExistAuthenticationCode(String savedCode) {
