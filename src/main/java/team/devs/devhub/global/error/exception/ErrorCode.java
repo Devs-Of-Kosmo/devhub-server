@@ -30,7 +30,6 @@ public enum ErrorCode {
     PERSONAL_PROJECT_MASTER_NOT_MATCH(500, "P005", "프로젝트 소유자가 일치하지 않습니다"),
     PERSONAL_COMMIT_NOT_FOUND(500, "P006", "해당 커밋을 찾을 수 없습니다"),
     DIRECTORY_DELETE_ERROR(500, "P007", "프로젝트 파일을 삭제하는 중 오류가 발생했습니다"),
-    COMMIT_SEARCH_ERROR(500, "P008", "커밋 이름 탐색 중 오류가 발생했습니다"),
     FILE_NOT_FOUND(500, "P009", "파일을 찾지 못했습니다"),
     FILE_SEARCH_ERROR(500, "P010", "파일을 찾는 중 오류가 발생했습니다"),
     ZIP_FILE_GENERATE_ERROR(500, "P012", "zip파일 생성 중 오류가 발생했습니다"),
@@ -95,7 +94,8 @@ public enum ErrorCode {
     DECODING_ERROR(500, "Ut003", "초대코드 복호화 중 오류가 발생했습니다"),
     ALREADY_UP_TO_DATE(500, "Ut004", "두 브랜치의 상태가 동일합니다"),
     MERGE_FAILED_ERROR(500, "Ut004", "예기치 못한 이유로 병합에 실패했습니다"),
-    MERGE_PROCESS_ERROR(500, "Ut004", "병합 처리 중 오류가 발생했습니다");
+    MERGE_PROCESS_ERROR(500, "Ut004", "병합 처리 중 오류가 발생했습니다"),
+    FETCH_FILE_LIST_ERROR(500, "Ut005", "파일 목록 가져오는 과정에서 오류가 발생했습니다");
 
     private final String code;
     private final String message;

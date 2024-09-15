@@ -1,8 +1,8 @@
 package team.devs.devhub.global.versioncontrol;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.multipart.MultipartFile;
-import team.devs.devhub.domain.team.domain.project.TeamProject;
 import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.versioncontrol.exception.RepositoryUtilException;
@@ -128,16 +128,34 @@ public class RepositoryUtil {
                 Files.createDirectories(filePath.getParent());
                 Files.write(filePath, file.getBytes());
             } catch (IOException e) {
-                VersionControlUtil.resetToBeforeCommit(git);
+                GitUtil.resetToBeforeCommit(git);
                 throw new RepositoryUtilException(ErrorCode.PROJECT_SAVE_ERROR);
             }
         }
     }
 
-    public void deleteFiles(TeamProject project, List<String> filePaths) {
+    public void deleteFiles(List<String> filePaths) {
         for (String relativePath : filePaths) {
             File file = new File(project.getRepositoryPath(), relativePath);
             file.delete();
+        }
+    }
+
+    public void renameOrMoveFiles(Git git, List<List<String>> filePaths) throws GitAPIException {
+        for (List<String> e : filePaths) {
+            String fromName = e.get(0);
+            String toName = e.get(1);
+
+            File from = new File(project.getRepositoryPath(), fromName);
+            File to = new File(project.getRepositoryPath(), toName);
+
+            to.getParentFile().mkdirs();
+
+            boolean success = from.renameTo(to);
+            if (success) {
+                git.rm().addFilepattern(fromName).call();
+                git.add().addFilepattern(toName).call();
+            }
         }
     }
 }
