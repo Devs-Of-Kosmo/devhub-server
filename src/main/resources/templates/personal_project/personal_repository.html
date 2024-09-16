@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Comparison</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/personal_repository/style.css">
+    <link rel="stylesheet" href="/css/personal_repository/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/plugins/line-numbers/prism-line-numbers.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+    <div class="container1">
+        <!-- 로고 이미지와 제목을 같은 div 내에 배치 -->
+        <div class="logo-title-container">
+            <img src="/img/logo_1.jpg" alt="Logo" class="site-logo">
+            <a href="http://localhost:8080/" class="site-title-link">
+                <h1 class="site-title">DEVHUV</h1>
+            </a>
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li id="login-nav-item">
+                    <a id="login-link" class="nav-link">
+                        <li id="project-name" class="nav-link">프로젝트 이름</li>
+                        <li id="project-description" class="nav-description">프로젝트 설명</li>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="wrapper">
+    <nav class="sidebar">
+        <ul class="nav-icons">
+            <li><a href="#" id="toggleSidebarBtn" data-tooltip="Project Save"><i class="fas fa-folder-open"></i></a></li>
+            <li><a href="#" id="branchToggleBtn" data-tooltip="Commit History"><i class="fas fa-code-branch"></i></a></li>
+            <li><a href="#" id="settingsBtn" data-tooltip="Settings"><i class="fas fa-cog"></i></a></li>
+            <li><a href="#" id="helpBtn" data-tooltip="Help"><i class="fas fa-question-circle"></i></a></li>
+            <li><a href="https://mail.google.com/" target="_blank" data-tooltip="Gmail"><i class="fas fa-envelope"></i></a></li>
+            <li><a href="https://chat.openai.com/" target="_blank" data-tooltip="ChatGPT"><i class="fas fa-robot"></i></a></li>
+        </ul>
+    </nav>
+
+
+    <!-- 도움말 모달 -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <span class="close-help-btn">&times;</span>
+            <h2>도움말</h2>
+            <ul>
+                <li>
+                    <strong>프로젝트 저장 <i class="fas fa-folder-open"></i> :</strong> 프로젝트를 저장합니다. 커밋 메시지를 입력하여 자신이 구현한 내용을 남기십시오. 커밋에 성공할 때마다 히스토리가 하나씩 증가합니다.
+                </li>
+                <li>
+                    <strong>커밋 히스토리 <i class="fas fa-code-branch"></i> :</strong> 저장한 프로젝트의 커밋 이력을 확인할 수 있습니다. 커밋 히스토리 마다 자신이 저장한 프로젝트를 다운로드 받을 수 있습니다.
+                </li>
+                <li>
+                    <strong>설정 <i class="fas fa-cog"></i> :</strong> 프로젝트를 수정 또는 삭제할 수 있습니다.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 설정 모달 -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content1">
+            <span class="close-settings-btn">&times;</span>
+            <button id="editProjectBtn">
+                <i class="fas fa-sync-alt"></i> 수정하기
+            </button>
+            <button class="delete-repo-btn">
+                <i class="fas fa-trash-alt"></i> 삭제하기
+            </button>
+        </div>
+    </div>
+
+    <!-- 프로젝트 수정 모달 -->
+    <div id="editProjectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-edit-modal-btn">&times;</span>
+            <button id="backToSettingsBtn" class="back-btn">&larr; 뒤로</button>
+            <div class="edit-form">
+                <div class="input-group">
+                    <label for="changedProjectName">프로젝트 이름:</label>
+                    <input type="text" id="changedProjectName" class="input-field" placeholder="변경할 프로젝트 이름 입력">
+                </div>
+                <br>
+                <div class="input-group">
+                    <label for="changedDescription">프로젝트 설명:</label>
+                    <textarea id="changedDescription" class="input-field" placeholder="변경할 프로젝트 설명 입력"></textarea>
+                </div>
+                <button id="saveChangesBtn" class="action-btn">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 프로젝트 저장 모달 -->
+    <div id="sideContentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>프로젝트 저장</h2>
+            <input type="text" id="commitMessage" placeholder="커밋 메세지를 입력하세요" style="width:80%;height: 30px;">
+            <br>
+            <div id="result-message" class="result-message"></div>
+            <br>
+            <button id="commit-button" class="action-btn">Commit</button>
+            <div class="results">
+                <div class="column content-column">
+                    <div class="title-section">
+                        <h2>Commit File</h2>
+                    </div>
+                    <div class="upload-section">
+                        <input type="file" webkitdirectory directory name="file1" id="file1" class="file-input" style="display: none;" required>
+                        <button type="button" class="open-file-btn" onclick="document.getElementById('file1').click();">Upload File</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 커밋 이력 모달 -->
+    <div id="branchContent" class="branch-modal" style="display: none;">
+        <span class="close-btn">&times;</span>
+        <h2>커밋 이력</h2>
+        <div class="metadata-cards-container">
+            <!-- 메타데이터 카드가 추가될 영역 -->
+        </div>
+    </div>
+
+    <!-- 파일 선택 숨기기 -->
+    <input type="file" id="hiddenFileInput" style="display: none;" />
+
+    <!-- AI 리뷰 모달 -->
+    <div id="reviewModal" class="modal">
+        <div class="review-modal-content">
+            <div class="review-modal-header">
+                <h2>AI 코드 리뷰 결과</h2>
+                <span class="close-review-btn">&times;</span>
+            </div>
+            <div id="review-result">
+                <!-- AI 코드 리뷰 결과가 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+    <div class="main-content">
+        <div id="content">
+            <div class="commit-and-content-container">
+                <div class="commit-cards-container">
+                    <h3>디렉토리</h3>
+                    <!-- 커밋 카드가 추가될 영역 -->
+                </div>
+                <div id="file-content-display">
+                    <div class="title-section">
+                        <h3>커밋 파일</h3>
+                    </div>
+                    <!-- 파일 내용이 여기 표시됩니다. -->
+                </div>
+                <div class="file-content" id="changed-file-content">
+                    <div class="column content-column">
+                        <h3>비교할 파일</h3>
+                        <div class="upload-section">
+                            <input type="file" name="file2" id="file2" class="file-input" style="display: none;" multiple>
+                            <button type="button" class="open-file-btn1" onclick="document.getElementById('file2').click();">Open File</button>
+                            <span id="file2-name" class="file-name"></span>
+                        </div>
+                        <div id="file2-content-display">
+                            <!-- 파일 내용이 여기에 표시됩니다 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-container" style="margin-top: 20px; text-align: center;">
+            <button id="compare-btn" class="action-btn">코드 차이점</button>
+            <button id="review-btn" class="action-btn">AI 코드 리뷰</button>
+        </div>
+
+        <div class="compare-section" style="margin-top: 20px;">
+            <div class="comparison-result" id="comparison-result">
+                <!-- Differences will be displayed here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Files -->
+<script src="/js/personal_repository/utils.js"></script> <!-- js 경로 수정 -->
+<script src="/js/personal_repository/editProject.js"></script> <!-- js 경로 수정 -->
+<script src="/js/personal_repository/main.js"></script> <!-- js 경로 수정 -->
+<script src="/js/personal_repository/fileComparison.js"></script> <!-- js 경로 수정 -->
+<script src="/js/personal_repository/metadata.js"></script> <!-- js 경로 수정 -->
+<script src="/js/personal_repository/commit.js"></script> <!-- js 경로 수정 -->
+<script src="/js/personal_repository/openai.js"></script> <!-- js 경로 수정 -->
+<script src="/js/personal_repository/script.js"></script> <!-- js 경로 수정 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>
