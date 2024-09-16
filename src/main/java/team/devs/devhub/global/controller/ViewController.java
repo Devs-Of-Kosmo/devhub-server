@@ -48,6 +48,11 @@ public class ViewController {
         return "personal_project/project_list";
     }
 
+    @GetMapping("/personal_repository")
+    public String personal_repository() {
+        return "personal_project/personal_repository";
+    }
+
     @GetMapping("/personal_project")
     public String personalProject() {
         return "personal_project/personal_project";
@@ -89,6 +94,8 @@ public class ViewController {
     public String teamLoading() {
         return "team_project/team_loading";
     }
+
+
 
     @GetMapping("/test_team")
     public String testTeam(){
