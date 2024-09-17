@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/team_project/list/list_style.css">
 </head>
 <body>
+<p id="currentUser"></p>
 
 <div id="desktop">
     <div id="create-repo-disk" class="disk-icon">
@@ -53,11 +54,9 @@
         </div>
         <div class="modal-body">
             <select id="teamSelect"></select>
-            <h3 id="projectName"></h3>
-            <p id="projectDescription"></p>
-            <p id="currentUser"></p>
-            <h4>팀 멤버</h4>
-            <ul id="teamMembers"></ul>
+            <div class="team-info-container">
+                <!-- 팀 정보가 여기에 동적으로 추가됩니다 -->
+            </div>
         </div>
     </div>
 </div>
@@ -81,6 +80,24 @@
             <div class="button-group">
                 <button id="editRepoButton" class="primary-button" disabled>수정</button>
                 <button id="deleteRepoButton" class="danger-button" disabled>삭제</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 팀 나가기 확인 모달 -->
+<div id="leaveTeamConfirmModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>팀 나가기 확인</h2>
+            <div class="close-button"></div>
+        </div>
+        <div class="modal-body">
+            <p id="currentTeamInfo"></p>
+            <p>정말로 이 팀을 나가시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+            <div class="button-group">
+                <button id="confirmLeaveTeamButton" class="danger-button">나가기</button>
+                <button id="cancelLeaveTeamButton" class="secondary-button">취소</button>
             </div>
         </div>
     </div>
@@ -112,10 +129,10 @@
             <p>휴지통</p>
         </div>
     </a>
-    <a href="https://www.postman.com" target="_blank" rel="noopener noreferrer">
-        <div class="item" data-folder="postman">
-            <img src="https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg" alt="Postman">
-            <p>Postman</p>
+    <a href="#" class="leave-team-button">
+        <div class="item" data-folder="leaveTeam">
+            <img src="/css/images/team_project/leave_team.png" alt="팀 나가기">
+            <p>팀 나가기</p>
         </div>
     </a>
 </nav>
@@ -136,7 +153,6 @@
     </div>
 </div>
 
-
 <!-- 휴지통 모달 -->
 <div id="trashModal" class="modal">
     <div class="modal-content">
@@ -155,13 +171,15 @@
     </div>
 </div>
 
+<script src="/js/team_project/list/teamInfo.js"></script>
 <script src="/js/team_project/list/script.js"></script>
 <script src="/js/team_project/list/invitation.js"></script>
 <script src="/js/team_project/list/create_repo.js"></script>
 <script src="/js/team_project/list/edit_repo.js"></script>
 <script src="/js/team_project/list/delete_repo.js"></script>
-<script src="/js/team_project/list/teamInfo.js"></script>
-
-
+<script src="/js/team_project/list/relegation.js"></script>
+<script src="/js/team_project/list/promotion.js"></script>
+<script src="/js/team_project/list/kick.js"></script>
+<script src="/js/team_project/list/leave_team.js"></script>
 </body>
 </html>

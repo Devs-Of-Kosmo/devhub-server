@@ -45,9 +45,11 @@ function loadTeams(callback) {
         success: function(teams) {
             const repoTeamSelect = document.getElementById('repoTeamId');
             const editTeamSelect = document.getElementById('editTeamSelect');
+            const leaveTeamSelect = document.getElementById('leaveTeamSelect');
 
             repoTeamSelect.innerHTML = '<option value="">팀 선택</option>';
             editTeamSelect.innerHTML = '<option value="">팀 선택</option>';
+            leaveTeamSelect.innerHTML = '<option value="">팀 선택</option>';
 
             teams.forEach(team => {
                 const optionRepo = document.createElement('option');
@@ -59,9 +61,13 @@ function loadTeams(callback) {
                 optionEdit.value = team.teamId;
                 optionEdit.textContent = team.teamName;
                 editTeamSelect.appendChild(optionEdit);
+
+                const optionLeave = document.createElement('option');
+                optionLeave.value = team.teamId;
+                optionLeave.textContent = team.teamName;
+                leaveTeamSelect.appendChild(optionLeave);
             });
 
-            // 저장된 팀 ID가 있으면 선택
             if (currentTeamId) {
                 repoTeamSelect.value = currentTeamId;
                 editTeamSelect.value = currentTeamId;
@@ -85,6 +91,7 @@ function loadTeams(callback) {
     });
 }
 
+window.loadTeams = loadTeams;
 
 function loadRepositories(teamId) {
     const token = getToken();
@@ -261,25 +268,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (folderName === 'settings') {
                 openEditRepoModal();
-            } else if (folderName === 'codepen') {
-                openTrash();
-            } else if (folderName === 'google' || folderName === 'git' || folderName === 'postman') {
-                let url;
-                switch (folderName) {
-                    case 'google':
-                        url = 'https://www.google.com';
-                        break;
-                    case 'git':
-                        url = 'https://github.com';
-                        break;
-                    case 'postman':
-                        url = 'https://www.postman.com';
-                        break;
-                }
-                window.open(url, '_blank');
+            } else if (folderName === 'google') {
+                window.open('https://www.google.com', '_blank');
             }
         });
     });
+
+    // 팀 나가기 버튼에 대한 이벤트 리스너 추가
+    const leaveTeamButton = document.querySelector('.item[data-folder="leaveTeam"]');
+    if (leaveTeamButton) {
+        leaveTeamButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            console.log('Leave team button clicked');
+            if (typeof window.showLeaveTeamModal === 'function') {
+                window.showLeaveTeamModal();
+            } else {
+                console.error('showLeaveTeamModal function is not defined');
+            }
+        });
+    } else {
+        console.error('Leave team button not found');
+    }
 
     document.getElementById('deleteRepoButton').addEventListener('click', function() {
         const projectId = document.getElementById('editRepoSelect').value;
@@ -385,6 +394,13 @@ window.handleIconClick = function(icon, windowId) {
             window.populateEditProjectModal().then(function() {
                 $('#editRepoModal').show();
             });
+        } else if (windowId === 'leaveTeam') {
+            console.log('Attempting to show leave team modal');
+            if (typeof window.showLeaveTeamModal === 'function') {
+                window.showLeaveTeamModal();
+            } else {
+                console.error('showLeaveTeamModal function is not defined');
+            }
         } else {
             $(`#${windowId}Modal`).show();
         }
@@ -398,5 +414,132 @@ function showAlert(title, text, icon) {
         text: text,
         icon: icon,
         confirmButtonText: '확인'
+    });
+}
+
+// 휴지통 관련 함수들
+function initializeTrash() {
+    const trashCan = document.querySelector('.trash-can');
+    trashCan.addEventListener('dragover', allowDrop);
+    trashCan.addEventListener('drop', drop);
+}
+
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function drop(event) {
+    event.preventDefault();
+    const data = JSON.parse(event.dataTransfer.getData('text'));
+    moveToTrash(data);
+}
+
+function moveToTrash(repoData) {
+    const token = getToken();
+    if (!token) return;
+
+    $.ajax({
+        url: `/api/team/repo/delete/${repoData.id}`,
+        type: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },
+        success: function() {
+            showAlert('성공', '레포지토리가 휴지통으로 이동되었습니다.', 'success');
+            loadRepositories(repoData.teamId);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error moving repository to trash:', error);
+            showAlert('오류', '레포지토리를 휴지통으로 이동하는데 실패했습니다.', 'error');
+        }
+    });
+}
+
+function openTrash() {
+    loadDeletedRepos();
+    $('#trashModal').show();
+}
+
+function loadDeletedRepos() {
+    const token = getToken();
+    if (!token) return;
+
+    $.ajax({
+        url: '/api/team/repo/deleted',
+        type: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` },
+        success: function(deletedRepos) {
+            updateTrashItems(deletedRepos);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error loading deleted repositories:', error);
+            showAlert('오류', '삭제된 레포지토리 목록을 불러오는데 실패했습니다.', 'error');
+        }
+    });
+}
+
+function updateTrashItems(deletedRepos) {
+    const trashItems = document.getElementById('trashItems');
+    trashItems.innerHTML = '';
+
+    deletedRepos.forEach(repo => {
+        const item = document.createElement('div');
+        item.className = 'trash-item';
+        item.innerHTML = `
+            <span>${repo.projectName}</span>
+            <button onclick="restoreRepo(${repo.projectId})">복구</button>
+            <button onclick="permanentlyDeleteRepo(${repo.projectId})">영구 삭제</button>
+        `;
+        trashItems.appendChild(item);
+    });
+}
+
+function restoreRepo(projectId) {
+    const token = getToken();
+    if (!token) return;
+
+    $.ajax({
+        url: `/api/team/repo/restore/${projectId}`,
+        type: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        success: function() {
+            showAlert('성공', '레포지토리가 복구되었습니다.', 'success');
+            loadDeletedRepos();
+            loadRepositories(currentTeamId);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error restoring repository:', error);
+            showAlert('오류', '레포지토리 복구에 실패했습니다.', 'error');
+        }
+    });
+}
+
+function permanentlyDeleteRepo(projectId) {
+    const token = getToken();
+    if (!token) return;
+
+    Swal.fire({
+        title: '경고',
+        text: "이 작업은 되돌릴 수 없습니다. 정말로 이 레포지토리를 영구적으로 삭제하시겠습니까?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/api/team/repo/permanentDelete/${projectId}`,
+                type: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` },
+                success: function() {
+                    showAlert('성공', '레포지토리가 영구적으로 삭제되었습니다.', 'success');
+                    loadDeletedRepos();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error permanently deleting repository:', error);
+                    showAlert('오류', '레포지토리 영구 삭제에 실패했습니다.', 'error');
+                }
+            });
+        }
     });
 }
