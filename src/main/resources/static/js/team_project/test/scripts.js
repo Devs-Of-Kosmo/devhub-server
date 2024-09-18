@@ -60,12 +60,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 메세지 모달 닫기 버튼
-    // 메시지 모달 관련 요소
+    // 메시지 모달 닫기 버튼 기능
     const messageModal = document.getElementById('messageModal');
     const messageModalCloseBtn = messageModal.querySelector('.close');
 
-    // 메시지 모달 닫기 버튼 기능
     if (messageModalCloseBtn) {
         messageModalCloseBtn.addEventListener('click', function() {
             messageModal.style.display = "none";
@@ -104,24 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             };
         }
-    }
-
-
-    // AI 리뷰 및 코드 차이 버튼 기능
-    var aiReviewBtn = document.getElementById("aiReviewButton");
-    var codeDiffBtn = document.getElementById("codeDiffButton");
-    var resultContainer = document.getElementById("resultContainer");
-
-    if (aiReviewBtn && resultContainer) {
-        aiReviewBtn.onclick = function() {
-            resultContainer.innerHTML = "<h3>AI 코드 리뷰 결과</h3><p>코드가 간단하고 명확합니다. 다만, 더 복잡한 로직을 위해 함수를 분리하는 것을 고려해보세요.</p>";
-        };
-    }
-
-    if (codeDiffBtn && resultContainer) {
-        codeDiffBtn.onclick = function() {
-            resultContainer.innerHTML = "<h3>코드 차이</h3><pre>- print(\"Hello, World!\")\n+ print(\"Hello, VS Code!\")</pre>";
-        };
     }
 
     // 메시지 탭 기능
@@ -298,11 +278,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(message => {
                 const detailDiv = document.getElementById('messageDetail');
                 detailDiv.innerHTML = `
-                <p><strong>보낸 사람:</strong> ${message.senderEmail}</p>
-                <p><strong>받는 사람:</strong> ${message.receiverEmail}</p>
-                <p><strong>내용:</strong> ${message.content}</p>
-                <p><strong>날짜:</strong> ${new Date(message.createdDate).toLocaleString()}</p>
-            `;
+                    <p><strong>보낸 사람:</strong> ${message.senderEmail}</p>
+                    <p><strong>받는 사람:</strong> ${message.receiverEmail}</p>
+                    <p><strong>내용:</strong> ${message.content}</p>
+                    <p><strong>날짜:</strong> ${new Date(message.createdDate).toLocaleString()}</p>
+                `;
                 modals.messageDetailModal.style.display = "block";
 
                 // 삭제 버튼 이벤트 리스너

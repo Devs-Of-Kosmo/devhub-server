@@ -8,6 +8,7 @@ body, html {
     background-color: #1e1e1e;
     color: #ffffff;
 }
+
 .header {
     background-color: #3c3c3c;
     color: #fff;
@@ -16,24 +17,29 @@ body, html {
     justify-content: space-between;
     align-items: center;
 }
+
 .logo {
     font-size: 1.2em;
     font-weight: bold;
 }
+
 .menu {
     display: flex;
     gap: 15px;
 }
+
 .menu a {
     color: #fff;
     text-decoration: none;
     font-size: 0.9em;
 }
+
 .main-content {
     display: flex;
     flex: 1;
     overflow: hidden;
 }
+
 .sidebar {
     width: 48px;
     background-color: #333333;
@@ -42,6 +48,7 @@ body, html {
     align-items: center;
     padding-top: 10px;
 }
+
 .sidebar-icon {
     width: 48px;
     height: 48px;
@@ -52,16 +59,20 @@ body, html {
     cursor: pointer;
     position: relative;
 }
+
 .sidebar-icon:hover {
     background-color: #2a2d2e;
 }
+
 .sidebar-icon i {
     font-size: 24px;
     color: #858585;
 }
+
 .sidebar-icon:hover i {
     color: #ffffff;
 }
+
 .sidebar-icon:hover::after {
     content: attr(title);
     position: absolute;
@@ -75,71 +86,92 @@ body, html {
     white-space: nowrap;
     z-index: 1;
 }
+
 .file-explorer {
     width: 250px;
     background-color: #252526;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
 }
+
 .file-tree {
     list-style-type: none;
     padding-left: 20px;
 }
+
 .file-tree li {
     margin-bottom: 5px;
+    cursor: pointer;
 }
+
 .file {
     color: #d4d4d4;
 }
+
 .folder {
     color: #c5c5c5;
 }
+
 .content {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
-.code-container {
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #252526;
+    flex-wrap: wrap;
+}
+
+.file-upload-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.file-upload-container input[type="file"] {
+    display: none;
+}
+
+.file-upload-container button {
+    background-color: #0e639c;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.file-upload-container button:hover {
+    background-color: #1177bb;
+}
+
+.code-comparison {
     display: flex;
     flex: 1;
     overflow: hidden;
 }
+
 .code-panel {
     flex: 1;
-    display: flex;
-    flex-direction: column;
+    overflow-y: auto;
     padding: 10px;
     background-color: #1e1e1e;
+}
+
+.review-panel {
+    height: 250px;
     overflow-y: auto;
-}
-.code-panel + .code-panel {
-    border-left: 1px solid #454545;
-}
-.code-panel h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-.code-panel pre {
-    flex: 1;
-    margin: 0;
-    overflow: auto;
-}
-.code-view, .comparison-view {
-    flex: 1;
-    padding: 20px;
     background-color: #1e1e1e;
-    overflow-y: auto;
-}
-.comparison-view {
-    border-left: 1px solid #454545;
-}
-.button-container {
-    display: flex;
-    justify-content: flex-end;
+    border-top: 1px solid #454545;
     padding: 10px;
-    background-color: #252526;
 }
+
 .action-button {
     background-color: #0e639c;
     color: #fff;
@@ -148,16 +180,28 @@ body, html {
     margin-left: 10px;
     cursor: pointer;
 }
+
 .action-button:hover {
     background-color: #1177bb;
 }
-.result-container {
-    height: 200px;
-    background-color: #1e1e1e;
-    border-top: 1px solid #454545;
-    overflow-y: auto;
-    padding: 10px;
+
+.d2h-diff-txt {
+    font-family: monospace;
 }
+
+.d2h-ins {
+    background-color: #e6ffed; /* 새로 추가된 부분 */
+}
+
+.d2h-del {
+    background-color: #ffeef0; /* 삭제된 부분 */
+}
+
+.code-panel {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
 .footer {
     background-color: #007acc;
     color: #fff;
@@ -165,6 +209,7 @@ body, html {
     padding: 5px;
     font-size: 0.8em;
 }
+
 .modal {
     display: none;
     position: fixed;
@@ -175,6 +220,7 @@ body, html {
     height: 100%;
     background-color: rgba(0,0,0,0.4);
 }
+
 .modal-content {
     background-color: #252526;
     margin: 15% auto;
@@ -185,548 +231,46 @@ body, html {
     overflow-y: auto;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
-body.modal-open {
-    overflow: hidden;
-}
+
 .close {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
+    cursor: pointer;
 }
+
 .close:hover,
 .close:focus {
     color: #fff;
     text-decoration: none;
-    cursor: pointer;
 }
-.branch-timeline {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: 20px;
-}
-.branch-node {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-.branch-dot {
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
     width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: #0e639c;
-    margin-right: 10px;
-}
-.branch-line {
-    width: 2px;
-    height: 20px;
-    background-color: #0e639c;
-    margin-left: 4px;
-}
-.branch-info {
-    display: flex;
-    flex-direction: column;
-}
-.branch-name {
-    font-weight: bold;
-}
-.branch-time {
-    font-size: 0.8em;
-    color: #858585;
-}
-.commit-list, .pr-list, .merge-list {
-    list-style-type: none;
-    padding: 0;
-}
-.commit-item, .pr-item, .merge-item {
-    background-color: #2d2d2d;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-}
-.commit-hash, .pr-number, .merge-id {
-    color: #569cd6;
-}
-.commit-message, .pr-title, .merge-message {
-    color: #ce9178;
-}
-.commit-author, .pr-author, .merge-author {
-    color: #4ec9b0;
-}
-.message-tabs {
-    display: flex;
-    margin-bottom: 10px;
-}
-.message-tab {
-    padding: 5px 10px;
-    cursor: pointer;
-    background-color: #2d2d2d;
-    color: #d4d4d4;
-    border: none;
-    margin-right: 5px;
-}
-.message-tab.active {
-    background-color: #0e639c;
-}
-.message-content {
-    display: none;
-}
-.message-content.active {
-    display: block;
-}
-.message-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-.message-form input, .message-form textarea {
-    background-color: #3c3c3c;
-    border: 1px solid #555;
-    color: #d4d4d4;
-    padding: 5px;
-}
-.message-form button {
-    background-color: #0e639c;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #0e639c;
-    color: #fff;
-    padding: 10px;
-    border-radius: 5px;
-    display: none;
-}
-.help-content {
-    max-height: 70vh;
-    overflow-y: auto;
-    padding-right: 15px;
-}
-.help-content h3 {
-    margin-top: 20px;
-    color: #0e639c;
-}
-.help-content ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-.help-content li {
-    margin-bottom: 10px;
-}
-.help-content strong {
-    color: #569cd6;
-}
-.help-content i {
-    margin-right: 5px;
-}
-/* ... (기존 CSS 내용) ... */
-
-.file-explorer {
-    width: 250px;
-    background-color: #252526;
-    padding: 10px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
 }
 
-.current-structure, .comparison-structure-container {
-    margin-bottom: 20px;
-}
-
-.structure-separator {
-    height: 1px;
-    background-color: #454545;
-    margin: 20px 0;
-}
-
-.toggle-icon {
-    cursor: pointer;
-    margin-left: 10px;
-}
-
-.toggle-icon i {
-    font-size: 14px;
-    color: #858585;
-}
-
-.toggle-icon:hover i {
-    color: #ffffff;
-}
-
-.comparison-structure {
-    margin-top: 10px;
-}
-
-/* 추가: 스크롤바 스타일링 */
-.file-explorer::-webkit-scrollbar {
-    width: 8px;
-}
-
-.file-explorer::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     background: #1e1e1e;
 }
 
-.file-explorer::-webkit-scrollbar-thumb {
-    background-color: #3c3c3c;
-    border-radius: 4px;
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
 }
 
-.file-explorer::-webkit-scrollbar-thumb:hover {
-    background-color: #4c4c4c;
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
+/* Mac 스타일 모달 */
 .mac-style {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-}
-
-.modal.mac-style {
-    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal.mac-style .modal-content {
     background-color: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 4px 23px 0 rgba(0, 0, 0, 0.2);
-    padding: 0;
-    width: 80%;
-    max-width: 600px;
-}
-
-.modal.mac-style .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.modal.mac-style h2 {
-    margin: 0;
-    font-size: 18px;
     color: #333;
-}
-
-.modal.mac-style .close {
-    font-size: 24px;
-    color: #999;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-.modal.mac-style .close:hover {
-    color: #333;
-}
-
-.modal.mac-style .search-container {
-    display: flex;
-    padding: 20px;
-}
-
-.modal.mac-style #searchInput {
-    flex-grow: 1;
-    padding: 10px 15px;
-    font-size: 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px 0 0 5px;
-    outline: none;
-    transition: border-color 0.2s ease;
-}
-
-.modal.mac-style #searchInput:focus {
-    border-color: #007AFF;
-}
-
-.modal.mac-style #searchSubmit {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #fff;
-    background-color: #007AFF;
-    border: none;
-    border-radius: 0 5px 5px 0;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.modal.mac-style #searchSubmit:hover {
-    background-color: #0056b3;
-}
-
-.modal.mac-style #searchResults {
-    max-height: 300px;
-    overflow-y: auto;
-    padding: 0 20px 20px;
-}
-
-.modal.mac-style #searchResults h3 {
-    font-size: 16px;
-    color: #333;
-    margin-top: 0;
-}
-
-.modal.mac-style #searchResults h4 {
-    font-size: 14px;
-    color: #666;
-    margin: 15px 0 5px;
-}
-
-.modal.mac-style #searchResults pre {
-    background-color: #6ca7f4;
-    border-radius: 5px;
-    padding: 10px;
-    font-size: 14px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-/* 메시지 모달 스타일 */
-#messageModal.modal.mac-style {
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-#messageModal .modal-content {
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 23px 0 rgba(0, 0, 0, 0.2);
-    padding: 0;
-    width: 80%;
-    max-width: 600px;
-    color: #333;
-}
-
-#messageModal .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-#messageModal .modal-header h2 {
-    margin: 0;
-    font-size: 18px;
-    color: #333;
-}
-
-#messageModal .close {
-    font-size: 24px;
-    color: #999;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-#messageModal .close:hover {
-    color: #333;
-}
-
-#messageModal .modal-body {
-    padding: 20px;
-}
-
-#messageModal .message-tabs {
-    display: flex;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-#messageModal .message-tab {
-    padding: 10px 15px;
-    cursor: pointer;
-    background-color: transparent;
-    color: #333;
-    border: none;
-    margin-right: 5px;
-    transition: background-color 0.2s ease;
-}
-
-#messageModal .message-tab.active {
-    background-color: #007AFF;
-    color: #ffffff;
-    border-radius: 5px 5px 0 0;
-}
-
-#messageModal .message-content {
-    display: none;
-}
-
-#messageModal .message-content.active {
-    display: block;
-}
-
-#messageModal .message-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-#messageModal .message-item {
-    background-color: #f5f5f5;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-#messageModal .message-item:hover {
-    background-color: #e0e0e0;
-}
-
-#messageModal .message-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-#messageModal .message-form input,
-#messageModal .message-form textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-#messageModal .message-form textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-#messageModal .message-form button {
-    align-self: flex-end;
-    padding: 10px 20px;
-    background-color: #007AFF;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-#messageModal .message-form button:hover {
-    background-color: #0056b3;
-}
-#messageDetail {
-    background-color: #f8f8f8;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-#messageDetail p {
-    margin-bottom: 12px;
-    line-height: 1.5;
-    color: #333;
-}
-
-#messageDetail strong {
-    display: inline-block;
-    width: 100px;
-    font-weight: 600;
-    color: #007AFF;
-}
-
-#messageDetail p:nth-child(3) { /* 내용 부분 */
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e0e0e0;
-}
-
-#messageDetail p:nth-child(3) strong {
-    display: block;
-    margin-bottom: 10px;
-}
-
-#messageDetail p:last-child { /* 날짜 부분 */
-    font-size: 0.9em;
-    color: #666;
-    text-align: right;
-    margin-top: 20px;
-}
-
-/* 반응형 디자인을 위한 미디어 쿼리 */
-@media (max-width: 600px) {
-    #messageDetail strong {
-        display: block;
-        width: auto;
-        margin-bottom: 5px;
-    }
-}
-#new.message-content {
-    padding: 20px;
-    background-color: #f8f8f8;
-    border-radius: 8px;
-}
-
-#newMessageForm {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-#newMessageForm input[type="email"],
-#newMessageForm textarea {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #d1d1d1;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-}
-
-#newMessageForm input[type="email"]:focus,
-#newMessageForm textarea:focus {
-    border-color: #007AFF;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
-}
-
-#newMessageForm textarea {
-    min-height: 120px;
-    resize: vertical;
-}
-
-#newMessageForm button[type="submit"] {
-    align-self: flex-end;
-    padding: 10px 20px;
-    background-color: #007AFF;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#newMessageForm button[type="submit"]:hover {
-    background-color: #0056b3;
-}
-
-#newMessageForm button[type="submit"]:active {
-    background-color: #004094;
-}
-
-/* 플레이스홀더 스타일 */
-#newMessageForm input[type="email"]::placeholder,
-#newMessageForm textarea::placeholder {
-    color: #999;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 600px) {
-    #new.message-content {
-        padding: 15px;
-    }
-
-    #newMessageForm button[type="submit"] {
-        width: 100%;
-        margin-top: 10px;
-    }
 }

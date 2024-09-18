@@ -6,12 +6,11 @@
     <title>VS Code 스타일 형상관리 사이트</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Acme&family=Black+Han+Sans&family=Noto Sans KR&family=New+Amsterdam&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Acme&family=Black+Han+Sans&family=Noto+Sans+KR&family=New+Amsterdam&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/atom-one-dark.min.css">
     <link rel="stylesheet" href="/css/team_project/test/style.css">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <header class="header">
@@ -58,66 +57,39 @@
     <section class="file-explorer">
         <div class="current-structure">
             <h3>프로젝트 구조</h3>
-            <ul class="file-tree">
-                <li class="folder">src</li>
-                <li class="file">- main.py</li>
-                <li class="file">- utils.py</li>
-                <li class="folder">tests</li>
-                <li class="file">- test_main.py</li>
-                <li class="file">README.md</li>
-            </ul>
-        </div>
-
-        <div class="structure-separator"></div>
-
-        <div class="comparison-structure-container">
-            <h3>
-                비교 프로젝트 구조
-                <span class="toggle-icon" id="toggleComparisonStructure">
-                        <i class="fas fa-eye"></i>
-                    </span>
-            </h3>
-            <ul class="file-tree comparison-structure" id="comparisonStructure" style="display: none;">
-                <li class="folder">src</li>
-                <li class="file">- main.py</li>
-                <li class="file">- utils.py</li>
-                <li class="folder">tests</li>
-                <li class="file">- test_main.py</li>
-                <li class="file">README.md</li>
-                <li class="file">CHANGELOG.md</li>
+            <ul id="fileTree" class="file-tree">
+                <!-- 여기에 동적으로 파일 구조가 추가됩니다 -->
             </ul>
         </div>
     </section>
 
     <section class="content">
         <div class="button-container">
+            <div class="file-upload-container">
+                <input type="file" id="fileUpload" multiple webkitdirectory directory>
+                <button id="uploadButton">파일 업로드</button>
+            </div>
+            <div class="file-upload-container">
+                <input type="file" id="comparisonFileUpload" multiple>
+                <button id="comparisonUploadButton">비교 파일 업로드</button>
+            </div>
+            <!-- 프로젝트 초기화 버튼을 최초 저장 버튼으로 변경 -->
+            <button class="action-button" id="saveProjectButton">최초 저장</button>
+        </div>
+        <div class="code-comparison">
+            <div id="fileContent" class="code-panel">
+                <!-- 선택된 파일의 내용이 여기에 표시됩니다 -->
+            </div>
+            <div id="comparisonContent" class="code-panel">
+                <!-- 비교할 파일의 내용이 여기에 표시됩니다 -->
+            </div>
+        </div>
+        <div class="review-panel">
             <button class="action-button" id="aiReviewButton">AI 코드 리뷰</button>
             <button class="action-button" id="codeDiffButton">코드 차이</button>
-        </div>
-        <div class="code-container">
-            <div class="code-panel">
-                <h3>main.py (현재 버전)</h3>
-                <pre><code class="python">
-            def main():
-                print("Hello, VS Code!")
-
-            if __name__ == "__main__":
-                main()
-                    </code></pre>
+            <div id="reviewResult">
+                <!-- AI 리뷰 결과나 코드 차이가 여기에 표시됩니다 -->
             </div>
-            <div class="code-panel">
-                <h3>main.py (이전 버전)</h3>
-                <pre><code class="python">
-            def main():
-                print("Hello, World!")
-
-            if __name__ == "__main__":
-                main()
-                    </code></pre>
-            </div>
-        </div>
-        <div class="result-container" id="resultContainer">
-            <!-- AI 리뷰 결과 또는 코드 차이 결과가 여기에 표시됩니다 -->
         </div>
     </section>
 </main>
@@ -125,14 +97,6 @@
 <footer class="footer">
     Git: main | Python 3.8.5 64-bit
 </footer>
-
-<!-- highlight.js 스크립트 추가 -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
-<script>
-    hljs.highlightAll();
-</script>
-
-<script src="/scripts.js"></script>
 
 <!-- 검색 모달 -->
 <div id="searchModal" class="modal mac-style">
@@ -282,10 +246,6 @@
     </div>
 </div>
 
-<div class="notification" id="messageNotification">
-    새 쪽지가 도착했습니다!
-</div>
-
 <!-- 로그아웃 모달  -->
 <div id="logoutModal" class="modal">
     <div class="modal-content">
@@ -343,6 +303,7 @@
                 <li>
                     <strong>AI 코드 리뷰:</strong>
                     AI가 자동으로 코드를 분석하고 개선점을 제안합니다.
+                </li>
                 <li>
                     <strong>코드 차이:</strong>
                     두 버전의 코드 차이를 시각적으로 비교합니다.
@@ -352,6 +313,16 @@
     </div>
 </div>
 
+<!-- highlight.js 스크립트 추가 -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+
+<!-- SweetAlert2 라이브러리 -->
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- 사용자 스크립트 -->
 <script src="/js/team_project/test/scripts.js"></script>
+<script src="/js/team_project/test/upload_diff.js"></script>
+<script src="/js/team_project/test/llama.js"></script>
+
 </body>
 </html>
