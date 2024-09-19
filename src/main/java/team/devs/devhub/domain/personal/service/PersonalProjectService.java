@@ -20,8 +20,7 @@ import team.devs.devhub.domain.user.exception.UserNotFoundException;
 import team.devs.devhub.global.common.exception.FileSizeOverException;
 import team.devs.devhub.global.common.exception.ParentCommitNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
-import team.devs.devhub.global.util.RepositoryUtil;
-import team.devs.devhub.global.util.VersionControlUtil;
+import team.devs.devhub.global.versioncontrol.*;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -35,6 +34,7 @@ public class PersonalProjectService {
     private final UserRepository userRepository;
     private final PersonalProjectRepository personalProjectRepository;
     private final PersonalCommitRepository personalCommitRepository;
+    private final GitUtil gitUtil;
     @Value("${business.personal.repository.path}")
     private String repositoryPathHead;
     @Value("${business.personal.multipart.max-size}")
@@ -50,7 +50,8 @@ public class PersonalProjectService {
         personalProjectRepository.save(project);
         project.saveRepositoryPath(repositoryPathHead);
 
-        RepositoryUtil.createRepository(project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.createRepository();
 
         return PersonalProjectRepoCreateResponse.of(project);
     }
@@ -73,16 +74,15 @@ public class PersonalProjectService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         PersonalProject target = request.toEntity();
-
         validMatchedProjectMaster(project, user);
         validRepositoryName(target);
 
         String oldRepoNamePath = project.getRepositoryPath();
-
         project.update(target);
         project.saveRepositoryPath(repositoryPathHead);
 
-        RepositoryUtil.changeRepositoryName(oldRepoNamePath, project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.changeRepositoryName(oldRepoNamePath);
 
         return PersonalProjectRepoUpdateResponse.of(project);
     }
@@ -94,7 +94,8 @@ public class PersonalProjectService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         validMatchedProjectMaster(project, user);
 
-        RepositoryUtil.deleteRepository(project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.deleteRepository();
 
         personalProjectRepository.deleteById(project.getId());
     }
@@ -107,9 +108,12 @@ public class PersonalProjectService {
         validMatchedProjectMaster(project, user);
         validUploadFileSize(request.getFiles());
 
-        RepositoryUtil.saveProjectFiles(project, request.getFiles());
-        RepositoryUtil.createGitIgnoreFile(project);
-        RevCommit newCommit = VersionControlUtil.initializeProject(project, request.getCommitMessage());
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.saveProjectFiles(request.getFiles());
+        repositoryUtil.createGitIgnoreFile();
+
+        ProjectUtil projectUtil = new ProjectUtil(gitUtil);
+        RevCommit newCommit = projectUtil.initializeProject(project, request.getCommitMessage());
 
         PersonalCommit commit = personalCommitRepository.save(
                 PersonalCommit.builder()
@@ -132,9 +136,12 @@ public class PersonalProjectService {
         validMatchedProjectMaster(parentCommit.getProject(), user);
         validUploadFileSize(request.getFiles());
 
-        RepositoryUtil.deleteFileForCommit(project);
-        RepositoryUtil.saveProjectFiles(project, request.getFiles());
-        RevCommit newCommit = VersionControlUtil.saveWorkedProject(project, request.getCommitMessage());
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.deleteFileForCommit();
+        repositoryUtil.saveProjectFiles(request.getFiles());
+
+        ProjectUtil projectUtil = new ProjectUtil(gitUtil);
+        RevCommit newCommit = projectUtil.saveWorkedProject(project, request.getCommitMessage());
 
         PersonalCommit commit = personalCommitRepository.save(
                 PersonalCommit.builder()
@@ -168,7 +175,8 @@ public class PersonalProjectService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         validMatchedProjectMaster(commit.getProject(), user);
 
-        List<String> results = VersionControlUtil.getFileNameWithPathList(commit);
+        CommitUtil commitUtil = new CommitUtil(gitUtil);
+        List<String> results = commitUtil.getFileNameWithPathList(commit);
 
         return PersonalProjectCommitReadResponse.of(results);
     }
@@ -181,7 +189,10 @@ public class PersonalProjectService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         validMatchedProjectMaster(commit.getProject(), user);
 
-        return new String(VersionControlUtil.getFileDataFromCommit(commit, filePath));
+        CommitUtil commitUtil = new CommitUtil(gitUtil);
+        byte[] fileData = commitUtil.getFileDataFromCommit(commit, filePath);
+
+        return new String(fileData);
     }
 
     @Transactional(readOnly = true)
@@ -192,8 +203,9 @@ public class PersonalProjectService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         validMatchedProjectMaster(commit.getProject(), user);
 
-        byte[] fileBytes = VersionControlUtil.getFileDataFromCommit(commit, filePath);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(fileBytes);
+        CommitUtil commitUtil = new CommitUtil(gitUtil);
+        byte[] fileData = commitUtil.getFileDataFromCommit(commit, filePath);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(fileData);
 
         return new InputStreamResource(inputStream);
     }
@@ -206,7 +218,8 @@ public class PersonalProjectService {
         validIsExistParentCommit(commit);
         validMatchedProjectMaster(commit.getProject(), user);
 
-        VersionControlUtil.resetCommitHistory(commit);
+        CommitUtil commitUtil = new CommitUtil(gitUtil);
+        commitUtil.resetCommitHistory(commit);
 
         personalCommitRepository.deleteById(commit.getId());
     }
@@ -219,7 +232,9 @@ public class PersonalProjectService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
         validMatchedProjectMaster(commit.getProject(), user);
 
-        ByteArrayResource resource = new ByteArrayResource(VersionControlUtil.generateProjectFilesAsZip(commit));
+        CommitUtil commitUtil = new CommitUtil(gitUtil);
+        byte[] fileData = commitUtil.createProjectFilesAsZip(commit);
+        ByteArrayResource resource = new ByteArrayResource(fileData);
 
         return PersonalProjectDownloadDto.of(resource, commit);
     }

@@ -29,7 +29,6 @@ public class TokenProvider implements InitializingBean {
     private final long accessTokenValidityInMilliseconds;
     private final long refreshTokenValidityInMilliseconds;
     private final CustomUserDetailsService customUserDetailsService;
-
     private Key key;
 
     public TokenProvider(

@@ -47,7 +47,7 @@ public class PersonalProject extends BaseTimeEntity implements ProjectUtilProvid
 
     public void saveRepositoryPath(String repositoryPathHead) {
         this.repositoryPath = repositoryPathHead
-                + master.getId() + "_" + master.getName() + "/"
+                + "user_" + master.getId() + "/"
                 + name + "_" + getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
     }
 

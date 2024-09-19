@@ -1,4 +1,4 @@
-package team.devs.devhub.global.security.error;
+package team.devs.devhub.global.security.exception;
 
 import team.devs.devhub.global.error.exception.BusinessException;
 import team.devs.devhub.global.error.exception.ErrorCode;

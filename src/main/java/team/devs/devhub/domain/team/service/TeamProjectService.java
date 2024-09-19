@@ -29,9 +29,8 @@ import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
 import team.devs.devhub.domain.user.exception.UserNotFoundException;
 import team.devs.devhub.global.error.exception.ErrorCode;
-import team.devs.devhub.global.util.RepositoryUtil;
-import team.devs.devhub.global.util.VersionControlUtil;
-import team.devs.devhub.global.util.exception.BranchNotFoundException;
+import team.devs.devhub.global.versioncontrol.*;
+import team.devs.devhub.global.versioncontrol.exception.BranchNotFoundException;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -48,6 +47,7 @@ public class TeamProjectService {
     private final TeamProjectRepository teamProjectRepository;
     private final TeamBranchRepository teamBranchRepository;
     private final TeamCommitRepository teamCommitRepository;
+    private final GitUtil gitUtil;
     @Value("${business.team.repository.path}")
     private String repositoryPathHead;
     @Value("${business.team.multipart.max-size}")
@@ -68,7 +68,8 @@ public class TeamProjectService {
         teamProjectRepository.save(project);
         project.saveRepositoryPath(repositoryPathHead);
 
-        RepositoryUtil.createRepository(project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.createRepository();
 
         return TeamProjectRepoCreateResponse.of(project);
     }
@@ -98,15 +99,14 @@ public class TeamProjectService {
         validSubManagerOrHigher(userTeam);
 
         TeamProject target = request.toEntity();
-
         validDuplicatedProjectName(project.getTeam(), target);
 
         String oldRepoNamePath = project.getRepositoryPath();
-
         project.update(target);
         project.saveRepositoryPath(repositoryPathHead);
 
-        RepositoryUtil.changeRepositoryName(oldRepoNamePath, project);
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.changeRepositoryName(oldRepoNamePath);
 
         return TeamProjectRepoUpdateResponse.of(project);
     }
@@ -165,7 +165,8 @@ public class TeamProjectService {
         TeamCommit commit = teamCommitRepository.findById(commitId)
                 .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
 
-        List<String> results = VersionControlUtil.getFileNameWithPathList(commit);
+        CommitUtil commitUtil = new CommitUtil(gitUtil);
+        List<String> results = commitUtil.getFileNameWithPathList(commit);
 
         return TeamProjectCommitReadResponse.of(results);
     }
@@ -175,7 +176,10 @@ public class TeamProjectService {
         TeamCommit commit = teamCommitRepository.findById(commitId)
                 .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
 
-        return new String(VersionControlUtil.getFileDataFromCommit(commit, filePath));
+        CommitUtil commitUtil = new CommitUtil(gitUtil);
+        byte[] fileData = commitUtil.getFileDataFromCommit(commit, filePath);
+
+        return new String(fileData);
     }
 
     @Transactional(readOnly = true)
@@ -183,8 +187,9 @@ public class TeamProjectService {
         TeamCommit commit = teamCommitRepository.findById(commitId)
                 .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
 
-        byte[] fileBytes = VersionControlUtil.getFileDataFromCommit(commit, filePath);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(fileBytes);
+        CommitUtil commitUtil = new CommitUtil(gitUtil);
+        byte[] fileData = commitUtil.getFileDataFromCommit(commit, filePath);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(fileData);
 
         return new InputStreamResource(inputStream);
     }
@@ -194,7 +199,9 @@ public class TeamProjectService {
         TeamCommit commit = teamCommitRepository.findById(commitId)
                 .orElseThrow(() -> new TeamCommitNotFoundException(ErrorCode.TEAM_COMMIT_NOT_FOUND));
 
-        ByteArrayResource resource = new ByteArrayResource(VersionControlUtil.generateProjectFilesAsZip(commit));
+        CommitUtil commitUtil = new CommitUtil(gitUtil);
+        byte[] fileData = commitUtil.createProjectFilesAsZip(commit);
+        ByteArrayResource resource = new ByteArrayResource(fileData);
 
         return TeamProjectDownloadDto.of(resource, commit);
     }
@@ -210,10 +217,15 @@ public class TeamProjectService {
         validExistsProjectBranch(project);
         validUploadFileSize(request.getFiles());
 
-        RepositoryUtil.saveProjectFiles(project, request.getFiles());
-        RepositoryUtil.createGitIgnoreFile(project);
-        RevCommit newCommit = VersionControlUtil.initializeProject(project, request.getCommitMessage());
-        Ref newBranch = VersionControlUtil.getBranch(project, newCommit)
+        RepositoryUtil repositoryUtil = new RepositoryUtil(project);
+        repositoryUtil.saveProjectFiles(request.getFiles());
+        repositoryUtil.createGitIgnoreFile();
+
+        ProjectUtil projectUtil = new ProjectUtil(gitUtil);
+        RevCommit newCommit = projectUtil.initializeProject(project, request.getCommitMessage());
+
+        BranchUtil branchUtil = new BranchUtil(gitUtil);
+        Ref newBranch = branchUtil.getBranchByHeadCommit(project, newCommit)
                 .orElseThrow(() -> new BranchNotFoundException(ErrorCode.BRANCH_NOT_FOUND));
 
         TeamBranch branch = teamBranchRepository.save(
@@ -247,7 +259,8 @@ public class TeamProjectService {
         valiProhibitedBranchName(prePersistBranch);
         validDuplicatedBranchName(prePersistBranch);
 
-        VersionControlUtil.createBranch(prePersistBranch);
+        BranchUtil branchUtil = new BranchUtil(gitUtil);
+        branchUtil.createBranch(prePersistBranch);
 
         TeamBranch branch = teamBranchRepository.save(prePersistBranch);
 
@@ -273,7 +286,8 @@ public class TeamProjectService {
 
         teamProjectRepository.findByIdWithLock(branch.getProject().getId())
                 .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
-        VersionControlUtil.deleteBranch(branch);
+        BranchUtil branchUtil = new BranchUtil(gitUtil);
+        branchUtil.deleteBranch(branch);
 
         teamBranchRepository.deleteById(branch.getId());
     }
@@ -289,7 +303,8 @@ public class TeamProjectService {
 
         teamProjectRepository.findByIdWithLock(branch.getProject().getId())
                 .orElseThrow(() -> new TeamProjectNotFoundException(ErrorCode.TEAM_PROJECT_NOT_FOUND));
-        RevCommit newCommit = VersionControlUtil.saveWorkedProject(branch, request);
+        ProjectUtil projectUtil = new ProjectUtil(gitUtil);
+        RevCommit newCommit = projectUtil.saveWorkedProject(branch, request);
 
         TeamCommit commit = teamCommitRepository.save(
                 TeamCommit.builder()
@@ -314,7 +329,8 @@ public class TeamProjectService {
         validIsExistParentCommit(commit);
 
         teamProjectRepository.findByIdWithLock(commit.getBranch().getProject().getId());
-        VersionControlUtil.resetCommitHistory(commit);
+        CommitUtil commitUtil = new CommitUtil(gitUtil);
+        commitUtil.resetCommitHistory(commit);
 
         teamCommitRepository.deleteById(commit.getId());
     }
@@ -362,7 +378,8 @@ public class TeamProjectService {
         validSubManagerOrHigher(userTeam);
         validIsConditionRequested(branch);
 
-        RevCommit newCommit = VersionControlUtil.mergeToDefaultBranch(branch, user);
+        BranchUtil branchUtil = new BranchUtil(gitUtil);
+        RevCommit newCommit = branchUtil.mergeToDefaultBranch(branch, user);
 
         branch.updateConditionToMerged();
 

@@ -1,12 +1,11 @@
-package team.devs.devhub.global.util;
+package team.devs.devhub.global.versioncontrol;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.multipart.MultipartFile;
-import team.devs.devhub.domain.personal.domain.PersonalProject;
-import team.devs.devhub.domain.team.domain.project.TeamProject;
 import team.devs.devhub.global.common.ProjectUtilProvider;
 import team.devs.devhub.global.error.exception.ErrorCode;
-import team.devs.devhub.global.util.exception.RepositoryUtilException;
+import team.devs.devhub.global.versioncontrol.exception.RepositoryUtilException;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,7 +16,13 @@ import java.util.List;
 
 public class RepositoryUtil {
 
-    public static void createRepository(ProjectUtilProvider project) {
+    private final ProjectUtilProvider project;
+
+    public RepositoryUtil(ProjectUtilProvider project) {
+        this.project = project;
+    }
+
+    public void createRepository() {
         Path path = Paths.get(project.getRepositoryPath());
         try {
             Files.createDirectories(path);
@@ -26,7 +31,7 @@ public class RepositoryUtil {
         }
     }
 
-    public static void createGitIgnoreFile(ProjectUtilProvider project) {
+    public void createGitIgnoreFile() {
         File gitIgnoreFile = new File(project.getRepositoryPath(), ".gitignore");
         try (FileWriter writer = new FileWriter(gitIgnoreFile)) {
             writer.write(".DS_Store\n");
@@ -35,7 +40,7 @@ public class RepositoryUtil {
         }
     }
 
-    public static void changeRepositoryName(String oldRepoNamePath, ProjectUtilProvider project) {
+    public void changeRepositoryName(String oldRepoNamePath) {
         File oldDirectory = new File(oldRepoNamePath);
         File newDirectory = new File(project.getRepositoryPath());
 
@@ -44,7 +49,7 @@ public class RepositoryUtil {
         }
     }
 
-    public static void deleteRepository(PersonalProject project) {
+    public void deleteRepository() {
         Path path = Paths.get(project.getRepositoryPath());
         try {
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
@@ -65,7 +70,7 @@ public class RepositoryUtil {
         }
     }
 
-    public static void saveProjectFiles(ProjectUtilProvider project, List<MultipartFile> files) {
+    public void saveProjectFiles(List<MultipartFile> files) {
         for (MultipartFile file : files) {
             try {
                 String relativePath = file.getOriginalFilename();
@@ -78,21 +83,7 @@ public class RepositoryUtil {
         }
     }
 
-    public static void overwriteFiles(ProjectUtilProvider project, List<MultipartFile> files, Git git) {
-        for (MultipartFile file : files) {
-            try {
-                String relativePath = file.getOriginalFilename();
-                Path filePath = Paths.get(project.getRepositoryPath(), relativePath);
-                Files.createDirectories(filePath.getParent());
-                Files.write(filePath, file.getBytes());
-            } catch (IOException e) {
-                VersionControlUtil.resetToBeforeCommit(git);
-                throw new RepositoryUtilException(ErrorCode.PROJECT_SAVE_ERROR);
-            }
-        }
-    }
-
-    public static void deleteFileForCommit(PersonalProject project) {
+    public void deleteFileForCommit() {
         Path path = Paths.get(project.getRepositoryPath());
         try {
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
@@ -129,12 +120,42 @@ public class RepositoryUtil {
         }
     }
 
-    public static void deleteFiles(TeamProject project, List<String> filePaths) {
+    public void overwriteFiles(List<MultipartFile> files, Git git) {
+        for (MultipartFile file : files) {
+            try {
+                String relativePath = file.getOriginalFilename();
+                Path filePath = Paths.get(project.getRepositoryPath(), relativePath);
+                Files.createDirectories(filePath.getParent());
+                Files.write(filePath, file.getBytes());
+            } catch (IOException e) {
+                GitUtil.resetToBeforeCommit(git);
+                throw new RepositoryUtilException(ErrorCode.PROJECT_SAVE_ERROR);
+            }
+        }
+    }
+
+    public void deleteFiles(List<String> filePaths) {
         for (String relativePath : filePaths) {
             File file = new File(project.getRepositoryPath(), relativePath);
             file.delete();
         }
     }
 
-    private RepositoryUtil() {}
+    public void renameOrMoveFiles(Git git, List<List<String>> filePaths) throws GitAPIException {
+        for (List<String> e : filePaths) {
+            String fromName = e.get(0);
+            String toName = e.get(1);
+
+            File from = new File(project.getRepositoryPath(), fromName);
+            File to = new File(project.getRepositoryPath(), toName);
+
+            to.getParentFile().mkdirs();
+
+            boolean success = from.renameTo(to);
+            if (success) {
+                git.rm().addFilepattern(fromName).call();
+                git.add().addFilepattern(toName).call();
+            }
+        }
+    }
 }

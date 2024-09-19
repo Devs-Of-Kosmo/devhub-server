@@ -69,7 +69,7 @@ public class TeamProject extends BaseTimeEntity implements ProjectUtilProvider {
 
     public void saveRepositoryPath(String repositoryPathHead) {
         this.repositoryPath = repositoryPathHead
-                + team.getId() + "_" + team.getName() + "/"
+                + "team_" + team.getId() + "/"
                 + name + "_" + getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
     }
 
