@@ -26,10 +26,12 @@ import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
 import team.devs.devhub.domain.user.exception.MailSendException;
 import team.devs.devhub.domain.user.exception.UserNotFoundException;
+import team.devs.devhub.global.common.AsyncMailSendService;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.policy.MailPolicy;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,10 +39,10 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class TeamService {
-
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
     private final UserTeamRepository userTeamRepository;
+    private final AsyncMailSendService asyncMailSendService;
     private final JavaMailSender javaMailSender;
     @Value("${spring.mail.verification.sender}")
     private String senderEmail;
@@ -159,7 +161,7 @@ public class TeamService {
 
         try {
             MimeMessage emailForm = createEmailForm(team, kickUser.getEmail());
-            javaMailSender.send(emailForm);
+            asyncMailSendService.send(emailForm);
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new MailSendException(ErrorCode.MAIL_SEND_FAILURE);
         }
@@ -203,7 +205,7 @@ public class TeamService {
 
     private MimeMessage createEmailForm(Team team, String email) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
         helper.setTo(email);
         helper.setSubject(MailPolicy.TEAM_KICK_TITLE);
