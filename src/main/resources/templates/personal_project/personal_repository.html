@@ -9,25 +9,18 @@
     <link rel="stylesheet" href="/css/personal_repository/style.css">
     <link rel="stylesheet" href="/css/personal_repository/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/plugins/line-numbers/prism-line-numbers.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <!-- Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/atom-one-dark.min.css">
 </head>
 <body>
 <header>
     <div class="container1">
-        <!-- 로고 이미지와 제목을 같은 div 내에 배치 -->
-        <div class="logo-title-container">
-            <img src="/img/logo_1.jpg" alt="Logo" class="site-logo">
-            <a href="http://localhost:8080/" class="site-title-link">
-                <h1 class="site-title">DEVHUV</h1>
-            </a>
-        </div>
         <nav class="navbar">
             <ul>
                 <li id="login-nav-item">
@@ -38,16 +31,22 @@
                 </li>
             </ul>
         </nav>
+        <div class="header-right">
+            <a href="#" id="helpBtn" data-tooltip="Help">도움말</a>
+            <a href="/mypage">
+                <img id="profile-image" src="/css/images/profile/pro_file.png" alt="Profile Image" class="profile-image">
+            </a>
+        </div>
     </div>
 </header>
 
 <div class="wrapper">
     <nav class="sidebar">
         <ul class="nav-icons">
+            <li><a href="/" id="homeBtn" data-tooltip="Home"><i class="fas fa-home"></i></a></li>
             <li><a href="#" id="toggleSidebarBtn" data-tooltip="Project Save"><i class="fas fa-folder-open"></i></a></li>
             <li><a href="#" id="branchToggleBtn" data-tooltip="Commit History"><i class="fas fa-code-branch"></i></a></li>
             <li><a href="#" id="settingsBtn" data-tooltip="Settings"><i class="fas fa-cog"></i></a></li>
-            <li><a href="#" id="helpBtn" data-tooltip="Help"><i class="fas fa-question-circle"></i></a></li>
             <li><a href="https://mail.google.com/" target="_blank" data-tooltip="Gmail"><i class="fas fa-envelope"></i></a></li>
             <li><a href="https://chat.openai.com/" target="_blank" data-tooltip="ChatGPT"><i class="fas fa-robot"></i></a></li>
         </ul>
@@ -206,5 +205,7 @@
 <script src="/js/personal_repository/openai.js"></script> <!-- js 경로 수정 -->
 <script src="/js/personal_repository/script.js"></script> <!-- js 경로 수정 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- highlight.js 스크립트 추가 -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
 </body>
 </html>

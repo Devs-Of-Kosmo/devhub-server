@@ -35,21 +35,35 @@ body, html {
     height: var(--header-height);
 }
 
-.logo-title-container {
+.nav-link {
+    color: #ffffff;
+}
+.nav-description {
+    color: #5e5a5a;
+}
+
+.header-right {
     display: flex;
     align-items: center;
+    height: var(--header-height);
+    font-family: 'Jua', sans-serif;
 }
 
-.site-logo {
-    height: 20px;
-    margin-right: 10px;
-}
-
-.site-title {
-    font-size: 14px;
-    font-weight: 700;
+.header-right a {
     color: #ffffff;
-    margin: 0;
+    text-decoration: none;
+}
+
+.header-right a:hover {
+    color: var(--accent-color); /* 호버 시 강조 색상으로 변경 */
+}
+
+.profile-image {
+    width: calc(var(--header-height) - 10px);
+    height: calc(var(--header-height) - 10px);
+    border-radius: 50%;
+    margin-left: 10px;
+    cursor: pointer;
 }
 
 .navbar ul {
@@ -61,7 +75,7 @@ body, html {
 }
 
 .navbar ul li {
-    margin-right: 20px;
+    margin-left: 20px;
 }
 
 button, .action-btn {

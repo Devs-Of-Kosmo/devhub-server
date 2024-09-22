@@ -221,12 +221,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const { fileNameWithPathList } = data;
 
         const treeData = buildFileTree(fileNameWithPathList);
-        const treeHtml = renderFileTree(treeData, commitId);
-        commitCardsContainer.innerHTML = `${treeHtml}`;
+        const treeElement = renderFileTree(treeData, commitId);
+        commitCardsContainer.innerHTML = ''; // 기존 내용을 지우고
+        commitCardsContainer.appendChild(treeElement); // 트리 요소를 추가합니다.
         commitCardsContainer.style.display = 'block';
-
-        addTreeToggleEvent();
-        addFileSelectEvent();
     }
 
     function buildFileTree(paths) {
@@ -248,86 +246,68 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function renderFileTree(tree, commitId, path = '') {
-        let html = '<ul>';
+        const ul = document.createElement('ul');
+
         for (const key in tree) {
             const newPath = path ? `${path}/${key}` : key;
-            html += `<li class="tree-node" data-path="${newPath}" data-commit-id="${commitId}">`;
+            const li = document.createElement('li');
+            li.classList.add('tree-node');
+            li.dataset.path = newPath;
+            li.dataset.commitId = commitId;
+
             if (tree[key] !== null) {
-                html += `<span class="toggle-icon">></span> <span class="directory-icon">${key}</span>`;
-                html += renderFileTree(tree[key], commitId, newPath);
-            } else {
-                html += `<input type="checkbox" class="file-checkbox" data-path="${newPath}" data-commit-id="${commitId}"> <span class="file-icon">${key}</span>`;
-            }
-            html += '</li>';
-        }
-        html += '</ul>';
-        return html;
-    }
+                // 폴더인 경우
+                const span = document.createElement('span');
+                span.classList.add('toggle-icon');
+                span.innerHTML = '<i class="fas fa-caret-right"></i>'; // 닫힌 상태의 아이콘
 
-    function addTreeToggleEvent() {
-        document.querySelectorAll('.tree-node > .toggle-icon').forEach(toggleIcon => {
-            toggleIcon.addEventListener('click', function () {
-                const listItem = this.parentElement;
-                const sublist = listItem.querySelector('ul');
+                const folderName = document.createElement('span');
+                folderName.classList.add('directory-icon');
+                folderName.textContent = key;
 
-                if (sublist) {
-                    if (sublist.style.display === 'none' || sublist.style.display === '') {
-                        sublist.style.display = 'block';
-                        this.textContent = 'v';
+                li.appendChild(span);
+                li.appendChild(folderName);
+
+                // 하위 트리를 생성하여 숨김 상태로 추가
+                const childUl = renderFileTree(tree[key], commitId, newPath);
+                childUl.style.display = 'none';
+                li.appendChild(childUl);
+
+                // 토글 이벤트 추가
+                span.addEventListener('click', function () {
+                    if (childUl.style.display === 'none') {
+                        childUl.style.display = 'block';
+                        span.innerHTML = '<i class="fas fa-caret-down"></i>'; // 열린 상태의 아이콘
                     } else {
-                        sublist.style.display = 'none';
-                        this.textContent = '>';
+                        childUl.style.display = 'none';
+                        span.innerHTML = '<i class="fas fa-caret-right"></i>'; // 닫힌 상태의 아이콘
                     }
-                }
-            });
-        });
-    }
-
-    function addFileSelectEvent() {
-        document.querySelectorAll('.file-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', async function () {
-                if (this.checked) {
-                    document.querySelectorAll('.file-checkbox').forEach(box => {
-                        if (box !== this) box.checked = false;
-                    });
-
-                    const listItem = this.closest('.tree-node');
-                    const filePath = listItem.getAttribute('data-path');
-                    const commitId = listItem.getAttribute('data-commit-id');
-
-                    await fetchFileContent(commitId, filePath);
-                } else {
-                    clearFileContent();
-                }
-            });
-        });
-
-        document.querySelectorAll('.file-icon').forEach(fileIcon => {
-            fileIcon.addEventListener('click', async function () {
-                const listItem = this.closest('.tree-node');
-                const checkbox = listItem.querySelector('.file-checkbox');
-
-                document.querySelectorAll('.file-checkbox').forEach(box => {
-                    box.checked = false;
                 });
 
-                checkbox.checked = true;
+                // 폴더 이름 클릭 시에도 토글
+                folderName.addEventListener('click', function () {
+                    span.click();
+                });
+            } else {
+                // 파일인 경우
+                const fileIcon = document.createElement('span');
+                fileIcon.classList.add('file-icon');
+                fileIcon.textContent = key;
 
-                const filePath = listItem.getAttribute('data-path');
-                const commitId = listItem.getAttribute('data-commit-id');
-                const fileType = filePath.split('.').pop().toLowerCase();
+                li.appendChild(fileIcon);
 
-                if (checkbox.checked) {
-                    if (['png', 'jpg', 'jpeg', 'gif', 'bmp'].includes(fileType)) {
-                        await fetchImageFile(commitId, filePath);
-                    } else {
-                        await fetchFileContent(commitId, filePath);
-                    }
-                } else {
-                    clearFileContent();
-                }
-            });
-        });
+                // 파일 클릭 이벤트 추가
+                fileIcon.addEventListener('click', async function () {
+                    const filePath = li.dataset.path;
+                    const commitId = li.dataset.commitId;
+                    await fetchFileContent(commitId, filePath);
+                });
+            }
+
+            ul.appendChild(li);
+        }
+
+        return ul;
     }
 
     async function fetchFileContent(commitId, filePath) {
@@ -351,7 +331,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const textContent = await response.text();
-            displayTextContent(textContent);
+            displayTextContent(textContent, filePath);
         } catch (error) {
             console.error('Error fetching file content:', error);
         }
@@ -392,15 +372,42 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function displayTextContent(text) {
+    function displayTextContent(text, filePath) {
         const contentContainer = document.getElementById('file-content-display');
         if (contentContainer) {
-            const lines = text.split('\n');
-            const numberedLines = lines.map((line, index) => {
-                return `<div class="line"><span class="line-number">${index + 1}</span> ${escapeHtml(line)}</div>`;
-            }).join('');
-            contentContainer.innerHTML = `<pre>${numberedLines}</pre>`;
+            const extension = filePath.split('.').pop().toLowerCase();
+            const language = getLanguageFromExtension(extension);
+
+            contentContainer.innerHTML = `
+                <h3>${filePath}</h3>
+                <pre><code class="language-${language}">${escapeHtml(text)}</code></pre>
+            `;
+
+            // 코드 하이라이팅 적용
+            hljs.highlightAll();
+
+            // file1Content에 내용 저장
+            window.file1Content = text;
         }
+    }
+
+    // 파일 확장자에 따라 언어 결정 함수 추가
+    function getLanguageFromExtension(extension) {
+        const languageMap = {
+            'js': 'javascript',
+            'java': 'java',
+            'py': 'python',
+            'cpp': 'cpp',
+            'c': 'c',
+            'html': 'html',
+            'css': 'css',
+            'txt': 'plaintext',
+            'xml': 'xml',
+            'json': 'json',
+            'md': 'markdown',
+            // 필요한 언어를 추가하세요
+        };
+        return languageMap[extension] || 'plaintext';
     }
 
     function clearFileContent() {
@@ -408,6 +415,22 @@ document.addEventListener("DOMContentLoaded", function () {
         if (contentContainer) {
             contentContainer.innerHTML = '';
         }
+    }
+
+    // HTML 이스케이프 함수
+    function escapeHtml(unsafe) {
+        return unsafe.replace(/[&<>"'`=\/]/g, function (s) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;',
+                '/': '&#x2F;',
+                '`': '&#x60;',
+                '=': '&#x3D;'
+            }[s];
+        });
     }
 
     window.fetchProjectMetadata = fetchProjectMetadata;

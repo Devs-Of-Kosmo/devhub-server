@@ -98,6 +98,15 @@ body, html {
     visibility: visible !important;
 }
 
+.diff-line {
+    background-color: rgba(255, 0, 0, 0.1); /* 변경된 부분 강조 */
+}
+
+.line-number {
+    color: #888;
+    margin-right: 10px;
+}
+
 .commit-cards-container, #file-content-display, #changed-file-content {
     flex: 1;
     height: calc(100vh - var(--header-height) - var(--footer-height));
