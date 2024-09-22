@@ -10,93 +10,101 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/atom-one-dark.min.css">
     <link rel="stylesheet" href="/css/team_project/test/style.css">
+    <link rel="stylesheet" href="/css/team_project/test/history.css">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
-<header class="header">
-    <div class="logo">해당 유저의 이름</div>
-    <nav class="menu">
-        <a href="#">파일</a>
-        <a href="#">편집</a>
-        <a href="#">보기</a>
-        <a href="#">도움말</a>
-    </nav>
-</header>
+<div class="page-container">
+    <header class="header">
+        <div class="logo">해당 유저의 이름</div>
+        <nav class="menu">
+            <a href="#" id="helpButton">도움말</a>
+            <button id="headerLogoutButton">로그아웃</button>
+        </nav>
+    </header>
 
-<main class="main-content">
-    <aside class="sidebar">
-        <div class="sidebar-icon" title="Home">
-            <i class="fas fa-home"></i>
-        </div>
-        <div class="sidebar-icon" id="searchButton" title="Search">
-            <i class="fas fa-search"></i>
-        </div>
-        <div class="sidebar-icon" title="Messages">
-            <i class="fas fa-comment"></i>
-        </div>
-        <div class="sidebar-icon" id="branchButton" title="Commit History">
-            <i class="fas fa-code-branch"></i>
-        </div>
-        <div class="sidebar-icon" id="commitButton" title="Commits">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        <div class="sidebar-icon" id="prButton" title="Pull Requests">
-            <i class="fas fa-code-pull-request"></i>
-        </div>
-        <div class="sidebar-icon" id="mergeButton" title="Merges">
-            <i class="fas fa-code-merge"></i>
-        </div>
-        <div class="sidebar-icon" id="chatgptButton" title="ChatGPT">
-            <i class="fas fa-robot"></i>
-        </div>
-        <div class="sidebar-icon" id="userProfileButton" title="User logout" style="top: 20em;">
-            <i class="fas fa-user-circle"></i>
-        </div>
-    </aside>
+    <main class="main-content">
+        <aside class="sidebar">
+            <div class="sidebar-icon" title="Home">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="sidebar-icon" id="searchButton" title="Search">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="sidebar-icon" title="Messages">
+                <i class="fas fa-comment"></i>
+            </div>
+            <div class="sidebar-icon" id="branchButton" title="Commit History">
+                <i class="fas fa-code-branch"></i>
+            </div>
+            <div class="sidebar-icon" id="commitButton" title="Commits">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="sidebar-icon" id="prButton" title="Pull Requests">
+                <i class="fas fa-code-pull-request"></i>
+            </div>
+            <div class="sidebar-icon" id="mergeButton" title="Merges">
+                <i class="fas fa-code-merge"></i>
+            </div>
+            <div class="sidebar-icon" id="chatgptButton" title="ChatGPT">
+                <i class="fas fa-robot"></i>
+            </div>
+        </aside>
 
-    <section class="file-explorer">
-        <div class="current-structure">
-            <h3>프로젝트 구조</h3>
-            <ul id="fileTree" class="file-tree">
-                <!-- 여기에 동적으로 파일 구조가 추가됩니다 -->
-            </ul>
-        </div>
-    </section>
+        <section class="file-explorer">
+            <div class="current-structure">
+                <h3>프로젝트 구조</h3>
+                <ul id="fileTree" class="file-tree">
+                    <!-- 여기에 동적으로 파일 구조가 추가됩니다 -->
+                </ul>
+            </div>
+        </section>
 
-    <section class="content">
-        <div class="button-container">
-            <div class="file-upload-container">
-                <input type="file" id="fileUpload" multiple webkitdirectory directory>
-                <button id="uploadButton">파일 업로드</button>
-            </div>
-            <div class="file-upload-container">
-                <input type="file" id="comparisonFileUpload" multiple>
-                <button id="comparisonUploadButton">비교 파일 업로드</button>
-            </div>
-            <!-- 프로젝트 초기화 버튼을 최초 저장 버튼으로 변경 -->
-            <button class="action-button" id="saveProjectButton">최초 저장</button>
-        </div>
-        <div class="code-comparison">
-            <div id="fileContent" class="code-panel">
-                <!-- 선택된 파일의 내용이 여기에 표시됩니다 -->
-            </div>
-            <div id="comparisonContent" class="code-panel">
-                <!-- 비교할 파일의 내용이 여기에 표시됩니다 -->
+        <!-- 이미지 파일 모달 -->
+        <div id="imageModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <img id="modalImage" src="" alt="Image Preview" class="modal-image"/>
+                <p id="modalTitle"></p>
             </div>
         </div>
-        <div class="review-panel">
-            <button class="action-button" id="aiReviewButton">AI 코드 리뷰</button>
-            <button class="action-button" id="codeDiffButton">코드 차이</button>
-            <div id="reviewResult">
-                <!-- AI 리뷰 결과나 코드 차이가 여기에 표시됩니다 -->
-            </div>
-        </div>
-    </section>
-</main>
 
-<footer class="footer">
-    Git: main | Python 3.8.5 64-bit
-</footer>
+        <section class="content">
+            <div class="button-container">
+                <div class="file-upload-container">
+                    <input type="file" id="fileUpload" multiple webkitdirectory directory>
+                    <button id="uploadButton">파일 업로드</button>
+                </div>
+                <div class="file-upload-container">
+                    <input type="file" id="comparisonFileUpload" multiple>
+                    <button id="comparisonUploadButton">비교 파일 업로드</button>
+                </div>
+                <button class="action-button" id="saveProjectButton">최초 저장</button>
+            </div>
+            <div class="code-comparison">
+                <div id="fileContent" class="code-panel">
+                    <pre><code></code></pre>
+                </div>
+                <div id="comparisonContent" class="code-panel">
+                    <!-- 비교할 파일의 내용이 여기에 표시됩니다 -->
+                </div>
+            </div>
+            <div class="review-panel">
+                <div class="review-buttons">
+                    <button class="action-button" id="aiReviewButton">AI 코드 리뷰</button>
+                    <button class="action-button" id="codeDiffButton">코드 차이</button>
+                </div>
+                <div id="reviewResult">
+                    <!-- AI 리뷰 결과나 코드 차이가 여기에 표시됩니다 -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        LLama: 3.1model | Token : 500
+    </footer>
+</div>
 
 <!-- 검색 모달 -->
 <div id="searchModal" class="modal mac-style">
@@ -113,53 +121,25 @@
     </div>
 </div>
 
+<!-- 브랜치 모달 -->
 <div id="branchModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>브랜치 관리</h2>
-        <div class="branch-timeline">
-            <div class="branch-node">
-                <div class="branch-dot"></div>
-                <div class="branch-info">
-                    <span class="branch-name">main</span>
-                    <span class="branch-time">2024-08-18 09:00</span>
-                </div>
-            </div>
-            <div class="branch-line"></div>
-            <div class="branch-node">
-                <div class="branch-dot"></div>
-                <div class="branch-info">
-                    <span class="branch-name">feature/new-ui</span>
-                    <span class="branch-time">2024-08-18 10:30</span>
-                </div>
-            </div>
-            <div class="branch-line"></div>
-            <div class="branch-node">
-                <div class="branch-dot"></div>
-                <div class="branch-info">
-                    <span class="branch-name">bugfix/login-issue</span>
-                    <span class="branch-time">2024-08-18 14:15</span>
-                </div>
-            </div>
+        <div class="branch-timeline" id="branchTimeline">
+            <!-- 브랜치 항목들은 JavaScript로 동적으로 추가됩니다 -->
         </div>
+        <button class="action-button" id="createBranchButton">브랜치 생성</button>
     </div>
 </div>
 
+<!-- 커밋 모달 -->
 <div id="commitModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>커밋 내역</h2>
         <ul class="commit-list">
-            <li class="commit-item">
-                <span class="commit-hash">#abc1234</span>
-                <span class="commit-message">로그인 기능 구현</span>
-                <span class="commit-author">작성자: John Doe</span>
-            </li>
-            <li class="commit-item">
-                <span class="commit-hash">#def5678</span>
-                <span class="commit-message">UI 디자인 업데이트</span>
-                <span class="commit-author">작성자: Jane Smith</span>
-            </li>
+            <!-- 커밋 항목들은 JavaScript로 동적으로 추가됩니다 -->
         </ul>
     </div>
 </div>
@@ -246,7 +226,7 @@
     </div>
 </div>
 
-<!-- 로그아웃 모달  -->
+<!-- 로그아웃 모달 -->
 <div id="logoutModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
@@ -266,9 +246,11 @@
                 <li>
                     <strong>Home <i class="fas fa-home"></i>:</strong>
                     메인 대시보드로 이동합니다.
+                </li>
                 <li>
                     <strong>Search <i class="fas fa-search"></i>:</strong>
                     프로젝트 내 파일이나 코드를 검색합니다.
+                </li>
                 <li>
                     <strong>Messages <i class="fas fa-comment"></i>:</strong>
                     팀원들과 메시지를 주고받을 수 있습니다.
@@ -320,9 +302,16 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- 사용자 스크립트 -->
-<script src="/js/team_project/test/scripts.js"></script>
-<script src="/js/team_project/test/upload_diff.js"></script>
+<script src="/js/team_project/test/api.js"></script>
+<script src="/js/team_project/test/fileExplorer.js"></script>
+<script src="/js/team_project/test/projectInfo.js"></script>
+<script src="/js/team_project/test/commitHistory.js"></script>
+<script src="/js/team_project/test/fileUpload.js"></script>
+<script src="/js/team_project/test/diff.js"></script>
+<script src="/js/team_project/test/main.js"></script>
 <script src="/js/team_project/test/llama.js"></script>
+<script src="/js/team_project/test/branchManagement.js"></script>
+<script src="/js/team_project/test/scripts.js"></script>
 
 </body>
 </html>
