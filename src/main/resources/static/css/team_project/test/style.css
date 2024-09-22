@@ -1,12 +1,18 @@
+/* style.css */
+
 body, html {
     margin: 0;
     padding: 0;
     font-family: "New Amsterdam","Noto Sans KR", sans-serif;
     height: 100%;
-    display: flex;
-    flex-direction: column;
     background-color: #1e1e1e;
     color: #ffffff;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .header {
@@ -26,6 +32,7 @@ body, html {
 .menu {
     display: flex;
     gap: 15px;
+    align-items: center;
 }
 
 .menu a {
@@ -34,9 +41,22 @@ body, html {
     font-size: 0.9em;
 }
 
+#logoutButton {
+    background-color: #0e639c;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+#logoutButton:hover {
+    background-color: #1177bb;
+}
+
 .main-content {
+    flex: 1 0 auto;
     display: flex;
-    flex: 1;
     overflow: hidden;
 }
 
@@ -151,25 +171,75 @@ body, html {
     background-color: #1177bb;
 }
 
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.file-name {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.download-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ffffff;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.download-button:hover {
+    color: #1e90ff;
+}
+
+.download-button:focus {
+    outline: none;
+}
+
 .code-comparison {
     display: flex;
     flex: 1;
     overflow: hidden;
+    height: calc(100vh - 220px); /* 세로 크기 조정 */
 }
 
 .code-panel {
-    flex: 1;
-    overflow-y: auto;
+    flex: 0.5; /* 코드 보는 부분을 줄임 */
+    overflow: auto; /* 세로와 가로 스크롤 모두 가능하게 함 */
     padding: 10px;
     background-color: #1e1e1e;
+    height: 100%;
+}
+
+.code-panel pre {
+    margin: 0;
+    white-space: pre;
+    word-wrap: normal;
+}
+
+.code-panel code {
+    display: inline-block;
+    min-width: 100%;
 }
 
 .review-panel {
-    height: 250px;
-    overflow-y: auto;
+    flex: 0.5; /* 코드 리뷰와 차이점 보는 부분을 키움 */
     background-color: #1e1e1e;
-    border-top: 1px solid #454545;
+    border-left: 1px solid #454545;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.review-buttons {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px;
 }
 
 .action-button {
@@ -177,7 +247,7 @@ body, html {
     color: #fff;
     border: none;
     padding: 5px 10px;
-    margin-left: 10px;
+    margin-right: 10px; /* 버튼 사이 간격 */
     cursor: pointer;
 }
 
@@ -185,21 +255,12 @@ body, html {
     background-color: #1177bb;
 }
 
-.d2h-diff-txt {
-    font-family: monospace;
-}
-
-.d2h-ins {
-    background-color: #e6ffed; /* 새로 추가된 부분 */
-}
-
-.d2h-del {
-    background-color: #ffeef0; /* 삭제된 부분 */
-}
-
-.code-panel {
-    white-space: pre-wrap;
-    word-wrap: break-word;
+#reviewResult {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #2d2d2d;
+    border-radius: 5px;
 }
 
 .footer {
@@ -208,8 +269,10 @@ body, html {
     text-align: center;
     padding: 5px;
     font-size: 0.8em;
+    flex-shrink: 0;
 }
 
+/* 공통 모달 스타일 */
 .modal {
     display: none;
     position: fixed;
@@ -246,7 +309,68 @@ body, html {
     text-decoration: none;
 }
 
-/* 스크롤바 스타일링 */
+#imageModal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+#imageModal .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+}
+
+#imageModal img {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+}
+
+#modalTitle {
+    margin-top: 10px;
+    color: #333;
+}
+
+#imageModal .close {
+    color: #fff;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1002;
+}
+
+#imageModal .close:hover,
+#imageModal .close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#modalTitle {
+    color: #fff;
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    margin: 0;
+}
+
 ::-webkit-scrollbar {
     width: 10px;
 }
@@ -264,7 +388,6 @@ body, html {
     background: #555;
 }
 
-/* Mac 스타일 모달 */
 .mac-style {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
