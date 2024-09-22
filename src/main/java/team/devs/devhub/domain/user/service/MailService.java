@@ -15,17 +15,20 @@ import team.devs.devhub.domain.user.dto.EmailAuthenticationResponse;
 import team.devs.devhub.domain.user.dto.MailSendResponse;
 import team.devs.devhub.domain.user.exception.AuthenticationCodeException;
 import team.devs.devhub.domain.user.exception.MailSendException;
+import team.devs.devhub.global.common.AsyncMailSendService;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.policy.MailPolicy;
 import team.devs.devhub.global.policy.RedisPolicy;
 import team.devs.devhub.global.redis.RedisUtil;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class MailService {
+    private final AsyncMailSendService asyncMailSendService;
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
     @Value("${spring.mail.verification.sender}")
@@ -38,7 +41,7 @@ public class MailService {
 
         try {
             MimeMessage emailForm = createEmailForm(toEmail);
-            javaMailSender.send(emailForm);
+            asyncMailSendService.send(emailForm);
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new MailSendException(ErrorCode.MAIL_SEND_FAILURE);
         }
@@ -59,7 +62,7 @@ public class MailService {
         String authCode = createCode();
 
         MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
         helper.setTo(email);
         helper.setSubject(MailPolicy.MAIL_AUTH_TITLE);
