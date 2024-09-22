@@ -16,7 +16,6 @@ import team.devs.devhub.global.security.CustomUserDetails;
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin(origins = "http://127.0.0.1:5000")
 @RequiredArgsConstructor
 @Tag(name = "유저 관련 API", description = "유저 관련 API 입니다")
 public class UserController {

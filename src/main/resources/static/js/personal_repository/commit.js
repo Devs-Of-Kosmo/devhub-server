@@ -9,56 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const sideContentModal = document.getElementById('sideContentModal');
     const openFileBtn = document.querySelector('.open-file-btn');
 
-    // 파일 업로드 후 체크 아이콘과 메시지를 표시하는 함수
-    function showCheckIcon(button, message = '') {
-        // 기존의 체크 아이콘을 제거하지 않음
-        let checkIcon = button.parentElement.querySelector('.check-icon');
-        if (!checkIcon) {
-            // 체크 아이콘이 없을 때만 새로 생성
-            checkIcon = document.createElement('span');
-            checkIcon.className = 'check-icon';
-            checkIcon.style.marginLeft = '10px'; // 버튼과의 간격 조절
-            button.insertAdjacentElement('afterend', checkIcon);
-            setTimeout(() => checkIcon.classList.add('show'), 100); // 체크 아이콘 표시 딜레이
-        }
-
-        // 기존 메시지를 제거하지 않음
-        let uploadMessage = button.parentElement.querySelector('.upload-message');
-        if (!uploadMessage && message) {
-            // 메시지가 없을 때만 새로 생성
-            uploadMessage = document.createElement('span');
-            uploadMessage.className = 'upload-message';
-            uploadMessage.style.marginLeft = '10px'; // 간격 조절
-            uploadMessage.textContent = message;
-            checkIcon.insertAdjacentElement('beforebegin', uploadMessage);
-        }
-    }
-
-    // 체크 아이콘과 메시지를 제거하는 함수
-    function clearCheckIconAndMessage() {
-        const checkIcon = document.querySelector('.check-icon');
-        const uploadMessage = document.querySelector('.upload-message');
-        if (checkIcon) checkIcon.remove();
-        if (uploadMessage) uploadMessage.remove();
-    }
-
-    // 커밋 성공 메시지와 체크 아이콘을 제거하는 함수
-    function clearCommitSuccessMessage() {
-        const successMessage = document.querySelector('.commit-success-message');
-        const checkIcon = document.querySelector('.check-icon');
-        if (successMessage) successMessage.remove();
-        if (checkIcon) checkIcon.remove();
-    }
-
-    // 커밋 메시지 입력 필드 내용을 지우는 함수
-    function clearCommitMessage() {
-        commitMessageInput.value = '';
-    }
-
     // 커밋을 위한 파일 선택 처리
     if (file1) {
-        // 중복 이벤트 리스너 방지
-        file1.removeEventListener('change', handleFile1Change);
         file1.addEventListener('change', handleFile1Change);
     }
 
@@ -87,10 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const message = `'${folderName}' 폴더가 업로드되었습니다.`;
 
             // 기존 체크 아이콘과 메시지 제거
-            const previousCheckIcon = document.querySelector('.check-icon');
-            const previousMessage = document.querySelector('.upload-message');
-            if (previousCheckIcon) previousCheckIcon.remove();
-            if (previousMessage) previousMessage.remove();
+            clearCheckIconAndMessage();
 
             // 새로운 체크 아이콘과 메시지 표시
             showCheckIcon(openFileBtn, message);
@@ -104,7 +53,6 @@ document.addEventListener("DOMContentLoaded", function () {
         commitBtn.addEventListener('click', async function () {
             const files = file1.files;
             const commitMessage = commitMessageInput.value.trim();
-            const personalProjects = JSON.parse(localStorage.getItem('personal_project') || '[]');
 
             if (!files.length) {
                 Swal.fire({
@@ -127,21 +75,42 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             try {
+                // 커밋 이력 로드
+                let fromCommitId = null;
+                const metadataResponse = await fetch(`http://localhost:8080/api/personal/project/metadata?projectId=${projectId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (metadataResponse.ok) {
+                    const metadata = await metadataResponse.json();
+                    const commitInfo = metadata.commitInfo;
+                    if (commitInfo && commitInfo.length > 0) {
+                        const latestCommit = commitInfo[commitInfo.length - 1];
+                        fromCommitId = latestCommit.commitId;
+                    }
+                } else {
+                    console.error('커밋 이력을 가져오는 데 실패했습니다.');
+                }
+
                 const formData = new FormData();
                 for (let file of files) {
                     formData.append('files', file, file.webkitRelativePath);
                 }
                 formData.append('commitMessage', commitMessage);
 
-                let apiUrl = 'http://localhost:8080/api/personal/project/init';
+                let apiUrl = '';
                 let method = 'POST';
 
-                if (personalProjects.length > 0) {
-                    const latestProject = personalProjects[personalProjects.length - 1];
-                    formData.append('fromCommitId', latestProject.newCommitId);
+                if (fromCommitId) {
+                    formData.append('fromCommitId', fromCommitId);
                     apiUrl = 'http://localhost:8080/api/personal/project/save';
                 } else {
                     formData.append('projectId', projectId);
+                    apiUrl = 'http://localhost:8080/api/personal/project/init';
                 }
 
                 const timestamp = new Date().getTime(); // 캐시 방지
@@ -167,12 +136,14 @@ document.addEventListener("DOMContentLoaded", function () {
                         const errorText = await response.text();
                         console.error('커밋 실패:', errorText);
                     }
+                    Swal.fire({
+                        title: '커밋 실패',
+                        text: '커밋에 실패하였습니다.',
+                        icon: 'error',
+                        confirmButtonText: '확인'
+                    });
                     return;
                 }
-
-                const newCommitData = await response.json();
-                personalProjects.push(newCommitData);
-                localStorage.setItem('personal_project', JSON.stringify(personalProjects));
 
                 // 성공 메시지 표시 및 모달 닫기
                 Swal.fire({
@@ -195,38 +166,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     confirmButtonText: '확인'
                 });
             }
-        });
-    }
-
-    // 파일 내용을 읽는 함수 (필요 시 사용)
-    async function getFileContents(files) {
-        const fileContents = [];
-        for (let file of files) {
-            if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
-                try {
-                    const content = await readFileContent(file);
-                    fileContents.push({ name: file.webkitRelativePath, content: content });
-                } catch (error) {
-                    console.error('파일 읽기 오류:', file.name, error);
-                    throw error;
-                }
-            } else {
-                console.warn('텍스트 파일이 아니므로 건너뜁니다:', file.name);
-            }
-        }
-        return fileContents;
-    }
-
-    function readFileContent(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                resolve(event.target.result);
-            };
-            reader.onerror = function (error) {
-                reject(error);
-            }
-            reader.readAsText(file);
         });
     }
 
