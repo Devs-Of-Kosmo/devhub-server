@@ -23,7 +23,6 @@ import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:5000")
 @RequestMapping("/api/team")
 @RequiredArgsConstructor
 @Tag(name = "팀 프로젝트 관련 API", description = "팀 프로젝트 관련 API 입니다")

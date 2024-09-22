@@ -45,7 +45,9 @@ window.loadUserTeams = function() {
 
                         if (!isTrashed && !isDeleted) {
                             projectIcon.on('click', function() {
-                                window.location.href = `/team_loading?id=${encodeURIComponent(team.teamId)}&name=${encodeURIComponent(team.teamName)}`;
+                                sessionStorage.setItem('teamId', team.teamId);
+                                sessionStorage.setItem('teamName', team.teamName);
+                                window.location.href = '/team_loading';
                             });
                             const listItem = $('<li>', {
                                 'data-team-id': team.teamId,
@@ -127,7 +129,9 @@ window.addNewTeamToList = function(teamId, teamName) {
     });
 
     projectIcon.on('click', function() {
-        window.location.href = `/team_loading?id=${encodeURIComponent(teamId)}&name=${encodeURIComponent(teamName)}`;
+        sessionStorage.setItem('teamId', teamId);
+        sessionStorage.setItem('teamName', teamName);
+        window.location.href = '/team_loading';
     });
 
     desktop.append(projectIcon);

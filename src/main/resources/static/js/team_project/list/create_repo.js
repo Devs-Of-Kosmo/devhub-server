@@ -183,9 +183,25 @@ $(document).ready(function() {
                     }
                 })
             );
-        } else {
+            } else {
             diskIcon.on('click', function() {
-                window.location.href = `/test_team`;
+                const params = new URLSearchParams({
+                    teamId: teamId,
+                    teamName: teamName,
+                    projectId: projectId,
+                    projectName: projectName,
+                    description: description
+                });
+                // 팀 정보를 세션 스토리지에 저장
+                sessionStorage.setItem('teamId', teamId);
+                sessionStorage.setItem('teamName', teamName);
+                sessionStorage.setItem('projectId', projectId);
+                sessionStorage.setItem('projectName', projectName);
+
+                // 필요한 경우 다른 팀 관련 정보도 저장할 수 있습니다.
+
+                // 페이지 이동
+                window.location.href = '/test_team';
             });
             diskIcon.on('dragstart', function(event) {
                 event.originalEvent.dataTransfer.setData('text/plain', JSON.stringify({

@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         prButton: document.getElementById("prButton"),
         mergeButton: document.getElementById("mergeButton"),
         messageButton: document.querySelector('.sidebar-icon[title="Messages"]'),
-        helpButton: document.querySelector('.menu a:last-child'),
+        helpButton: document.getElementById("helpButton"),
         chatgptButton: document.getElementById("chatgptButton"),
         userProfileButton: document.getElementById("userProfileButton"),
         searchButton: document.getElementById("searchButton"),
@@ -102,6 +102,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             };
         }
+    }
+
+    // 도움말 버튼 기능 수정
+    if (buttons.helpButton && modals.helpModal) {
+        buttons.helpButton.onclick = function(event) {
+            event.preventDefault();
+            modals.helpModal.style.display = "block";
+            document.body.style.overflow = 'hidden'; // 스크롤 비활성화
+        };
     }
 
     // 메시지 탭 기능
@@ -358,4 +367,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 초기 로드
     checkNewMessages();
+
+    // 이미지 모달 관련 코드 추가
+    const imageModal = document.getElementById('imageModal');
+    const closeImageModal = imageModal.querySelector('.close');
+
+    if (closeImageModal) {
+        closeImageModal.onclick = function() {
+            imageModal.style.display = "none";
+        }
+    }
+
+    window.onclick = function(event) {
+        if (event.target == imageModal) {
+            imageModal.style.display = "none";
+        }
+    }
 });

@@ -1,0 +1,166 @@
+/* 모달 전체 스타일 */
+#commitModal .modal-content,
+#branchModal .modal-content {
+    background-color: #3c3c3c;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* 커밋 리스트와 브랜치 타임라인 스타일 */
+.commit-list,
+.branch-timeline {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.commit-item,
+.branch-node {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0 10px 30px;
+    position: relative;
+}
+
+/* 타임라인 선 스타일 */
+.commit-item::before,
+.branch-node::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #ff69b4;
+}
+
+/* 원형 노드 스타일 */
+.commit-item::after,
+.branch-node::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    background-color: #ff9900;
+    border-radius: 50%;
+    position: absolute;
+    left: 1px;
+    top: 15px;
+    z-index: 1;
+}
+
+/* 커밋 내용 스타일 */
+.commit-hash {
+    display: none; /* 해시 숨기기 */
+}
+
+.commit-message {
+    font-weight: bold;
+    color: #ffffff;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.commit-author,
+.commit-date {
+    font-size: 0.8em;
+    color: #cccccc;
+}
+
+/* 다운로드 버튼 스타일 */
+.download-commit-button {
+    align-self: flex-end;
+    padding: 2px 8px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.7em;
+    text-transform: lowercase;
+    background-color: #0000ff;
+    color: #ffffff;
+    margin-top: 5px;
+}
+
+/* 추가 버튼 스타일 (JavaScript로 동적 추가 필요) */
+.change-button,
+.delete-button {
+    padding: 2px 8px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.7em;
+    text-transform: lowercase;
+    margin-right: 5px;
+}
+
+.change-button {
+    background-color: #ffff00;
+    color: #000000;
+}
+
+.delete-button {
+    background-color: #ff0000;
+    color: #ffffff;
+}
+
+/* 브랜치 생성 버튼 스타일 */
+#createBranchButton {
+    background-color: #00ffff;
+    color: #000000;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+/* 모달 헤더 스타일 */
+#commitModal h2,
+#branchModal h2 {
+    color: #ffffff;
+    border-bottom: 1px solid #4e4e4e;
+    padding-bottom: 10px;
+    margin-top: 0;
+    font-size: 1.2em;
+}
+
+/* 모달 닫기 버튼 스타일 */
+.close {
+    color: #ffffff;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: -10px;
+}
+
+/* 스크롤바 스타일 */
+.commit-list,
+.branch-timeline {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.commit-list::-webkit-scrollbar,
+.branch-timeline::-webkit-scrollbar {
+    width: 8px;
+}
+
+.commit-list::-webkit-scrollbar-track,
+.branch-timeline::-webkit-scrollbar-track {
+    background: #2d2d2d;
+}
+
+.commit-list::-webkit-scrollbar-thumb,
+.branch-timeline::-webkit-scrollbar-thumb {
+    background: #555555;
+    border-radius: 4px;
+}
+
+.commit-list::-webkit-scrollbar-thumb:hover,
+.branch-timeline::-webkit-scrollbar-thumb:hover {
+    background: #777777;
+}
