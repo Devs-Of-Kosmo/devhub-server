@@ -28,6 +28,7 @@ import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.domain.user.domain.repository.UserRepository;
 import team.devs.devhub.domain.user.exception.MailSendException;
 import team.devs.devhub.domain.user.exception.UserNotFoundException;
+import team.devs.devhub.global.common.AsyncMailSendService;
 import team.devs.devhub.global.error.exception.BusinessException;
 import team.devs.devhub.global.error.exception.ErrorCode;
 import team.devs.devhub.global.policy.MailPolicy;
@@ -36,7 +37,7 @@ import team.devs.devhub.global.redis.RedisUtil;
 import team.devs.devhub.global.util.TeamInviteCodeUtil;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +48,7 @@ public class InviteService {
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
     private final UserTeamRepository userTeamRepository;
+    private final AsyncMailSendService asyncMailSendService;
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
     private final TeamInviteCodeUtil teamInviteCodeUtil;
@@ -82,7 +84,7 @@ public class InviteService {
 
         try {
             MimeMessage emailForm = createEmailForm(team, user, invitedEmail, data);
-            javaMailSender.send(emailForm);
+            asyncMailSendService.send(emailForm);
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new MailSendException(ErrorCode.MAIL_SEND_FAILURE);
         }
@@ -120,7 +122,7 @@ public class InviteService {
 
     private MimeMessage createEmailForm(Team team, User sender, String email, Map<String, String> data) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
         helper.setTo(email);
         helper.setSubject(String.format(MailPolicy.TEAM_INVITE_TITLE, team.getName()));
