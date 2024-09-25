@@ -34,10 +34,10 @@
             <div class="sidebar-icon" title="Messages">
                 <i class="fas fa-comment"></i>
             </div>
-            <div class="sidebar-icon" id="branchButton" title="Commit History">
+            <div class="sidebar-icon" id="branchButton" title="Branch History">
                 <i class="fas fa-code-branch"></i>
             </div>
-            <div class="sidebar-icon" id="commitButton" title="Commits">
+            <div class="sidebar-icon" id="commitButton" title="Commit History">
                 <i class="fas fa-check-circle"></i>
             </div>
             <div class="sidebar-icon" id="prButton" title="Pull Requests">
@@ -137,7 +137,7 @@
 <div id="commitModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>커밋 내역</h2>
+        <h2>병합 브런치</h2>
         <ul class="commit-list">
             <!-- 커밋 항목들은 JavaScript로 동적으로 추가됩니다 -->
         </ul>
@@ -295,6 +295,15 @@
     </div>
 </div>
 
+<input type="hidden" id="teamId" value="">
+<input type="hidden" id="teamName" value="">
+<input type="hidden" id="projectId" value="">
+<input type="hidden" id="projectName" value="">
+<input type="hidden" id="description" value="">
+<input type="hidden" id="latestCommitId" value="">
+<input type="hidden" id="isInitialized" value="false">
+<input type="hidden" id="commitInfo" value="[]">
+<input type="hidden" id="branchesInfo" value="[]">
 <!-- highlight.js 스크립트 추가 -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
 
