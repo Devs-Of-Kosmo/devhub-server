@@ -5,27 +5,23 @@ const api = {
             throw new Error('인증 토큰이 없습니다. 로그인 해주세요.');
         }
 
-        // 기본 헤더 설정
         options.headers = {
             ...options.headers,
             'Authorization': `Bearer ${token}`
         };
 
-        // HTTP 메서드에 따라 Content-Type 헤더 설정
         const method = options.method ? options.method.toUpperCase() : 'GET';
         if (method !== 'GET') {
             options.headers['Content-Type'] = 'application/json';
         }
 
         const response = await fetch(url, options);
+
         if (!response.ok) {
-            let errorData;
-            try {
-                errorData = await response.json();
-            } catch (e) {
-                errorData = { message: '네트워크 응답이 정상적이지 않습니다.' };
-            }
-            throw new Error(errorData.message || '네트워크 응답이 정상적이지 않습니다.');
+            const responseText = await response.text();
+            console.error('Response Error:', response.status, responseText);
+            let errorMessage = `서버 에러 (${response.status}): ${responseText}`;
+            throw new Error(errorMessage);
         }
         return response.json();
     },
@@ -170,6 +166,13 @@ const api = {
     },
 
     async initializeProject(projectId, files, commitMessage) {
+        console.log('API initializeProject 호출됨. files:', files, 'commitMessage:', commitMessage);  // 로깅 추가
+
+        if (!Array.isArray(files)) {
+            console.error('files is not an array:', files);
+            throw new Error('파일 목록이 올바르지 않습니다.');
+        }
+
         const formData = new FormData();
         formData.append('projectId', projectId);
         formData.append('commitMessage', commitMessage);

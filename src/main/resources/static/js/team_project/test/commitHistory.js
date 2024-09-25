@@ -1,3 +1,5 @@
+// commitHistory.js
+
 const commitHistory = {
     addCommitToHistory(commit) {
         const commitList = document.querySelector('#commitModal .commit-list');
@@ -78,6 +80,20 @@ const commitHistory = {
             console.error('Error:', error);
             Swal.fire('에러', '커밋 정보를 불러오는 중 문제가 발생했습니다.', 'error');
         }
+    },
+
+    updateCommitList(commits) {
+        const commitListElement = document.querySelector('#commitModal .commit-list');
+        if (!commitListElement) {
+            console.error('커밋 리스트 요소를 찾을 수 없습니다.');
+            return;
+        }
+        commitListElement.innerHTML = ''; // 기존 내용 초기화
+
+        commits.forEach(commit => {
+            const commitItem = this.createCommitElement(commit);
+            commitListElement.appendChild(commitItem);
+        });
     }
 };
 
