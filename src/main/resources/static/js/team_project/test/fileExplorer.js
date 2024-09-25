@@ -1,5 +1,6 @@
 const fileExplorer = {
     currentCommitId: null,
+    comparisonCommitId: null,
 
     displayFileTree(fileList, commitId) {
         console.log('Received fileList:', fileList);
@@ -16,6 +17,7 @@ const fileExplorer = {
         console.log('Generated file structure:', structure);
         const treeElement = this.createTreeElement(structure);
         fileTree.appendChild(treeElement);
+
     },
 
     createFileStructure(fileList) {
@@ -87,6 +89,7 @@ const fileExplorer = {
         return ul;
     },
 
+
     async handleFileClick(filePath) {
         try {
             const commitId = this.currentCommitId;
@@ -97,13 +100,29 @@ const fileExplorer = {
                 `/api/team/project/text-file?commitId=${commitId}&filePath=${encodedFilePath}`
             );
 
-            const fileContentDiv = document.getElementById('fileContent').querySelector('pre > code');
-            fileContentDiv.textContent = fileContent;
+            // 파일 이름 표시 추가
+            const fileNameElement = document.createElement('h3');
+            fileNameElement.textContent = `${filePath}`;
+
+            const fileContentContainer = document.getElementById('fileContent');
+            fileContentContainer.innerHTML = ''; // 기존 내용 초기화
+            fileContentContainer.appendChild(fileNameElement);
+
+            const preElement = document.createElement('pre');
+            const codeElement = document.createElement('code');
+            codeElement.textContent = fileContent;
+            preElement.appendChild(codeElement);
+            fileContentContainer.appendChild(preElement);
 
             if (typeof hljs !== 'undefined') {
-                hljs.highlightElement(fileContentDiv);
+                hljs.highlightElement(codeElement);
             } else {
                 console.warn('highlight.js가 로드되지 않았습니다.');
+            }
+
+            // 비교 커밋이 선택되어 있다면 비교 실행
+            if (this.comparisonCommitId) {
+                await this.compareWithSelectedCommit(filePath, fileContent);
             }
         } catch (error) {
             console.error('Error:', error);
@@ -128,6 +147,53 @@ const fileExplorer = {
         } catch (error) {
             console.error('Error:', error);
             Swal.fire('에러', '이미지를 불러오는 중 문제가 발생했습니다.', 'error');
+        }
+    },
+
+    async selectComparisonCommit() {
+        const commitList = await this.fetchCommitList();
+        const { value: selectedCommitId } = await Swal.fire({
+            title: '비교할 커밋 선택',
+            input: 'select',
+            inputOptions: Object.fromEntries(commitList.map(commit => [
+                commit.commitId,
+                `${commit.commitMessage} (${new Date(commit.createdDate).toLocaleString()})`
+            ])),
+            inputPlaceholder: '커밋을 선택하세요',
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return '커밋을 선택해야 합니다!';
+                }
+            }
+        });
+
+        if (selectedCommitId) {
+            this.comparisonCommitId = selectedCommitId;
+            Swal.fire('선택 완료', `비교할 커밋이 선택되었습니다. 이제 파일을 클릭하면 비교 결과를 볼 수 있습니다.`, 'success');
+        }
+    },
+
+    async fetchCommitList() {
+        // 커밋 목록을 가져오는 API 호출
+        return await window.api.fetchWithTokenJSON('/api/team/project/commits');
+    },
+
+    async compareWithSelectedCommit(filePath, currentFileContent) {
+        try {
+            const encodedFilePath = encodeURIComponent(filePath);
+            const comparisonFileContent = await window.api.fetchWithTokenText(
+                `/api/team/project/text-file?commitId=${this.comparisonCommitId}&filePath=${encodedFilePath}`
+            );
+
+            // diff.js의 compareFiles 함수를 사용하여 비교
+            window.diff.compareFiles(
+                { name: filePath, content: currentFileContent },
+                { name: filePath, content: comparisonFileContent }
+            )
+        } catch (error) {
+            console.error('Error comparing files:', error);
+            Swal.fire('에러', '파일 비교 중 문제가 발생했습니다.', 'error');
         }
     }
 };

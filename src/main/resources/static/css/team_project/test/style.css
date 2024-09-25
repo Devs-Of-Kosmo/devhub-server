@@ -286,14 +286,18 @@ body, html {
 
 .modal-content {
     background-color: #252526;
-    margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 70%;
     max-height: 80vh;
     overflow-y: auto;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
+
 
 .close {
     color: #aaa;

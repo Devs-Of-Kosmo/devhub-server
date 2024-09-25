@@ -102,11 +102,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                 throw new Error('업로드된 파일이 없습니다.');
             }
 
-            if (!window.projectInfo.getProjectId()) {
-                throw new Error('프로젝트 ID가 설정되지 않았습니다.');
+            const projectId = sessionStorage.getItem('projectId');
+            if (!projectId) {
+                throw new Error('세션 스토리지에 프로젝트 ID가 없습니다.');
             }
 
-            const { value: commitMessage } = await Swal.fire({
+            const result = await Swal.fire({
                 title: '커밋 메시지',
                 input: 'text',
                 inputLabel: '초기 커밋에 대한 메시지를 입력하세요',
@@ -115,18 +116,30 @@ document.addEventListener('DOMContentLoaded', async function() {
                 inputValidator: (value) => !value && '커밋 메시지를 입력해주세요!'
             });
 
-            if (!commitMessage) {
+            console.log('SweetAlert2 결과:', result);  // 결과 로깅
+
+            if (result.isDismissed) {
+                console.log('사용자가 취소했거나 모달을 닫았습니다.');
+                return;  // 함수 종료
+            }
+
+            if (!result.value) {
                 throw new Error('커밋 메시지가 입력되지 않았습니다.');
             }
+
+            const commitMessage = result.value;
 
             // TEST 폴더를 제외한 파일 목록 생성
             const filteredFiles = window.uploadedFiles.filter(file => !file.webkitRelativePath.startsWith('test/'));
 
-            const result = await window.projectInfo.initializeProject(filteredFiles, commitMessage);
+            console.log('초기화할 파일 목록:', filteredFiles);  // 파일 목록 로깅
+
+            // 매개변수 순서 수정: (projectId, files, commitMessage)
+            const initResult = await window.projectInfo.initializeProject(projectId, filteredFiles, commitMessage);
 
             const initialCommit = {
-                commitId: result.newCommitId,
-                commitMessage: result.commitMessage,
+                commitId: initResult.newCommitId,
+                commitMessage: initResult.commitMessage,
                 createdByName: currentUser ? currentUser.name : 'Unknown',
                 createdDate: new Date().toISOString()
             };
@@ -135,7 +148,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             Swal.fire({
                 title: '프로젝트 최초저장 성공!',
-
                 icon: 'success'
             });
 
@@ -147,6 +159,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             Swal.fire('오류', `프로젝트 초기화 중 문제가 발생했습니다: ${error.message}`, 'error');
         }
     }
+
 
     // 프로젝트 저장 함수
     async function saveProject() {
@@ -204,11 +217,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // 코드 차이 버튼 이벤트 리스너 추가
+    // 코드 차이 버튼 이벤트 리스너 수정
     if (codeDiffButton) {
-        codeDiffButton.addEventListener('click', function() {
+        codeDiffButton.addEventListener('click', async function() {
             if (window.uploadedFiles.length > 0 && window.comparisonFiles.length > 0) {
-                window.diff.compareFiles(window.uploadedFiles[0], window.comparisonFiles[0]);
+                const originalFile = window.uploadedFiles[0];
+                const comparisonFile = window.comparisonFiles[0];
+                await window.diff.compareFiles(
+                    { name: originalFile.name, content: originalFile },
+                    { name: comparisonFile.name, content: comparisonFile }
+                );
             } else {
                 Swal.fire('오류', '비교할 파일을 모두 업로드해주세요.', 'error');
             }

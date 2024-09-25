@@ -1,53 +1,73 @@
 // diff.js
-
 // 파일 비교 함수
-function compareFiles(originalFile, comparisonFile) {
-    Promise.all([readFileContent(originalFile), readFileContent(comparisonFile)])
-        .then(([originalContent, comparisonContent]) => {
-            const originalLines = originalContent.split('\n');
-            const comparisonLines = comparisonContent.split('\n');
-            let result = '';
+async function compareFiles(originalFile, comparisonFile) {
+    try {
+        const originalText = await readFileContent(originalFile.content);
+        const comparisonText = await readFileContent(comparisonFile.content);
 
-            const maxLines = Math.max(originalLines.length, comparisonLines.length);
+        const originalLines = originalText.split('\n');
+        const comparisonLines = comparisonText.split('\n');
+        let result = '';
 
-            for (let i = 0; i < maxLines; i++) {
-                const originalLine = originalLines[i] || '';
-                const comparisonLine = comparisonLines[i] || '';
+        const maxLines = Math.max(originalLines.length, comparisonLines.length);
 
-                if (originalLine !== comparisonLine) {
-                    result += `
-                    <div class="diff-line">
-                        <div class="diff-arrow">➡️</div>
-                        <div class="original-line">${escapeHtml(originalLine)}</div>
-                        <div class="comparison-line">${escapeHtml(comparisonLine)}</div>
-                    </div>`;
-                }
+        for (let i = 0; i < maxLines; i++) {
+            const originalLine = originalLines[i] || '';
+            const comparisonLine = comparisonLines[i] || '';
+
+            if (originalLine !== comparisonLine) {
+                result += `
+                <div class="diff-line">
+                    <div class="diff-arrow">➡️</div>
+                    <div class="original-line">${escapeHtml(originalLine)}</div>
+                    <div class="comparison-line">${escapeHtml(comparisonLine)}</div>
+                </div>`;
             }
+        }
 
-            const reviewResult = document.getElementById('reviewResult');
-            reviewResult.innerHTML = `
-                <h2>코드 비교 결과</h2>
-                <div class="diff-container">
-                    ${result || '<div class="no-diff">차이가 없습니다.</div>'}
-                </div>
-            `;
+        const reviewResult = document.getElementById('reviewResult');
+        reviewResult.innerHTML = `
+            <h2>코드 비교 결과</h2>
+            <h3>파일: ${escapeHtml(originalFile.name)}</h3>
+            <div class="diff-container">
+                ${result || '<div class="no-diff">차이가 없습니다.</div>'}
+            </div>
+        `;
 
-            applyDiffStyles();
-        })
-        .catch(error => {
-            console.error('Error comparing files:', error);
-            Swal.fire('오류', `파일 비교 중 오류가 발생했습니다: ${error.message}`, 'error');
-        });
+        applyDiffStyles();
+    } catch (error) {
+        console.error('Error comparing files:', error);
+        const reviewResult = document.getElementById('reviewResult');
+        reviewResult.innerHTML = `<h2>오류 발생</h2><p>파일 비교 중 오류가 발생했습니다: ${error.message}</p>`;
+    }
 }
 
-// 파일 내용 읽기 함수
+// 파일 내용 읽기 함수 (File 객체 또는 문자열)
 function readFileContent(file) {
     return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
-        reader.onerror = e => reject(e);
-        reader.readAsText(file);
+        if (typeof file === 'string') {
+            // 이미 문자열인 경우 (커밋 내역에서 불러온 파일)
+            resolve(file);
+        } else if (file instanceof File) {
+            // File 객체인 경우 (업로드된 파일)
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target.result);
+            reader.onerror = e => reject(e);
+            reader.readAsText(file);
+        } else {
+            reject(new Error('지원하지 않는 파일 형식입니다.'));
+        }
     });
+}
+
+// HTML 이스케이프 함수
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 // 스타일 적용 함수

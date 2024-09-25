@@ -245,3 +245,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
         onTeamProjectPageLoad();
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const saveProjectButton = document.getElementById('saveProjectButton');
+    saveProjectButton.addEventListener('click', function() {
+        const projectId = sessionStorage.getItem('projectId');
+        if (projectId) {
+            initializeProject(projectId);
+        } else {
+            console.error('세션 스토리지에 프로젝트 ID가 없습니다.');
+            // 여기에 사용자에게 오류 메시지를 표시하는 코드를 추가할 수 있습니다.
+        }
+    });
+});
+
+function initializeProject(projectId) {
+    // 프로젝트 초기화 로직
+    // ...
+
+    // 프로젝트 ID를 hidden input에 설정
+    document.getElementById('projectId').value = projectId;
+
+    // 서버 API 호출 등 나머지 초기화 로직
+    // ...
+}
