@@ -5,11 +5,13 @@ const api = {
             throw new Error('인증 토큰이 없습니다. 로그인 해주세요.');
         }
 
+        // 기본 헤더 설정
         options.headers = {
             ...options.headers,
             'Authorization': `Bearer ${token}`
         };
 
+        // method가 'GET'이 아니면 'Content-Type'을 'application/json'으로 설정
         const method = options.method ? options.method.toUpperCase() : 'GET';
         if (method !== 'GET') {
             options.headers['Content-Type'] = 'application/json';
@@ -32,19 +34,30 @@ const api = {
             throw new Error('인증 토큰이 없습니다. 로그인 해주세요.');
         }
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: formData
-        });
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || '네트워크 응답이 정상적이지 않습니다.');
+            if (!response.ok) {
+                let errorMessage = '네트워크 응답이 정상적이지 않습니다.';
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                } catch (e) {
+                    console.error('Error parsing error response:', e);
+                }
+                throw new Error(`프로젝트 저장 중 오류가 발생했습니다: ${errorMessage}`);
+            }
+            return response.json();
+        } catch (error) {
+            console.error('fetchWithTokenFormData 오류:', error);
+            throw new Error(`프로젝트 저장 중 오류가 발생했습니다: ${error.message}`);
         }
-        return response.json();
     },
 
     // 텍스트 응답을 처리하는 함수
@@ -166,7 +179,7 @@ const api = {
     },
 
     async initializeProject(projectId, files, commitMessage) {
-        console.log('API initializeProject 호출됨. files:', files, 'commitMessage:', commitMessage);  // 로깅 추가
+        console.log('API initializeProject 호출됨. files:', files, 'commitMessage:', commitMessage);
 
         if (!Array.isArray(files)) {
             console.error('files is not an array:', files);
@@ -176,7 +189,7 @@ const api = {
         const formData = new FormData();
         formData.append('projectId', projectId);
         formData.append('commitMessage', commitMessage);
-        files.forEach(file => formData.append('files', file));
+        files.forEach(file => formData.append('files', file, file.webkitRelativePath));
 
         return this.fetchWithTokenFormData('/api/team/project/init', formData);
     }

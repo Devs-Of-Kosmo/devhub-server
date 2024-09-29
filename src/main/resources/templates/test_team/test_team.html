@@ -121,6 +121,18 @@
     </div>
 </div>
 
+<!-- 브랜치 선택 모달 -->
+<div id="selectBranchModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Branch 선택</h2>
+        <button id="createBranchButtonModal" class="create-branch-button">+ Branch 생성</button>
+        <ul id="branchList">
+            <!-- 브랜치 목록이 여기에 동적으로 추가됩니다 -->
+        </ul>
+    </div>
+</div>
+
 <!-- 브랜치 모달 -->
 <div id="branchModal" class="modal">
     <div class="modal-content">
@@ -129,17 +141,21 @@
         <div class="branch-timeline" id="branchTimeline">
             <!-- 브랜치 항목들은 JavaScript로 동적으로 추가됩니다 -->
         </div>
-        <button class="action-button" id="createBranchButton">브랜치 생성</button>
+        <button class="action-button create-branch-button" id="createBranchButtonTimeline">브랜치 생성</button>
     </div>
 </div>
-
 <!-- 커밋 모달 -->
 <div id="commitModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>병합 브런치</h2>
+        <h2>병합 브랜치</h2>
         <ul class="commit-list">
             <!-- 커밋 항목들은 JavaScript로 동적으로 추가됩니다 -->
+            <!-- 예시: -->
+            <li>
+                <span class="commit-message">커밋 메시지</span>
+                <button class="branch-button" data-commit-id="1">브랜치</button>
+            </li>
         </ul>
     </div>
 </div>
@@ -304,6 +320,9 @@
 <input type="hidden" id="isInitialized" value="false">
 <input type="hidden" id="commitInfo" value="[]">
 <input type="hidden" id="branchesInfo" value="[]">
+<input type="hidden" id="currentBranch" value="">
+<input type="hidden" id="currentBranchId" value="">
+<input type="hidden" id="currentCommitId" value="">
 <!-- highlight.js 스크립트 추가 -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
 
