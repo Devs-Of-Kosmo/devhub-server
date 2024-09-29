@@ -6,8 +6,10 @@ window.projectInfo = (function() {
         projectName: '',
         description: '',
         latestCommitId: null,
+        currentCommitId: null,
         isInitialized: false,
         commitInfo: [],
+        currentBranch: null,
     };
 
     let onProjectInfoChange = null;
@@ -16,7 +18,6 @@ window.projectInfo = (function() {
         loadFromValues();
         console.log('HTML 요소의 값을 통해 로드된 프로젝트 정보:', state);
 
-        // 최초 저장 시 세션 스토리지에서 프로젝트 ID 가져오기
         if (!state.isInitialized) {
             const sessionProjectId = sessionStorage.getItem('projectId');
             if (sessionProjectId) {
@@ -43,6 +44,7 @@ window.projectInfo = (function() {
         state.description = document.getElementById('description').value || '';
         state.latestCommitId = document.getElementById('latestCommitId').value || null;
         state.isInitialized = document.getElementById('isInitialized').value === 'true';
+        state.currentBranch = document.getElementById('currentBranch').value || null;
         const commitInfoValue = document.getElementById('commitInfo').value;
         try {
             state.commitInfo = commitInfoValue ? JSON.parse(commitInfoValue) : [];
@@ -61,6 +63,7 @@ window.projectInfo = (function() {
         document.getElementById('latestCommitId').value = state.latestCommitId || '';
         document.getElementById('isInitialized').value = state.isInitialized;
         document.getElementById('commitInfo').value = JSON.stringify(state.commitInfo);
+        document.getElementById('currentBranch').value = state.currentBranch || '';
     }
 
     function setProjectInfo(projectData) {
@@ -99,12 +102,23 @@ window.projectInfo = (function() {
 
     function setLatestCommitId(id) {
         state.latestCommitId = id;
+        state.currentCommitId = id;  // currentCommitId도 함께 업데이트
         document.getElementById('latestCommitId').value = id;
+        document.getElementById('currentCommitId').value = id;  // hidden input 업데이트
         saveToValues();
         console.log(`최신 커밋 ID 설정: ${id}`);
         if (onProjectInfoChange) {
             onProjectInfoChange();
         }
+    }
+
+    function setCurrentCommitId(id) {
+        state.currentCommitId = id;
+        console.log(`Current commit ID set to: ${id}`);
+    }
+
+    function getCurrentCommitId() {
+        return state.currentCommitId;
     }
 
     async function fetchProjectMetadata() {
@@ -177,6 +191,19 @@ window.projectInfo = (function() {
         }
     }
 
+    function getCurrentBranch() {
+        return state.currentBranch;
+    }
+
+    function setCurrentBranch(branchId) {
+        state.currentBranch = branchId;
+        saveToValues();
+        console.log(`현재 브랜치 설정: ${branchId}`);
+        if (onProjectInfoChange) {
+            onProjectInfoChange();
+        }
+    }
+
     return {
         initialize,
         getProjectId,
@@ -186,6 +213,10 @@ window.projectInfo = (function() {
         fetchProjectMetadata,
         addCommit,
         initializeProject,
+        getCurrentBranch,
+        setCurrentBranch,
+        setCurrentCommitId,
+        getCurrentCommitId,
         get isInitialized() { return state.isInitialized; },
         set onProjectInfoChange(callback) { onProjectInfoChange = callback; },
         getLatestCommitId: () => state.latestCommitId,
