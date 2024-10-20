@@ -9,11 +9,20 @@
     <link rel="stylesheet" href="/css/team_project/list/list_style.css">
 </head>
 <body>
+<p id="currentUser"></p>
 
 <div id="desktop">
     <div id="create-repo-disk" class="disk-icon">
         <img src="/css/images/team_project/repo.png" alt="Create New Repository">
         <p>새 레포 만들기</p>
+    </div>
+    <div class="disk-icon" data-title="teamInfo" onclick="handleIconClick(this, 'teamInfo')">
+        <img src="/css/images/team_project/team_info.png" alt="팀 정보">
+        <p>팀 정보</p>
+    </div>
+    <div class="disk-icon" data-title="inviteMembers" onclick="handleIconClick(this, 'inviteMembers')">
+        <img src="/css/images/team_project/invite.png" alt="팀원 초대">
+        <p>팀원 초대</p>
     </div>
     <!-- 생성된 레포지토리 디스크 아이콘들이 여기에 추가됩니다 -->
 </div>
@@ -32,6 +41,22 @@
             <input type="text" id="repoProjectName" placeholder="프로젝트 이름">
             <textarea id="repoDescription" placeholder="설명 (선택사항)"></textarea>
             <button id="createRepoButton">레포 생성</button>
+        </div>
+    </div>
+</div>
+
+<!-- 팀 정보 모달 -->
+<div id="teamInfoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>팀 정보</h2>
+            <div class="close-button"></div>
+        </div>
+        <div class="modal-body">
+            <select id="teamSelect"></select>
+            <div class="team-info-container">
+                <!-- 팀 정보가 여기에 동적으로 추가됩니다 -->
+            </div>
         </div>
     </div>
 </div>
@@ -55,6 +80,24 @@
             <div class="button-group">
                 <button id="editRepoButton" class="primary-button" disabled>수정</button>
                 <button id="deleteRepoButton" class="danger-button" disabled>삭제</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 팀 나가기 확인 모달 -->
+<div id="leaveTeamConfirmModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>팀 나가기 확인</h2>
+            <div class="close-button"></div>
+        </div>
+        <div class="modal-body">
+            <p id="currentTeamInfo"></p>
+            <p>정말로 이 팀을 나가시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+            <div class="button-group">
+                <button id="confirmLeaveTeamButton" class="danger-button">나가기</button>
+                <button id="cancelLeaveTeamButton" class="secondary-button">취소</button>
             </div>
         </div>
     </div>
@@ -86,13 +129,29 @@
             <p>휴지통</p>
         </div>
     </a>
-    <a href="https://www.postman.com" target="_blank" rel="noopener noreferrer">
-        <div class="item" data-folder="postman">
-            <img src="https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg" alt="Postman">
-            <p>Postman</p>
+    <a href="#" class="leave-team-button">
+        <div class="item" data-folder="leaveTeam">
+            <img src="/css/images/team_project/leave_team.png" alt="팀 나가기">
+            <p>팀 나가기</p>
         </div>
     </a>
 </nav>
+
+<!-- 팀원 초대 모달 -->
+<div id="inviteMembersModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>팀원 초대</h2>
+            <div class="close-button"></div>
+        </div>
+        <div class="modal-body">
+            <p>현재 팀: <span id="currentTeamName"></span></p>
+            <input type="email" id="inviteEmail" placeholder="초대할 이메일 주소">
+            <button id="sendInviteButton">초대 보내기</button>
+            <div id="inviteMessages"></div>
+        </div>
+    </div>
+</div>
 
 <!-- 휴지통 모달 -->
 <div id="trashModal" class="modal">
@@ -112,10 +171,15 @@
     </div>
 </div>
 
+<script src="/js/team_project/list/teamInfo.js"></script>
+<script src="/js/team_project/list/script.js"></script>
+<script src="/js/team_project/list/invitation.js"></script>
 <script src="/js/team_project/list/create_repo.js"></script>
 <script src="/js/team_project/list/edit_repo.js"></script>
 <script src="/js/team_project/list/delete_repo.js"></script>
-<script src="/js/team_project/list/script.js"></script>
-
+<script src="/js/team_project/list/relegation.js"></script>
+<script src="/js/team_project/list/promotion.js"></script>
+<script src="/js/team_project/list/kick.js"></script>
+<script src="/js/team_project/list/leave_team.js"></script>
 </body>
 </html>

@@ -14,9 +14,9 @@ public class PersonalProjectDownloadDto {
     private ByteArrayResource resource;
     private String projectName;
 
-    public static PersonalProjectDownloadDto of(ByteArrayResource resouce, PersonalCommit commit) {
+    public static PersonalProjectDownloadDto of(ByteArrayResource resource, PersonalCommit commit) {
         return PersonalProjectDownloadDto.builder()
-                .resource(resouce)
+                .resource(resource)
                 .projectName(commit.getProject().getName())
                 .build();
     }

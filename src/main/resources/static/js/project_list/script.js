@@ -165,13 +165,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     var project = projectsArray[projectIndex];
 
                     if (project) {
-                        var url = `http://127.0.0.1:5000/save_token?token=${accessToken}` +
-                            `&projectId=${encodeURIComponent(project.projectId)}` +
-                            `&projectName=${encodeURIComponent(project.projectName)}` +
-                            `&description=${encodeURIComponent(project.description)}` +
-                            `&createdDate=${encodeURIComponent(project.createdDate)}`;
+                        // 프로젝트 ID를 세션 스토리지에 저장
+                        sessionStorage.setItem('projectId', project.projectId);
+                        sessionStorage.setItem('projectName', project.projectName);
+                        sessionStorage.setItem('description', project.description);
 
                         // 프로젝트 데이터를 포함한 URL로 이동
+                        var url = `personal_repository`;
+
+                        // 프로젝트 아이디를 포함한 URL로 이동
                         window.location.href = url;
                     } else {
                         console.error('Project data not found for index:', projectIndex);

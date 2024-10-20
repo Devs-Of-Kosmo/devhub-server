@@ -244,17 +244,52 @@ $(document).ready(function() {
         $('#profile-image-upload').click();
     });
 
+    // 프로필 이미지 업로드 이벤트 핸들러 수정
     $('#profile-image-upload').on('change', function(event) {
         var file = event.target.files[0];
-        var reader = new FileReader();
 
-        reader.onload = function(e) {
-            $('#profile-image').attr('src', e.target.result);
-            // TODO: 프로필 이미지를 서버에 업로드하는 AJAX 요청 추가
+        // 파일 유형 및 크기 검증
+        if (!file.type.startsWith('image/')) {
+            Swal.fire('오류', '이미지 파일만 업로드 가능합니다.', 'error');
+            return;
         }
 
-        reader.readAsDataURL(file);
+        if (file.size > 5 * 1024 * 1024) { // 5MB 제한
+            Swal.fire('오류', '이미지 파일 크기는 5MB 이하여야 합니다.', 'error');
+            return;
+        }
+
+        // 로딩 스피너 표시
+        Swal.fire({
+            title: '업로드 중...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        var formData = new FormData();
+        formData.append('profileImage', file);
+
+        ajaxWithToken('/api/user/profile-image', {
+            method: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData
+        })
+        .done(function(response) {
+            Swal.close(); // 로딩 스피너 닫기
+            Swal.fire('성공', '프로필 이미지가 업데이트되었습니다.', 'success');
+            // 프로필 이미지 새로 고침
+            $('#profile-image').attr('src', response.profileImageUrl + '?t=' + new Date().getTime());
+        })
+        .fail(function(error) {
+            Swal.close(); // 로딩 스피너 닫기
+            console.error('Error uploading profile image:', error);
+            Swal.fire('오류', '프로필 이미지 업로드에 실패하였습니다.', 'error');
+        });
     });
+
 
     $('#progress-slider').on('input', function() {
         var value = $(this).val();

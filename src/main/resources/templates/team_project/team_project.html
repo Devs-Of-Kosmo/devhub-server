@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +10,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="/css/team_project/style.css">
+    <link rel="stylesheet" href="/css/team_project/invite/style.css">
 </head>
 <body>
 <header>
@@ -179,7 +180,8 @@
         </li>
     </ul>
 </footer>
-
+<div id="code" style="display: none;" th:data-code="${code}"></div>
+<div id="redirectPath" style="display: none;" th:data-redirectPath="${redirectPath}"></div>
 
 <!-- 자바스크립트 파일 포함 -->
 <script src="/js/team_project/util.js"></script>
@@ -189,5 +191,6 @@
 <script src="/js/team_project/dragAndDrop.js"></script>
 <script src="/js/team_project/trash.js"></script>
 <script src="/js/team_project/message.js"></script>
+<script src="/js/team_project/invitation.js"></script>
 </body>
 </html>

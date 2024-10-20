@@ -35,12 +35,12 @@ public class SecurityConfig {
     private final String[] AUTH_WHITELIST = {
             "/favicon.ico", "/error",
       
-            "/api/*/public/**", "/ws/message",
+            "/api/*/public/**", "/ws/message","/api/llama/code-review",
 
             "/", "/register", "/login","/mypage",
             "loading","/personal_project","/project_list",
             "/team_loading","/team_project","/team_project_list/**","/test_team",
-            "/boards", "/boards/new", "/boards/{id}", "/boards/edit/{id}",
+            "/boards", "/boards/new", "/boards/{id}", "/boards/edit/{id}","/personal_repository",
       
             "/footer.html", "/templates/**", "/css/**", "/js/**", "/static/css/images/**", "images/**","/videos/**", "/fonts/**",
     };
@@ -82,8 +82,8 @@ public class SecurityConfig {
                         logout
                                 .logoutUrl("/api/auth/logout")
                                 .logoutSuccessUrl("/")
-                                .invalidateHttpSession(true) // 세션 무효화
-                                .deleteCookies("refreshToken", "JSESSIONID") // refreshToken 쿠키 삭제
+                                .invalidateHttpSession(true)
+                                .deleteCookies("refreshToken", "JSESSIONID")
                                 .clearAuthentication(true)
                 );
 

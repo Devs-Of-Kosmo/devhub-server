@@ -30,13 +30,12 @@ public enum ErrorCode {
     PERSONAL_PROJECT_MASTER_NOT_MATCH(500, "P005", "프로젝트 소유자가 일치하지 않습니다"),
     PERSONAL_COMMIT_NOT_FOUND(500, "P006", "해당 커밋을 찾을 수 없습니다"),
     DIRECTORY_DELETE_ERROR(500, "P007", "프로젝트 파일을 삭제하는 중 오류가 발생했습니다"),
-    COMMIT_SEARCH_ERROR(500, "P008", "커밋 이름 탐색 중 오류가 발생했습니다"),
     FILE_NOT_FOUND(500, "P009", "파일을 찾지 못했습니다"),
     FILE_SEARCH_ERROR(500, "P010", "파일을 찾는 중 오류가 발생했습니다"),
     ZIP_FILE_GENERATE_ERROR(500, "P012", "zip파일 생성 중 오류가 발생했습니다"),
     REPOSITORY_UPDATE_ERROR(500, "P013", "레포지토리 업데이트 중 오류가 발생했습니다"),
     REPOSITORY_DELETE_ERROR(500, "P014", "레포지토리를 삭제하는 중 오류가 발생했습니다"),
-    PARENT_COMMIT_NOT_FOUND(500, "P015", "부모 커밋이 존재하지 않습니다"),
+    PERSONAL_PARENT_COMMIT_NOT_EXIST(500, "P015", "부모 커밋이 존재하지 않습니다"),
     PERSONAL_PROJECT_FILE_SIZE_OVER(500, "P016", "업로드한 파일의 용량이 100MB를 초과했습니다"),
 
     // Team
@@ -54,6 +53,17 @@ public enum ErrorCode {
     USER_BRANCH_MISMATCH(500, "T012", "해당 브랜치를 생성한 유저가 아닙니다"),
     PROHIBITED_BRANCH_NAME(500, "T013", "브랜치 이름으로 'main' 또는 'master'는 불가능합니다"),
     DEFAULT_BRANCH_NOT_ALLOWED(500, "T014", "기본 브랜치는 삭제하실 수 없습니다"),
+    USER_COMMIT_MISMATCH(500, "T015", "해당 커밋을 생성한 유저가 아닙니다"),
+    TEAM_PARENT_COMMIT_NOT_EXIST(500, "T016", "부모 커밋이 존재하지 않습니다"),
+    DEFAULT_BRANCH_COMMIT_NOT_ALLOWED(500, "T017", "기본 브랜치의 커밋은 삭제하실 수 없습니다"),
+    INVITE_MAIL_ALREADY_EXISTS(500, "T018", "이미 초대 메일을 보낸 유저입니다"),
+    USER_ALREADY_IN_TEAM(500, "T019", "팀에 속해 있는 유저입니다"),
+    INVITE_EMAIL_MISMATCH(500, "T020", "팀에 초대된 유저가 아닙니다"),
+    INVITE_MAIL_EXPIRED(500, "T021", "초대 유효기간이 지났습니다"),
+    MANAGER_ACTION_NOT_ALLOWED(500, "T022", "MANAGER 권환은 불가능합니다"),
+    CANNOT_KICK_MANAGER(500, "T023", "MANAGER 권한의 팀원은 퇴출이 불가능합니다"),
+    UNAUTHORIZED_CANCEL_SUGGESTION(500, "T024", "병합 요청 취소가 불가능한 권한입니다"),
+    MERGE_CONDITION_NOT_REQUESTED(500, "T025", "병합 요청된 상태가 아닙니다"),
 
     // Board
     BOARD_NOT_FOUND(500,"B001", "게시글을 찾을 수 없습니다"),
@@ -76,7 +86,16 @@ public enum ErrorCode {
     GIT_ROLLBACK_ERROR(500, "V004", "깃 상태 롤백 중 오류가 발생했습니다"),
     COMMIT_RESET_ERROR(500, "V005", "커밋 삭제 중 오류가 발생했습니다"),
     BRANCH_CREATION_ERROR(500, "V005", "브랜치 생성 중 오류가 발생했습니다"),
-    BRANCH_DELETE_ERROR(500, "V006", "브랜치 삭제 중 오류가 발생했습니다");
+    BRANCH_DELETE_ERROR(500, "V006", "브랜치 삭제 중 오류가 발생했습니다"),
+
+    // Util
+    DESERIALIZE_ERROR(500, "Ut001", "데이터 역직렬화 과정 중 오류가 발생했습니다"),
+    ENCODING_ERROR(500, "Ut002", "초대정보 암호화 중 오류가 발생했습니다"),
+    DECODING_ERROR(500, "Ut003", "초대코드 복호화 중 오류가 발생했습니다"),
+    ALREADY_UP_TO_DATE(500, "Ut004", "두 브랜치의 상태가 동일합니다"),
+    MERGE_FAILED_ERROR(500, "Ut004", "예기치 못한 이유로 병합에 실패했습니다"),
+    MERGE_PROCESS_ERROR(500, "Ut004", "병합 처리 중 오류가 발생했습니다"),
+    FETCH_FILE_LIST_ERROR(500, "Ut005", "파일 목록 가져오는 과정에서 오류가 발생했습니다");
 
     private final String code;
     private final String message;

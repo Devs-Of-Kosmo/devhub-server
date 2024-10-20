@@ -1,7 +1,6 @@
 package team.devs.devhub.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +20,11 @@ import java.util.regex.Pattern;
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private static final int INITIAL_IDENTIFICATION_CODE = 0;
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile(RegisterPolicy.PASSWORD_PATTERN.getValue());
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile(RegisterPolicy.PASSWORD_PATTERN);
 
     public SignupResponse saveUser(User user) {
         verifyDuplicatedEmail(user.getEmail());

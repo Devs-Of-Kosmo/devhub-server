@@ -4,7 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import team.devs.devhub.domain.team.domain.project.MergeCondition;
 import team.devs.devhub.domain.team.domain.project.TeamBranch;
+import team.devs.devhub.domain.team.domain.project.TeamCommit;
 import team.devs.devhub.domain.team.domain.project.TeamProject;
 import team.devs.devhub.domain.user.domain.User;
 
@@ -24,12 +26,14 @@ public class TeamProjectBranchCreateRequest {
     @Schema(description = "생성하는 브랜치의 설명 (할 일 같은 거 쓰는 용도)", example = "OO 기능 구현")
     private String description;
 
-    public TeamBranch toEntity(User user, TeamProject project) {
+    public TeamBranch toEntity(User user, TeamProject project, TeamCommit fromCommit) {
         return TeamBranch.builder()
                 .name(branchName)
                 .description(description)
-                .createdBy(user)
+                .condition(MergeCondition.BEFORE_REQUEST)
                 .project(project)
+                .fromCommit(fromCommit)
+                .createdBy(user)
                 .build();
     }
 }

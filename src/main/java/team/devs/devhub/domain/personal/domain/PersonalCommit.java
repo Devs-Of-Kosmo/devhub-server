@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.common.BaseTimeEntity;
+import team.devs.devhub.global.common.CommitUtilProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 @Getter
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PersonalCommit extends BaseTimeEntity {
+public class PersonalCommit extends BaseTimeEntity implements CommitUtilProvider {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,4 +57,13 @@ public class PersonalCommit extends BaseTimeEntity {
         this.parentCommit = parentCommit;
     }
 
+    @Override
+    public String getRepositoryPath() {
+        return project.getRepositoryPath();
+    }
+
+    @Override
+    public String getCommitCode() {
+        return commitCode;
+    }
 }

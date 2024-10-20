@@ -19,6 +19,3 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 
 # 컨테이너가 실행될 때 Java 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
-# 포트 노출 (필요한 경우)
-EXPOSE 8080

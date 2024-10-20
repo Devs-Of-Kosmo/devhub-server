@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import team.devs.devhub.domain.user.domain.User;
 import team.devs.devhub.global.common.BaseTimeEntity;
+import team.devs.devhub.global.common.CommitUtilProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 @Getter
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TeamCommit extends BaseTimeEntity {
+public class TeamCommit extends BaseTimeEntity implements CommitUtilProvider {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +47,9 @@ public class TeamCommit extends BaseTimeEntity {
     @OneToMany(mappedBy = "parentCommit", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamCommit> childCommits = new ArrayList<>();
 
+    @OneToMany(mappedBy = "fromCommit", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TeamBranch> branches = new ArrayList<>();
+
     @Builder
     public TeamCommit(Long id, String commitCode, String commitMessage, TeamBranch branch, TeamCommit parentCommit, User createdBy) {
         this.id = id;
@@ -56,4 +60,13 @@ public class TeamCommit extends BaseTimeEntity {
         this.createdBy = createdBy;
     }
 
+    @Override
+    public String getRepositoryPath() {
+        return branch.getProject().getRepositoryPath();
+    }
+
+    @Override
+    public String getCommitCode() {
+        return commitCode;
+    }
 }

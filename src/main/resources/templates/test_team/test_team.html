@@ -6,133 +6,105 @@
     <title>VS Code 스타일 형상관리 사이트</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Acme&family=Black+Han+Sans&family=Noto Sans KR&family=New+Amsterdam&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Acme&family=Black+Han+Sans&family=Noto+Sans+KR&family=New+Amsterdam&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/atom-one-dark.min.css">
     <link rel="stylesheet" href="/css/team_project/test/style.css">
+    <link rel="stylesheet" href="/css/team_project/test/history.css">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-<header class="header">
-    <div class="logo">해당 유저의 이름</div>
-    <nav class="menu">
-        <a href="#">파일</a>
-        <a href="#">편집</a>
-        <a href="#">보기</a>
-        <a href="#">도움말</a>
-    </nav>
-</header>
+<div class="page-container">
+    <header class="header">
+        <div class="logo">해당 유저의 이름</div>
+        <nav class="menu">
+            <a href="#" id="helpButton">도움말</a>
+            <button id="headerLogoutButton">로그아웃</button>
+        </nav>
+    </header>
 
-<main class="main-content">
-    <aside class="sidebar">
-        <div class="sidebar-icon" title="Home">
-            <i class="fas fa-home"></i>
-        </div>
-        <div class="sidebar-icon" id="searchButton" title="Search">
-            <i class="fas fa-search"></i>
-        </div>
-        <div class="sidebar-icon" title="Messages">
-            <i class="fas fa-comment"></i>
-        </div>
-        <div class="sidebar-icon" id="branchButton" title="Commit History">
-            <i class="fas fa-code-branch"></i>
-        </div>
-        <div class="sidebar-icon" id="commitButton" title="Commits">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        <div class="sidebar-icon" id="prButton" title="Pull Requests">
-            <i class="fas fa-code-pull-request"></i>
-        </div>
-        <div class="sidebar-icon" id="mergeButton" title="Merges">
-            <i class="fas fa-code-merge"></i>
-        </div>
-        <div class="sidebar-icon" id="chatgptButton" title="ChatGPT">
-            <i class="fas fa-robot"></i>
-        </div>
-        <div class="sidebar-icon" id="userProfileButton" title="User logout" style="top: 20em;">
-            <i class="fas fa-user-circle"></i>
-        </div>
-    </aside>
-
-    <section class="file-explorer">
-        <div class="current-structure">
-            <h3>프로젝트 구조</h3>
-            <ul class="file-tree">
-                <li class="folder">src</li>
-                <li class="file">- main.py</li>
-                <li class="file">- utils.py</li>
-                <li class="folder">tests</li>
-                <li class="file">- test_main.py</li>
-                <li class="file">README.md</li>
-            </ul>
-        </div>
-
-        <div class="structure-separator"></div>
-
-        <div class="comparison-structure-container">
-            <h3>
-                비교 프로젝트 구조
-                <span class="toggle-icon" id="toggleComparisonStructure">
-                        <i class="fas fa-eye"></i>
-                    </span>
-            </h3>
-            <ul class="file-tree comparison-structure" id="comparisonStructure" style="display: none;">
-                <li class="folder">src</li>
-                <li class="file">- main.py</li>
-                <li class="file">- utils.py</li>
-                <li class="folder">tests</li>
-                <li class="file">- test_main.py</li>
-                <li class="file">README.md</li>
-                <li class="file">CHANGELOG.md</li>
-            </ul>
-        </div>
-    </section>
-
-    <section class="content">
-        <div class="button-container">
-            <button class="action-button" id="aiReviewButton">AI 코드 리뷰</button>
-            <button class="action-button" id="codeDiffButton">코드 차이</button>
-        </div>
-        <div class="code-container">
-            <div class="code-panel">
-                <h3>main.py (현재 버전)</h3>
-                <pre><code class="python">
-            def main():
-                print("Hello, VS Code!")
-
-            if __name__ == "__main__":
-                main()
-                    </code></pre>
+    <main class="main-content">
+        <aside class="sidebar">
+            <div class="sidebar-icon" title="Home">
+                <i class="fas fa-home"></i>
             </div>
-            <div class="code-panel">
-                <h3>main.py (이전 버전)</h3>
-                <pre><code class="python">
-            def main():
-                print("Hello, World!")
+            <div class="sidebar-icon" id="searchButton" title="Search">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="sidebar-icon" title="Messages">
+                <i class="fas fa-comment"></i>
+            </div>
+            <div class="sidebar-icon" id="branchButton" title="Branch History">
+                <i class="fas fa-code-branch"></i>
+            </div>
+            <div class="sidebar-icon" id="commitButton" title="Commit History">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="sidebar-icon" id="prButton" title="Pull Requests">
+                <i class="fas fa-code-pull-request"></i>
+            </div>
+            <div class="sidebar-icon" id="mergeButton" title="Merges">
+                <i class="fas fa-code-merge"></i>
+            </div>
+            <div class="sidebar-icon" id="chatgptButton" title="ChatGPT">
+                <i class="fas fa-robot"></i>
+            </div>
+        </aside>
 
-            if __name__ == "__main__":
-                main()
-                    </code></pre>
+        <section class="file-explorer">
+            <div class="current-structure">
+                <h3>프로젝트 구조</h3>
+                <ul id="fileTree" class="file-tree">
+                    <!-- 여기에 동적으로 파일 구조가 추가됩니다 -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- 이미지 파일 모달 -->
+        <div id="imageModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <img id="modalImage" src="" alt="Image Preview" class="modal-image"/>
+                <p id="modalTitle"></p>
             </div>
         </div>
-        <div class="result-container" id="resultContainer">
-            <!-- AI 리뷰 결과 또는 코드 차이 결과가 여기에 표시됩니다 -->
-        </div>
-    </section>
-</main>
 
-<footer class="footer">
-    Git: main | Python 3.8.5 64-bit
-</footer>
+        <section class="content">
+            <div class="button-container">
+                <div class="file-upload-container">
+                    <input type="file" id="fileUpload" multiple webkitdirectory directory>
+                    <button id="uploadButton">파일 업로드</button>
+                </div>
+                <div class="file-upload-container">
+                    <input type="file" id="comparisonFileUpload" multiple>
+                    <button id="comparisonUploadButton">비교 파일 업로드</button>
+                </div>
+                <button class="action-button" id="saveProjectButton">최초 저장</button>
+            </div>
+            <div class="code-comparison">
+                <div id="fileContent" class="code-panel">
+                    <pre><code></code></pre>
+                </div>
+                <div id="comparisonContent" class="code-panel">
+                    <!-- 비교할 파일의 내용이 여기에 표시됩니다 -->
+                </div>
+            </div>
+            <div class="review-panel">
+                <div class="review-buttons">
+                    <button class="action-button" id="aiReviewButton">AI 코드 리뷰</button>
+                    <button class="action-button" id="codeDiffButton">코드 차이</button>
+                </div>
+                <div id="reviewResult">
+                    <!-- AI 리뷰 결과나 코드 차이가 여기에 표시됩니다 -->
+                </div>
+            </div>
+        </section>
+    </main>
 
-<!-- highlight.js 스크립트 추가 -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
-<script>
-    hljs.highlightAll();
-</script>
-
-<script src="/scripts.js"></script>
+    <footer class="footer">
+        LLama: 3.1model | Token : 500
+    </footer>
+</div>
 
 <!-- 검색 모달 -->
 <div id="searchModal" class="modal mac-style">
@@ -149,52 +121,40 @@
     </div>
 </div>
 
+<!-- 브랜치 선택 모달 -->
+<div id="selectBranchModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Branch 선택</h2>
+        <button id="createBranchButtonModal" class="create-branch-button">+ Branch 생성</button>
+        <ul id="branchList">
+            <!-- 브랜치 목록이 여기에 동적으로 추가됩니다 -->
+        </ul>
+    </div>
+</div>
+
+<!-- 브랜치 모달 -->
 <div id="branchModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>브랜치 관리</h2>
-        <div class="branch-timeline">
-            <div class="branch-node">
-                <div class="branch-dot"></div>
-                <div class="branch-info">
-                    <span class="branch-name">main</span>
-                    <span class="branch-time">2024-08-18 09:00</span>
-                </div>
-            </div>
-            <div class="branch-line"></div>
-            <div class="branch-node">
-                <div class="branch-dot"></div>
-                <div class="branch-info">
-                    <span class="branch-name">feature/new-ui</span>
-                    <span class="branch-time">2024-08-18 10:30</span>
-                </div>
-            </div>
-            <div class="branch-line"></div>
-            <div class="branch-node">
-                <div class="branch-dot"></div>
-                <div class="branch-info">
-                    <span class="branch-name">bugfix/login-issue</span>
-                    <span class="branch-time">2024-08-18 14:15</span>
-                </div>
-            </div>
+        <div class="branch-timeline" id="branchTimeline">
+            <!-- 브랜치 항목들은 JavaScript로 동적으로 추가됩니다 -->
         </div>
+        <button class="action-button create-branch-button" id="createBranchButtonTimeline">브랜치 생성</button>
     </div>
 </div>
-
+<!-- 커밋 모달 -->
 <div id="commitModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>커밋 내역</h2>
+        <h2>병합 브랜치</h2>
         <ul class="commit-list">
-            <li class="commit-item">
-                <span class="commit-hash">#abc1234</span>
-                <span class="commit-message">로그인 기능 구현</span>
-                <span class="commit-author">작성자: John Doe</span>
-            </li>
-            <li class="commit-item">
-                <span class="commit-hash">#def5678</span>
-                <span class="commit-message">UI 디자인 업데이트</span>
-                <span class="commit-author">작성자: Jane Smith</span>
+            <!-- 커밋 항목들은 JavaScript로 동적으로 추가됩니다 -->
+            <!-- 예시: -->
+            <li>
+                <span class="commit-message">커밋 메시지</span>
+                <button class="branch-button" data-commit-id="1">브랜치</button>
             </li>
         </ul>
     </div>
@@ -282,11 +242,7 @@
     </div>
 </div>
 
-<div class="notification" id="messageNotification">
-    새 쪽지가 도착했습니다!
-</div>
-
-<!-- 로그아웃 모달  -->
+<!-- 로그아웃 모달 -->
 <div id="logoutModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
@@ -306,9 +262,11 @@
                 <li>
                     <strong>Home <i class="fas fa-home"></i>:</strong>
                     메인 대시보드로 이동합니다.
+                </li>
                 <li>
                     <strong>Search <i class="fas fa-search"></i>:</strong>
                     프로젝트 내 파일이나 코드를 검색합니다.
+                </li>
                 <li>
                     <strong>Messages <i class="fas fa-comment"></i>:</strong>
                     팀원들과 메시지를 주고받을 수 있습니다.
@@ -343,6 +301,7 @@
                 <li>
                     <strong>AI 코드 리뷰:</strong>
                     AI가 자동으로 코드를 분석하고 개선점을 제안합니다.
+                </li>
                 <li>
                     <strong>코드 차이:</strong>
                     두 버전의 코드 차이를 시각적으로 비교합니다.
@@ -352,6 +311,35 @@
     </div>
 </div>
 
+<input type="hidden" id="teamId" value="">
+<input type="hidden" id="teamName" value="">
+<input type="hidden" id="projectId" value="">
+<input type="hidden" id="projectName" value="">
+<input type="hidden" id="description" value="">
+<input type="hidden" id="latestCommitId" value="">
+<input type="hidden" id="isInitialized" value="false">
+<input type="hidden" id="commitInfo" value="[]">
+<input type="hidden" id="branchesInfo" value="[]">
+<input type="hidden" id="currentBranch" value="">
+<input type="hidden" id="currentBranchId" value="">
+<input type="hidden" id="currentCommitId" value="">
+<!-- highlight.js 스크립트 추가 -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+
+<!-- SweetAlert2 라이브러리 -->
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- 사용자 스크립트 -->
+<script src="/js/team_project/test/api.js"></script>
+<script src="/js/team_project/test/fileExplorer.js"></script>
+<script src="/js/team_project/test/projectInfo.js"></script>
+<script src="/js/team_project/test/commitHistory.js"></script>
+<script src="/js/team_project/test/fileUpload.js"></script>
+<script src="/js/team_project/test/diff.js"></script>
+<script src="/js/team_project/test/main.js"></script>
+<script src="/js/team_project/test/llama.js"></script>
+<script src="/js/team_project/test/branchManagement.js"></script>
 <script src="/js/team_project/test/scripts.js"></script>
+
 </body>
 </html>
