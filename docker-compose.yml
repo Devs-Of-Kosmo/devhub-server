@@ -11,6 +11,8 @@ services:
     build: .
     expose:
       - 8080 # 컨테이너 내부에서만 해당 포트를 인식하게끔 하는 속성. 즉, 다른 컨테이너에서는 8080으로 통신이 가능하지만, 외부에서는 8080으로 접근할 수 없음
+    volumes:
+      - /data/DevHubProject:/data/DevHubProject # ubuntu
     depends_on:
       - redis  # redis 컨테이너가 먼저 올라간 다음 nginx가 올라가도록 설정
 
